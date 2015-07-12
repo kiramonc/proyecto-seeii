@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../templates/template.xhtml">
+
+            <ui:define name="content">
+
+                <h:form id="frmListarUnidades">
+                    <center><h2>LISTA DE UNIDADES DE ENSEÑANZA</h2></center>
+                    <hr/>
+                    <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+
+                    <p:dataTable id="tablaListaUnidades" var="item" value="#{beanRUnidadE.allUnidadE}" selection="#{beanRUnidadE.unidadE}" selectionMode="single" rowKey="#{item.id}" paginator="true" rows="10" filteredValue="#{beanRUnidadE.listaUnidadEFiltrada}">
+                        <f:facet name="header">
+                            Lista de unidades de enseñanza
+                        </f:facet>
+                        <p:column headerText="NOMBRE UNIDAD" filterBy="nombreUnidad">
+                            <p:outputLabel value="#{item.nombreUnidad}"/>
+                        </p:column>
+                        <p:column headerText="ADMINISTRADOR" filterBy="adminUnidEnsen.usuario.username">
+                            <p:outputLabel value="#{item.administrador.usuario.username}"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="Actualizar Datos" action="#{beanRUnidadE.cargarUnidadEditar(item.id)}" />
+                        </p:column>
+
+                        <p:column>
+                            <p:commandButton ajax="false" value="Eliminar" actionListener="#{beanRUnidadE.cargarUnidadEliminar(item.id)}" title="Eliminar" onclick="if (!confirm('Desea cambiar el estado del usuario'))
+                                        return false;"/>
+                        </p:column>
+
+                    </p:dataTable>                   
+                </h:form>
+
+                <h:form id="frmEditarUnidad">
+                    <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                    <p:dialog header="Datos de la unidad de enseñanza" widgetVar="dialogEditarUnidad" modal="true">
+                        <h:panelGrid id="panelEditarUnidad" columns="3">
+                            <p:outputLabel value="Nombre unidad: " for="txtNombreUnidad"/>
+                            <p:inputText id="txtNombreUnidad" label="Nombre" value="#{beanRUnidadE.unidadE.nombreUnidad}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtNombreUnidad"/>
+                            <h3>Temas</h3>
+                            <h:panelGroup></h:panelGroup>
+                            <h:panelGroup></h:panelGroup>
+
+                            <p:dataTable id="tablaTemas" var="item" value="#{beanRTema.getTemasPorUnidad(beanRUnidadE.unidadE.id)}" selection="#{beanRTema.tema}" selectionMode="single" rowKey="#{item.idTema}" paginator="true" rows="10" >
+                                <p:column headerText="NOMBRE">
+                                    <p:outputLabel value="#{item.nombre}"/>
+                                </p:column>
+                                <p:column headerText="VOCABULARIO">
+                                    <p:outputLabel value="#{item.vocabulario}"/>
+                                </p:column>
+                                <p:column headerText="OBJETIVO">
+                                    <p:outputLabel value="#{item.objetivo}"/>
+                                </p:column>
+                                <p:column headerText="DOMINIO">
+                                    <p:outputLabel value="#{item.dominio}"/>
+                                </p:column>               
+
+                                <p:column>
+                                    <p:commandButton value="Actualizar Datos" actionListener="#{beanRTema.cargarTemaEditar(item.idTema)}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton ajax="false" value="Eliminar" title="Eliminar" onclick="if (!confirm('Desea eliminar el tema'))
+                                        return false;"/>
+                                </p:column>
+                            </p:dataTable>
+                            <h:panelGroup></h:panelGroup>
+                            <h:panelGroup></h:panelGroup>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="frmEditarTema">
+                    <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                    <p:dialog header="Datos del tema" widgetVar="dialogEditarTema" modal="true">
+                        <h:panelGrid id="panelEditarTema" columns="3">
+                            <p:outputLabel value="Nombre: "  for="txtNombreTema"/>
+                            <p:inputText id="txtNombreTema" label="Nombre" size="40" value="#{beanRTema.tema.nombre}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtNombreTema"/>
+
+                            <p:outputLabel value="Vocabulario: " for="txtVocabulario"/>
+                            <p:inputText id="txtVocabulario" label="Vocabulario:" size="40" value="#{beanRTema.tema.vocabulario}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtVocabulario"/>
+
+                            <p:outputLabel value="Objetivo: " for="txtObjetivo"/>
+                            <p:inputText id="txtObjetivo" label="Objetivo" size="40" value="#{beanRTema.tema.objetivo}">
+                            </p:inputText>
+                            <p:message for="txtObjetivo"/>
+
+                            <p:outputLabel value="Dominio: " for="txtDominio"/>
+                            <p:inputText id="txtDominio" label="Dominio:" size="40" value="#{beanRTema.tema.dominio}">
+                            </p:inputText>
+                            <p:message for="txtDominio"/>
+
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton value="Guardar cambios" ajax="false" actionListener="#{beanRTema.actualizar()}" styleClass="botonstyle"/>
+                        </center>
+                    </p:dialog>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

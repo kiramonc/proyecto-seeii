@@ -1,0 +1,149 @@
+
+#top {
+    position: relative;
+    background-color: #036fab;
+    color: white;
+    padding: 5px;
+    margin: 0px 0px 10px 0px;
+}
+
+#bottom {
+    position: relative;
+    background-color: #c2dfef;
+    padding: 5px;
+    margin: 10px 0px 0px 0px;
+    text-shadow: 0.3px 0.3px 0px #036fab;
+    text-align: center;
+}
+
+#left {
+    float: left;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+#right {
+    float: right;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+.center_content {
+    position: relative;
+    box-shadow: 0px 0px 2px black;
+    background-color: #dddddd;
+    padding: 5px;
+}
+
+.left_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin-left: 170px;
+}
+
+.right_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin: 0px 170px 0px 170px;
+}
+
+#top a:link, #top a:visited {
+  color: #036fab;
+  font-weight : bold;
+  text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+  color: black;
+  font-weight : bold;
+  text-decoration : underline;
+}
+
+#datosUsuario{
+    
+}
+
+#datosCuenta{
+    
+}
+
+#frmRegistrarUsuario{
+    margin-left: 330px;
+    margin-right: 330px;
+    background: #eee;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 30px;
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    position: inherit;
+    border: 2px cadetblue solid;
+}
+#frmRegistrarTema{
+    margin-left: 400px;
+    margin-right: 400px;
+    background: #eee;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 30px;
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    position: inherit;
+    border: 2px cadetblue solid;
+}
+
+#frmCrearUnidad{
+    margin-left: 400px;
+    margin-right: 400px;
+    background: #eee;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 30px;
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    position: inherit;
+    border: 2px cadetblue solid;
+}
+
+.botonstyle{
+    margin-top: 20px;
+    color: #036fab;
+    padding: 10px;
+    margin-left: 130px;
+    
+}
+
+.botonDesactivarstyle{
+    color: #036fab;
+    padding: 10px;
+    width: 160px;
+}
+
+.botonActualizarstyle{
+    color: #036fab;
+    padding: 10px;
+    width: 140px;
+}
+
+#sesionUsuario{
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    color: #ffffff;
+    
+}
+
+#frmMenuPrincipal\3a j_idt14.ui-commandlink.ui-widget:link, #frmMenuPrincipal\3a j_idt14.ui-commandlink.ui-widget:visited{
+    color: lightcoral;
+    text-decoration: underline;
+    text-shadow: 0.5px 0.5px 0px #000000
+}
+#frmMenuPrincipal\3a j_idt14.ui-commandlink.ui-widget:link:hover, #frmMenuPrincipal\3a j_idt14.ui-commandlink.ui-widget:visited:hover  {
+    color: #ffffff;
+    text-shadow: 0.5px 0.5px 0px #000000
+}

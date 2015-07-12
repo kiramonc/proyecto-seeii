@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../templates/template.xhtml">
+
+            <ui:define name="content">
+                <h:form id="frmCrearUnidad">
+                    <center><h2>FORMULARIO CREAR UNIDAD</h2></center>
+                    <hr/>
+
+                    <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                    <div id="datosUnidad">
+                        <h:panelGrid columns="3">
+                            <p:outputLabel value="Nombre: " for="txtNombreUnidad"/>
+                            <p:inputText id="txtNombreUnidad" label="Nombre" value="#{beanRUnidadE.unidadE.nombreUnidad}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtNombreUnidad"/>
+                            
+                            <!--<p:outputLabel value="Administrador:" for="menuAdmin"/>
+                            <p:selectOneMenu converter="adminConverter" id="menuAdmin" value="#{beanRUnidadE.unidadE.administrador}" >
+                                <f:selectItems id="itemsAdmin" value="#{beanRUnidadE.listaunidadE}" var="u" itemLabel="#{u.nombreUnidad}"/>
+                                <f:converter converterId="adminConverter"/>
+                            </p:selectOneMenu>
+                            <h:panelGroup></h:panelGroup>-->
+                            
+                            <h:panelGroup></h:panelGroup>
+                            <p:commandButton value="Registrar" actionListener="#{beanRUnidadE.registrar()}" update="frmCrearUnidad" styleClass="botonstyle"/>
+                        </h:panelGrid>
+                    </div>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 26/06/2015 06:18:17 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="Pojo.Pregunta" table="pregunta" catalog="proyectoinglescopia">
+        <id name="idPregunta" type="int">
+            <column name="idPregunta" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="test" class="Pojo.Test" fetch="select">
+            <column name="testPreg" not-null="true" />
+        </many-to-one>
+        <many-to-one name="concepto" class="Pojo.Concepto" fetch="select">
+            <column name="conceptoPreg" not-null="true" />
+        </many-to-one>
+        <property name="descripcion" type="string">
+            <column name="descripcion" length="250" not-null="true" />
+        </property>
+        <property name="peso" type="double">
+            <column name="peso" precision="22" scale="0" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
