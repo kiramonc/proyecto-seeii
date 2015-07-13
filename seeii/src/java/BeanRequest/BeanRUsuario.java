@@ -46,11 +46,13 @@ public class BeanRUsuario {
     private String txtPasswordRepita;
     private Session session;
     private Transaction transaction;
+    private boolean establecerPass;
 
     public BeanRUsuario() {
         this.usuario = new Usuario();
         this.usuario.setEstado(true);
         this.usuario.setGenero(true);
+        this.establecerPass=true;
     }
 
     //Ingresa un nuevo Usuario a la BD
@@ -99,6 +101,7 @@ public class BeanRUsuario {
             this.usuario = new Usuario();
             this.usuario.setEstado(true);
             this.usuario.setGenero(true);
+            this.establecerPass=true;
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -122,6 +125,13 @@ public class BeanRUsuario {
 //                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error:", "El nombre de usuario ya se encuentra registrado"));
 //                return;
 //            }
+            if(this.establecerPass){
+                if (!this.usuario.getPassword().equals(this.txtPasswordRepita)) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Las contraseñas no coinciden"));
+                return;
+                }
+                this.usuario.setPassword(Encrypt.sha512(this.usuario.getPassword()));
+            }
             daoUsuario.actualizar(this.session, this.usuario);
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
@@ -141,6 +151,7 @@ public class BeanRUsuario {
     public List<Usuario> getAllUsuario() {
         this.session = null;
         this.transaction = null;
+//        this.establecerPass=false;
 
         try {
             DaoUsuario daoUsuario = new DaoUsuario();
@@ -302,6 +313,20 @@ public class BeanRUsuario {
 
     public void setListaUsuarioFiltrado(List<Usuario> listaUsuarioFiltrado) {
         this.listaUsuarioFiltrado = listaUsuarioFiltrado;
+    }
+
+    public boolean isEstablecerPass() {
+        return establecerPass;
+    }
+
+    public void setEstablecerPass(boolean establecerPass) {
+        this.establecerPass = establecerPass;
+    }
+    
+    
+    
+    public void limpiarFormulario(){
+        this.usuario=null;
     }
     
     

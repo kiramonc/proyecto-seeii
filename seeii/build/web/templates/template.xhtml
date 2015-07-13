@@ -28,34 +28,10 @@
                     <p:commandLink value="Cerrar Sesión" action="#{beanSLogin.logout()}" update="frmMenuPrincipal" />
                 </div>
                 <p:megaMenu>
-                    <p:menuitem value="Inicio" outcome="/index"/>
-                    <p:submenu label="Usuario" icon="ui-icon-person">
-                        <p:column>
-                            <p:submenu label="CRUD">
-                                <p:menuitem value="Registrar" outcome="/admin/registrar_usuario" icon="ui-icon-pencil"/>
-                                <p:menuitem value="Modificar" outcome="/admin/buscar" icon="ui-icon-document"/>
-                                <p:menuitem value="Ver detalle" outcome="/admin/verDetalle" icon="ui-icon-info"/>
-                            </p:submenu>
-                        </p:column>
-                    </p:submenu>
-                    <p:submenu label="Tema" icon="ui-icon-plus">
-                        <p:column>
-                            <p:submenu label="CRUD Temas">
-                                <p:menuitem value="Crear" outcome="/admin/tema/registrar_tema" icon="ui-icon-pencil"/>
-                                <p:menuitem value="Modificar" outcome="/admin/buscar" icon="ui-icon-document"/>
-                                <p:menuitem value="Ver detalle" outcome="/admin/verDetalle" icon="ui-icon-info"/>
-                            </p:submenu>
-                        </p:column>
-                    </p:submenu>
-                    <p:submenu label="Unidad Enseñanza" icon="ui-icon-plus">
-                        <p:column>
-                            <p:submenu label="CRUD Unidad">
-                                <p:menuitem value="Crear" outcome="/admin/unidad/registrar_unidad" icon="ui-icon-pencil"/>
-                                <p:menuitem value="Lista Unidades" outcome="/admin/unidad/buscar_unidad" icon="ui-icon-document"/>
-                                <p:menuitem value="Ver detalle" outcome="/admin/verDetalle" icon="ui-icon-info"/>
-                            </p:submenu>
-                        </p:column>
-                    </p:submenu>
+                    <p:menuitem value="Usuario" outcome="/admin/buscar" icon="ui-icon-person"/>
+                    <p:menuitem value="Unidad" outcome="/admin/unidad/buscar_unidad" icon="ui-icon-bookmark"/>
+                    <p:menuitem value="Test" outcome="/index" icon="ui-icon-clipboard"/>
+                    <p:menuitem value="Ficha" outcome="/index" icon="ui-icon-contact"/>
                 </p:megaMenu>
             </h:form>
             <ui:insert name="top"></ui:insert>

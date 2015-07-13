@@ -15,66 +15,153 @@
                     <center><h2>LISTA DE USUARIO</h2></center>
                     <hr/>
                     <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                    <h:panelGrid id="panelAdministracionUsuario" columns="2" cellspacing="25px">
+                        <h:panelGroup>
+                            <p:dataTable id="tablaListaUsuarios" var="item" value="#{beanRUsuario.allUsuario}" selection="#{beanRUsuario.usuario}" selectionMode="single" rowKey="#{item.idUsuario}" paginator="true" rows="20" filteredValue="#{beanRUsuario.listaUsuarioFiltrado}" styleClass="estiloTabla">
+                                <p:ajax event="rowSelect" update=":frmListarUsuarios:panelDatosUsuario"/>
+                                <f:facet name="header">
+                                    Lista de usuarios
+                                </f:facet>
+                                <p:column headerText="USERNAME" filterBy="username">
+                                    <p:outputLabel value="#{item.username}"/>
+                                </p:column>
+                                <p:column headerText="NOMBRE" filterBy="nombre">
+                                    <p:outputLabel value="#{item.nombre}"/>
+                                </p:column>
+                                <p:column headerText="APELLIDO" filterBy="apellido">
+                                    <p:outputLabel value="#{item.apellido}"/>
+                                </p:column>
+                                <!--<p:column headerText="GÉNERO">
+                                    <p:outputLabel value="#{item.genero ? 'Masculino':'Femenino'}"/>
+                                </p:column>               
+                                <p:column headerText="FECHA NACIMIENTO">
+                                    <p:outputLabel value="#{item.fechaNacimiento.toString()}"/>
+                                </p:column>-->
+                                <p:column headerText="ESTADO CUENTA" filterBy="estado">
+                                    <p:outputLabel value="#{item.estado ? 'Activo':'Inactivo'}"/>
+                                </p:column>
+                                <p:column headerText="ROL" filterBy="rol.tipo">
+                                    <p:outputLabel value="#{item.rol.tipo}"/>
+                                </p:column>
+                                <!--
+                                <p:column>
+                                    <p:commandButton value="Actualizar Datos" actionListener="#{beanRUsuario.cargarUsuarioEditar(item.idUsuario)}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton ajax="false" value="#{item.estado ? 'Desactivar usuario':'Activar usuario'}" actionListener="#{beanRUsuario.cargarUsuarioDesactivar(item.idUsuario)}"/>
+                                </p:column>
+                                -->
+                            </p:dataTable>
+                            <p:dialog header="Detalle usuario" widgetVar="dialogoUsuario" resizable="False">
+                                <h:panelGrid id="panelDetUsuario" columns="2">
+                                    <p:outputLabel value="Username:"/>
+                                    <h:outputText value="#{beanRUsuario.usuario.username}"/>
+                                    <p:outputLabel value="Nombre:"/>
+                                    <h:outputText value="#{beanRUsuario.usuario.nombre}"/>
+                                    <p:outputLabel value="Apellido:"/>
+                                    <h:outputText value="#{beanRUsuario.usuario.apellido}"/>
+                                    <p:outputLabel value="Género:"/>
+                                    <h:outputText value="#{beanRUsuario.usuario.genero ? 'Masculino':'Femenino'}"/>
+                                    <p:outputLabel value="Fecha Nacimiento:"/>
+                                    <h:outputText value="#{beanRUsuario.usuario.fechaNacimiento.toString()}"/>
+                                    <p:outputLabel value="Estado:"/>
+                                    <h:outputText value="#{beanRUsuario.usuario.estado ? 'Activo':'Inactivo'}"/>
+                                    <p:outputLabel value="Rol:"/>
+                                    <h:outputText value="#{beanRUsuario.usuario.rol.tipo}"/>
 
-                    <p:dataTable id="tablaListaUsuarios" var="item" value="#{beanRUsuario.allUsuario}" selection="#{beanRUsuario.usuario}" selectionMode="single" rowKey="#{item.idUsuario}" paginator="true" rows="20" filteredValue="#{beanRUsuario.listaUsuarioFiltrado}">
-                        <p:ajax event="rowSelect" update=":frmListarUsuarios:panelDetUsuario" oncomplete="dialogoUsuario.show()"/>
-                        <f:facet name="header">
-                            Lista de usuarios
-                        </f:facet>
-                        <p:column headerText="USERNAME" filterBy="username">
-                            <p:outputLabel value="#{item.username}"/>
-                        </p:column>
-                        <p:column headerText="NOMBRE" filterBy="nombre">
-                            <p:outputLabel value="#{item.nombre}"/>
-                        </p:column>
-                        <p:column headerText="APELLIDO" filterBy="apellido">
-                            <p:outputLabel value="#{item.apellido}"/>
-                        </p:column>
-                        <!--<p:column headerText="GÉNERO">
-                            <p:outputLabel value="#{item.genero ? 'Masculino':'Femenino'}"/>
-                        </p:column>               
-                        <p:column headerText="FECHA NACIMIENTO">
-                            <p:outputLabel value="#{item.fechaNacimiento.toString()}"/>
-                        </p:column>-->
-                        <p:column headerText="ESTADO CUENTA" filterBy="estado">
-                            <p:outputLabel value="#{item.estado ? 'Activo':'Inactivo'}"/>
-                        </p:column>
-                        <p:column headerText="ROL" filterBy="rol.tipo">
-                            <p:outputLabel value="#{item.rol.tipo}"/>
-                        </p:column>
-                        <p:column>
-                            <p:commandButton value="Actualizar Datos" actionListener="#{beanRUsuario.cargarUsuarioEditar(item.idUsuario)}"/>
-                        </p:column>
-                        <p:column>
-                            <p:commandButton ajax="false" value="#{item.estado ? 'Desactivar usuario':'Activar usuario'}" actionListener="#{beanRUsuario.cargarUsuarioDesactivar(item.idUsuario)}"/>
-                        </p:column>
+                                </h:panelGrid>
+                            </p:dialog>
 
-                    </p:dataTable>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <h:panelGrid columns="1" id="panelDatosUsuario">
+                                <h:panelGrid columns="3">
+                                    <p:outputLabel value="Nombre: " for="txtNombre"/>
+                                    <p:inputText id="txtNombre" label="Nombre" value="#{beanRUsuario.usuario.nombre}">
+                                        <f:validator validatorId="validatorVacio"/>
+                                    </p:inputText>
+                                    <p:message for="txtNombre"/>
+
+                                    <p:outputLabel value="Apellido: " for="txtApellido"/>
+                                    <p:inputText id="txtApellido" label="Apellido" value="#{beanRUsuario.usuario.apellido}">
+                                        <f:validator validatorId="validatorVacio"/>
+                                    </p:inputText>
+                                    <p:message for="txtApellido"/>
+
+                                    <h:outputText value="Fecha de nacimiento:"/>
+                                    <p:calendar id="txtFechaNacimiento" title="Ejemplo:dd/MM/yyyy" showOn="button" value="#{beanRUsuario.usuario.fechaNacimiento}" pattern="dd/MM/yyyy" required="true" requiredMessage="Se requiere Fecha"/>
+                                    <p:message for="txtFechaNacimiento"/>
+
+                                    <h:outputText value="Género:"/>          
+                                    <p:selectOneRadio id="radioCuenta" value="#{beanRUsuario.usuario.genero}">
+                                        <f:selectItem itemLabel="Masculino" itemValue="true"/>
+                                        <f:selectItem itemLabel="Femenino" itemValue="false"/>
+                                    </p:selectOneRadio>
+                                    <h:panelGroup></h:panelGroup>
+
+                                    <p:outputLabel value="Nombre de usuario: " for="txtUsername"/>
+                                    <p:inputText id="txtUsername" label="Nombre de usuario" value="#{beanRUsuario.usuario.username}">
+                                        <f:validator validatorId="validatorVacio"/>
+                                    </p:inputText>
+                                    <p:message for="txtUsername"/>
+
+
+                                    <p:outputLabel value="Rol de usuario:" for="menuRol"/>
+                                    <p:selectOneMenu converter="rolConverter" id="menuRol" value="#{beanRUsuario.usuario.rol}" >
+
+                                        <f:selectItems id="itemsRol" value="#{beanRUsuario.listaRoles}" var="r" itemLabel="#{r.tipo}"/>
+                                        <f:converter converterId="rolConverter"/>
+                                    </p:selectOneMenu>
+                                    <h:panelGroup></h:panelGroup>
+
+                                    <p:outputLabel value="Establecer contraseña" for="menuRol"/>
+                                    <p:selectOneRadio value="#{beanRUsuario.establecerPass}" >
+                                        <f:selectItem itemValue="true" itemLabel="Si"></f:selectItem>
+                                        <f:selectItem itemValue="false" itemLabel="No"></f:selectItem>
+                                        <p:ajax update="txtPassword" event="valueChange" />
+                                        <p:ajax update="txtPasswordRepita" event="valueChange" />
+                                    </p:selectOneRadio>
+                                    <h:panelGroup></h:panelGroup>
+
+                                    <p:outputLabel value="Contraseña: " for="txtPassword"/>
+                                    <p:password id="txtPassword" label="Contraseña" value="#{beanRUsuario.usuario.password}" disabled="#{!beanRUsuario.establecerPass}">
+                                        <f:validator validatorId="validatorVacio"/>
+                                    </p:password>
+                                    <p:message for="txtPassword"/>
+
+                                    <p:outputLabel value="Repita contraseña: " for="txtPasswordRepita"/>
+                                    <p:password id="txtPasswordRepita" label="Repetir Contraseña" value="#{beanRUsuario.txtPasswordRepita}" disabled="#{!beanRUsuario.establecerPass}">
+                                        <f:validator validatorId="validatorVacio"/>
+                                    </p:password>
+                                    <h:panelGroup></h:panelGroup>
+
+
+                                </h:panelGrid>
+                                <h:panelGrid columns="4">
+
+                                    <p:commandButton ajax="false" value="Actualizar Datos" actionListener="#{beanRUsuario.actualizar()}" styleClass="botonstyle"/>
+                                    <p:commandButton ajax="false" value="#{beanRUsuario.usuario.estado? 'Desactivar usuario':'Activar usuario'}" actionListener="#{beanRUsuario.cargarUsuarioDesactivar(beanRUsuario.usuario.idUsuario)}" styleClass="botonstyle"/>
+
+                                    <p:commandButton value="Crear" actionListener="#{beanRUsuario.registrar()}" styleClass="botonstyle"/>
+                                    <p:commandButton ajax="false" icon="ui-icon-circle-arrow-w" value="Limpiar" actionListener="#{beanRUsuario.limpiarFormulario()}" styleClass="botonstyle">
+                                        <!--<p:ajax event="onselect" update=":frmListarUsuarios:panelDatosUsuario"/>-->
+                                    </p:commandButton>
+                                    <!--EN EL BOTON CREAR BORRE EL update="frmRegistrarUsuario"-->
+                                </h:panelGrid>
+
+                            </h:panelGrid>
+
+
+
+
+                        </h:panelGroup>
+                    </h:panelGrid>
 
                     <!--<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">  
                         <p:commandButton value="Si" type="button" icon="ui-icon-check"/>  
                         <p:commandButton value="No" type="button" icon="ui-icon-close"/>       
                     </p:confirmDialog> -->
-                    
-                    <p:dialog header="Detalle usuario" widgetVar="dialogoUsuario" resizable="False">
-                        <h:panelGrid id="panelDetUsuario" columns="2">
-                            <p:outputLabel value="Username:"/>
-                            <h:outputText value="#{beanRUsuario.usuario.username}"/>
-                            <p:outputLabel value="Nombre:"/>
-                            <h:outputText value="#{beanRUsuario.usuario.nombre}"/>
-                            <p:outputLabel value="Apellido:"/>
-                            <h:outputText value="#{beanRUsuario.usuario.apellido}"/>
-                            <p:outputLabel value="Género:"/>
-                            <h:outputText value="#{beanRUsuario.usuario.genero ? 'Masculino':'Femenino'}"/>
-                            <p:outputLabel value="Fecha Nacimiento:"/>
-                            <h:outputText value="#{beanRUsuario.usuario.fechaNacimiento.toString()}"/>
-                            <p:outputLabel value="Estado:"/>
-                            <h:outputText value="#{beanRUsuario.usuario.estado ? 'Activo':'Inactivo'}"/>
-                            <p:outputLabel value="Rol:"/>
-                            <h:outputText value="#{beanRUsuario.usuario.rol.tipo}"/>
-
-                        </h:panelGrid>
-                    </p:dialog>
                 </h:form>
 
                 <h:form id="frmEditarUsuario">
@@ -117,8 +204,8 @@
                             </p:selectOneMenu>
                             <h:panelGroup></h:panelGroup>-->
 
-                            
-                            
+
+
                         </h:panelGrid>
                         <center>
                             <p:commandButton value="Guardar cambios" ajax="false" actionListener="#{beanRUsuario.actualizar()}" styleClass="botonstyle"/>
