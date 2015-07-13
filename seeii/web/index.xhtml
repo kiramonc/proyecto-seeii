@@ -7,23 +7,32 @@
 
     <body>
 
-        <ui:composition template="./templates/template.xhtml">
+        <ui:composition template="./templates/templateLogin.xhtml">
+
+            <ui:define name="top">
+
+            </ui:define>
 
             <ui:define name="content">
-                <h2>Inicio de sesión</h2>
-                <hr/>
-                <h:form id="frmLogin">
+                <header>            
+                    <img src="imagen/stii.png" alt="STII" width="40%" height="40%"></img>
+                </header> 
+                <h:form id="login"  class="form-horizontal"  >
+                    <h2>INGRESO</h2>
                     <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
-                    <h:panelGrid columns="2">
+                    <h:panelGrid columns="1">
                         <p:outputLabel value="Nombre de usuario:" for="txtUsername"/>
                         <p:inputText id="txtUsername" size="35" value="#{beanSLogin.usernameLogin}"/>
+                                               
                         <p:outputLabel value="Contraseña:" for="txtPassword"/>
                         <p:password id="txtPassword" size="35" value="#{beanSLogin.passwordLogin}"/>
-                        <h:panelGroup></h:panelGroup>
-                        <p:commandButton value="Ingresar" action="#{beanSLogin.login()}" update="frmLogin"/>
+                        <br/>
+                        <p:commandButton value="Ingresar" action="#{beanSLogin.login()}" update="login"/> 
                     </h:panelGrid>
-                    
                 </h:form>
+            </ui:define>
+
+            <ui:define name="bottom">
             </ui:define>
 
         </ui:composition>
