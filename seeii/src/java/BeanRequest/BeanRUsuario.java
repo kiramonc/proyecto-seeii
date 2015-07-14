@@ -44,6 +44,7 @@ public class BeanRUsuario {
     private List<Usuario> listaUsuarioFiltrado;
     private List<Rol> listaRoles;
     private String txtPasswordRepita;
+    private String txtPassword;
     private Session session;
     private Transaction transaction;
     private boolean establecerPass;
@@ -52,7 +53,9 @@ public class BeanRUsuario {
         this.usuario = new Usuario();
         this.usuario.setEstado(true);
         this.usuario.setGenero(true);
-        this.establecerPass=true;
+        this.establecerPass = true;
+        this.usuario.setPassword("");
+        this.txtPasswordRepita = "";
     }
 
     //Ingresa un nuevo Usuario a la BD
@@ -61,36 +64,36 @@ public class BeanRUsuario {
         this.transaction = null;
 
         try {
-            if (!this.usuario.getPassword().equals(this.txtPasswordRepita)) {
+            if (!this.txtPassword.equals(this.txtPasswordRepita)) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Las contraseñas no coinciden"));
                 return;
             }
             Dao.DaoUsuario daoUsuario = new DaoUsuario();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            Usuario u= daoUsuario.verPorUsername(session, usuario.getUsername()) ;
+            Usuario u = daoUsuario.verPorUsername(session, usuario.getUsername());
             if (u != null) {
                 System.out.println(u.toString());
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "El nombre de usuario ya se encuentra registrado"));
                 return;
             }
-            
-            this.usuario.setPassword(Encrypt.sha512(this.usuario.getPassword()));
+
+            this.usuario.setPassword(Encrypt.sha512(this.txtPassword));
             daoUsuario.registrar(this.session, this.usuario);
-            
-            if(this.usuario.getRol().getTipo().equals("Administrador")){
-                Administrador admin= new Administrador();
+
+            if (this.usuario.getRol().getTipo().equals("Administrador")) {
+                Administrador admin = new Administrador();
                 admin.setUsuario(daoUsuario.verPorUsername(session, usuario.getUsername()));
-                DaoAdministrador daoAdmin=new DaoAdministrador();
+                DaoAdministrador daoAdmin = new DaoAdministrador();
                 daoAdmin.registrar(session, admin);
-            }else{
-                if(this.usuario.getRol().getTipo().equals("Estudiante")){
-                    Estudiante est= new Estudiante();
+            } else {
+                if (this.usuario.getRol().getTipo().equals("Estudiante")) {
+                    Estudiante est = new Estudiante();
                     est.setUsuario(daoUsuario.verPorUsername(session, usuario.getUsername()));
-                    DaoUnidadE daoUnidad=new DaoUnidadE();
-                    Unidadensenianza unidadE=daoUnidad.verPorNombreUnidad(session, "UnidadBasica");
+                    DaoUnidadE daoUnidad = new DaoUnidadE();
+                    Unidadensenianza unidadE = daoUnidad.verPorNombreUnidad(session, "UnidadBasica");
                     est.setUnidadensenianza(unidadE);
-                    DaoEstudiante daoEst= new DaoEstudiante();
+                    DaoEstudiante daoEst = new DaoEstudiante();
                     daoEst.registrar(session, est);
                 }
             }
@@ -101,7 +104,7 @@ public class BeanRUsuario {
             this.usuario = new Usuario();
             this.usuario.setEstado(true);
             this.usuario.setGenero(true);
-            this.establecerPass=true;
+            this.establecerPass = true;
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -125,12 +128,12 @@ public class BeanRUsuario {
 //                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error:", "El nombre de usuario ya se encuentra registrado"));
 //                return;
 //            }
-            if(this.establecerPass){
-                if (!this.usuario.getPassword().equals(this.txtPasswordRepita)) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Las contraseñas no coinciden"));
-                return;
+            if (this.establecerPass) {
+                if (!this.txtPassword.equals(this.txtPasswordRepita)) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Las contraseñas no coinciden"));
+                    return;
                 }
-                this.usuario.setPassword(Encrypt.sha512(this.usuario.getPassword()));
+                this.usuario.setPassword(Encrypt.sha512(this.txtPassword));
             }
             daoUsuario.actualizar(this.session, this.usuario);
             this.transaction.commit();
@@ -202,20 +205,20 @@ public class BeanRUsuario {
         }
     }
 
-    public void cargarUsuarioEditar(int codigo){
+    public void cargarUsuarioEditar(int codigo) {
         this.session = null;
         this.transaction = null;
         try {
             Dao.DaoUsuario daoUsuario = new DaoUsuario();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            this.usuario=daoUsuario.verPorCodigoUsuario(session, codigo);
-            
+            this.usuario = daoUsuario.verPorCodigoUsuario(session, codigo);
+
             //Para cargar los datos en el panelEditarUsuario del formulario frmEditarUsuario
             RequestContext.getCurrentInstance().update("frmEditarUsuario:panelEditarUsuario");
-            
+
             //Para mostrar el diálogo que contiene los datos del usuario con el widgetVar: dialogEditarUsuario
-            RequestContext.getCurrentInstance().execute("PF('dialogEditarUsuario').show()");            
+            RequestContext.getCurrentInstance().execute("PF('dialogEditarUsuario').show()");
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
         } catch (Exception ex) {
@@ -229,8 +232,9 @@ public class BeanRUsuario {
             }
         }
     }
-    public void cargarUsuarioDesactivar(int codigo){
-        this.usuario=new Usuario();
+
+    public void cargarUsuarioDesactivar(int codigo) {
+        this.usuario = new Usuario();
         this.usuario.setEstado(true);
         this.session = null;
         this.transaction = null;
@@ -238,14 +242,14 @@ public class BeanRUsuario {
             Dao.DaoUsuario daoUsuario = new DaoUsuario();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            this.usuario=daoUsuario.verPorCodigoUsuario(session, codigo);
+            this.usuario = daoUsuario.verPorCodigoUsuario(session, codigo);
             System.out.println(this.usuario.toString());
-            if(this.usuario.isEstado()){
+            if (this.usuario.isEstado()) {
                 this.usuario.setEstado(false);
-            }else{
+            } else {
                 this.usuario.setEstado(true);
             }
-            
+
             daoUsuario.actualizar(this.session, this.usuario);
 
             this.transaction.commit();
@@ -260,9 +264,9 @@ public class BeanRUsuario {
                 this.session.close();
             }
         }
-        
+
     }
-    
+
     public Usuario getUsuario() {
         return usuario;
     }
@@ -322,13 +326,50 @@ public class BeanRUsuario {
     public void setEstablecerPass(boolean establecerPass) {
         this.establecerPass = establecerPass;
     }
-    
-    
-    
-    public void limpiarFormulario(){
-        this.usuario=null;
+
+    public void limpiarFormulario() {
+        this.usuario = new Usuario();
+        this.usuario.setEstado(true);
+        this.usuario.setGenero(true);
+        this.establecerPass = true;
     }
-    
-    
+
+    public boolean deshabilitarBotonCrear() {
+        if (this.usuario.getIdUsuario() != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deshabilitarBotonEstado() {
+        if (this.usuario.getIdUsuario() != 0) {
+            HttpSession sesionUsuario = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+            System.out.println("EL NOMBRE DEL USUARIO LOGEADO ES:"+sesionUsuario.getAttribute("usernameLogin").toString());
+            System.out.println("EL NOMBRE DEL USUARIO CARGADO ES:"+this.usuario.getUsername());
+            if (this.usuario.getUsername().equals(sesionUsuario.getAttribute("usernameLogin").toString())) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public void cambiarDatosPass() {
+        if (establecerPass) {
+            this.txtPasswordRepita = "";
+            this.txtPassword = "";
+        } else {
+            this.txtPasswordRepita = "password";
+            this.txtPassword = "password";
+        }
+    }
+
+    public String getTxtPassword() {
+        return txtPassword;
+    }
+
+    public void setTxtPassword(String txtPassword) {
+        this.txtPassword = txtPassword;
+    }
 
 }

@@ -7,17 +7,14 @@ package BeanRequest;
 
 import Dao.DaoTema;
 import Dao.DaoUnidadE;
-import Dao.DaoUsuario;
 import HibernateUtil.HibernateUtil;
 import Pojo.Tema;
 import Pojo.Unidadensenianza;
 import java.util.List;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.primefaces.context.RequestContext;
@@ -45,7 +42,7 @@ public class BeanRTema {
     }
     //    metodos para crear,actualizar y ver temas
     
-    public void registrar() {     
+    public void registrar(Unidadensenianza unidadE) {     
         this.session = null;
         this.transaction = null;
         try {
@@ -60,9 +57,7 @@ public class BeanRTema {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "El nombre de Tema ya se encuentra registrado"));
                 return;
             }
-            System.out.println("el tema a ingresar es: "+this.tema.getNombre()+"-"+this.tema.getVocabulario()+"-"+this.tema.getObjetivo()+"-"+this.tema.getDominio());
-            
-            
+            this.tema.setUnidadensenianza(unidadE);
             daoTema.registrar(this.session, this.tema);
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
@@ -95,6 +90,7 @@ public class BeanRTema {
             
             List<Tema> t=daoTema.verPorUnidad(session, codigo);
             transaction.commit();
+            System.out.println("NO EXISTE ERROR EN LOS TEMAS");
             return t;
 
         } catch (Exception ex) {
@@ -106,6 +102,17 @@ public class BeanRTema {
             if (this.session != null) {
                 this.session.close();
             }
+        }
+    }
+    
+    public void abrirDialogoCrearTema(){
+        try {
+            this.tema=new Tema();
+            RequestContext.getCurrentInstance().update("frmCrearTema:panelCrearTema");
+            RequestContext.getCurrentInstance().execute("PF('dialogCrearTema').show()");            
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR TEMA CREAR:", "Contacte con el administrador" + ex.getMessage()));
         }
     }
     
@@ -155,6 +162,29 @@ public class BeanRTema {
             }
         }
     }
+    
+    public void eliminar() {
+        this.session = null;
+        this.transaction = null;
+        try {
+            DaoTema daoTema = new DaoTema();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            daoTema.eliminar(this.session, this.tema);
+            this.transaction.commit();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Tema eliminado correctamente."));
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL ELIMINAR:", "Contacte con el administrador, " + ex));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+    }
+
 
     
     //    setter and getter de atributos

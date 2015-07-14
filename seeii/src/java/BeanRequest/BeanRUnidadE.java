@@ -6,7 +6,6 @@
 package BeanRequest;
 
 import Dao.DaoAdministrador;
-import Dao.DaoTema;
 import Dao.DaoUnidadE;
 import Dao.DaoUsuario;
 import HibernateUtil.HibernateUtil;
@@ -33,7 +32,7 @@ import org.primefaces.context.RequestContext;
 @ViewScoped
 public class BeanRUnidadE {
 
-    private Unidadensenianza unidadE;
+    private Unidadensenianza unidadE=new Unidadensenianza();
     private List<Unidadensenianza> listaunidadE;
     private List<Unidadensenianza> listaUnidadEFiltrada;
     private List<Tema> listaTemas;
@@ -41,7 +40,7 @@ public class BeanRUnidadE {
     private Transaction transaction;
 
     public BeanRUnidadE() {
-        this.unidadE = new Unidadensenianza();
+
     }
 
     //Metodos
@@ -73,6 +72,7 @@ public class BeanRUnidadE {
             if (this.transaction != null) {
                 this.transaction.rollback();
             }
+            this.unidadE=new Unidadensenianza();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR REGISTRO:", "Contacte con el administrador" + ex.getMessage()));
         } finally {
             if (this.session != null) {
@@ -104,6 +104,29 @@ public class BeanRUnidadE {
             }
         }
     }
+    
+    public void eliminar() {
+        this.session = null;
+        this.transaction = null;
+        try {
+            DaoUnidadE daoUnidadE = new DaoUnidadE();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            daoUnidadE.eliminar(this.session, this.unidadE);
+            this.transaction.commit();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Unidad de enseñanza eliminada correctamente."));
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL ELIMINAR:", "Contacte con el administrador, " + ex));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+    }
+
 
     // Recuperar un determinado unida (se utliza en la clase UnidadConverter)
     public Unidadensenianza consultarUnidadPorNombre(String unidad) {
@@ -282,5 +305,16 @@ public class BeanRUnidadE {
     public void setListaUnidadEFiltrada(List<Unidadensenianza> listaUnidadEFiltrada) {
         this.listaUnidadEFiltrada = listaUnidadEFiltrada;
     }
-
+    
+    public void limpiarFormulario(){
+        this.unidadE=new Unidadensenianza();
+    }
+    
+    public boolean deshabilitarBotonCrearTema(){
+        if(this.unidadE.getAdministrador()!=null){
+            return false;
+        }
+        return true;
+    }
+    
 }

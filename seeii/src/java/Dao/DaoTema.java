@@ -7,9 +7,8 @@ package Dao;
 
 import Interface.InterfaceTema;
 import Pojo.Tema;
-import Pojo.Usuario;
+import Pojo.Unidadensenianza;
 import java.util.List;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -40,6 +39,12 @@ public class DaoTema implements InterfaceTema {
 //        Hibernate.initialize(tema.getUnidadensenianza());
         return true;
     }
+    
+    public boolean eliminar(Session session, Tema tema) throws Exception{
+        session.delete(tema);
+        return true;
+    }
+
 
     @Override
     public Tema verPorCodigoTema(Session session, int idTema) throws Exception {
