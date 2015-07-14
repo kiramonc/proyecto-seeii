@@ -53,7 +53,7 @@ public class BeanRUsuario {
         this.usuario = new Usuario();
         this.usuario.setEstado(true);
         this.usuario.setGenero(true);
-        this.establecerPass = true;
+        this.establecerPass = false;
         this.usuario.setPassword("");
         this.txtPasswordRepita = "";
     }
@@ -109,7 +109,11 @@ public class BeanRUsuario {
             if (this.transaction != null) {
                 this.transaction.rollback();
             }
+            if(this.txtPassword==null){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "ATENCIÓN:", "Se necesita establecer una contraseña"));
+            }else{
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR REGISTRO:", "Contacte con el administrador" + ex.getMessage()));
+            }
         } finally {
             if (this.session != null) {
                 this.session.close();
@@ -331,7 +335,15 @@ public class BeanRUsuario {
         this.usuario = new Usuario();
         this.usuario.setEstado(true);
         this.usuario.setGenero(true);
-        this.establecerPass = true;
+        this.txtPassword="";
+        this.txtPasswordRepita="";    
+        this.establecerPass=false;
+//        RequestContext.getCurrentInstance().update("panelDatosUsuario:radioPass");
+//
+//            //Para mostrar el diálogo que contiene los datos del usuario con el widgetVar: dialogEditarUsuario
+////            RequestContext.getCurrentInstance().execute("PF('dialogEditarUsuario').show()");
+//            
+//        this.establecerPass = true;
     }
 
     public boolean deshabilitarBotonCrear() {
@@ -355,13 +367,14 @@ public class BeanRUsuario {
     }
 
     public void cambiarDatosPass() {
-        if (establecerPass) {
-            this.txtPasswordRepita = "";
-            this.txtPassword = "";
-        } else {
-            this.txtPasswordRepita = "password";
-            this.txtPassword = "password";
-        }
+//        if (establecerPass) {
+//            this.txtPasswordRepita = "";
+//            this.txtPassword = "";
+//        } else {
+//            this.txtPasswordRepita = "password";
+//            this.txtPassword = "password";
+//        }
+        this.establecerPass=false;
     }
 
     public String getTxtPassword() {
@@ -371,5 +384,4 @@ public class BeanRUsuario {
     public void setTxtPassword(String txtPassword) {
         this.txtPassword = txtPassword;
     }
-
 }

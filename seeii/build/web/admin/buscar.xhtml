@@ -105,7 +105,10 @@
                                 <p:commandButton ajax="false" value="Crear" actionListener="#{beanRUsuario.registrar()}" styleClass="botonstyle" icon="ui-icon-circle-plus" disabled="#{beanRUsuario.deshabilitarBotonCrear()}"/>
                                 <p:commandButton ajax="false" value="Actualizar Datos" actionListener="#{beanRUsuario.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check" disabled="#{!beanRUsuario.deshabilitarBotonCrear()}"/>
                                 <p:commandButton ajax="false" value="#{beanRUsuario.usuario.estado? 'Desactivar usuario':'Activar usuario'}" actionListener="#{beanRUsuario.cargarUsuarioDesactivar(beanRUsuario.usuario.idUsuario)}" styleClass="botonstyle" icon="ui-icon-trash" disabled="#{beanRUsuario.deshabilitarBotonEstado()}"/>
-                                <p:commandButton ajax="false" icon="ui-icon-circle-arrow-w" value="Limpiar" actionListener="#{beanRUsuario.limpiarFormulario()}" styleClass="botonstyle" disabled="#{!beanRUsuario.deshabilitarBotonCrear()}"/>
+                                <p:commandButton ajax="false" icon="ui-icon-circle-arrow-w" value="Limpiar" actionListener="#{beanRUsuario.limpiarFormulario()}" styleClass="botonstyle" disabled="#{!beanRUsuario.deshabilitarBotonCrear()}">
+                                    <!--<f:setPropertyActionListener target="#{beanRUsuario.txtPassword}" value="password" />
+                                    <f:setPropertyActionListener target="#{beanRUsuario.txtPasswordRepita}" value="password" />-->
+                                </p:commandButton>
                             </h:panelGrid>
                         </h:panelGrid>
                     </h:form>
