@@ -31,10 +31,10 @@
                         </h:panelGroup>
                     </h:form>
 
-                    
+
                     <h:form id="frmDatosUnidades">
                         <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
-                        
+
                         <h:panelGrid columns="1" id="panelDatosUnidades">
                             <h:panelGrid columns="3">
                                 <p:outputLabel value="Nombre unidad: " for="txtNombreUnidad"/>
@@ -51,9 +51,9 @@
                             </h:panelGrid>    
                             <h:panelGrid columns="2">
                                 <h3>Temas:</h3>
-                            <p:commandButton value="Crear Tema" actionListener="#{beanRTema.abrirDialogoCrearTema()}" styleClass="botonCrearNuevo" icon="ui-icon-circle-plus" disabled="#{beanRUnidadE.deshabilitarBotonCrearTema()}"/>
+                                <p:commandButton value="Crear Tema" actionListener="#{beanRTema.abrirDialogoCrearTema()}" styleClass="botonCrearNuevo" icon="ui-icon-circle-plus" disabled="#{beanRUnidadE.deshabilitarBotonCrearTema()}"/>
                             </h:panelGrid>
-                            
+
                             <p:dataTable id="tablaTemas" var="item" value="#{beanRTema.getTemasPorUnidad(beanRUnidadE.unidadE.id)}" selection="#{beanRTema.tema}" selectionMode="single" rowKey="#{item.idTema}" paginator="true" rows="10" >
                                 <p:ajax event="rowSelect" update=":frmEditarTema:panelEditarTema" oncomplete="dialogEditarTema.show()"/>
                                 <p:column headerText="NOMBRE">
@@ -73,8 +73,13 @@
                             <h:panelGrid columns="4">
                                 <p:commandButton ajax="false" value="Crear Unidad" actionListener="#{beanRUnidadE.registrar()}" styleClass="botonstyle" icon="ui-icon-circle-plus" disabled="#{!beanRUnidadE.deshabilitarBotonCrearTema()}"/>
                                 <p:commandButton ajax="false" value="Actualizar" actionListener="#{beanRUnidadE.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check" disabled="#{beanRUnidadE.deshabilitarBotonCrearTema()}"/>
-                                <p:commandButton ajax="false" value="Eliminar" title="Eliminar" actionListener="#{beanRUnidadE.eliminar()}" onclick="if (!confirm('Desea eliminar el tema'))
-                                            return false;" styleClass="botonstyle" icon="ui-icon-trash" disabled="#{beanRUnidadE.deshabilitarBotonCrearTema()}"/>
+                                <h:panelGroup>
+                                <p:commandButton value="Eliminar" title="Eliminar"  onclick="PF('cd').show()" styleClass="botonstyle" icon="ui-icon-trash" disabled="#{beanRUnidadE.deshabilitarBotonCrearTema()}"/>
+                                <p:confirmDialog message="La unidad será eliminada" header="Eliminar" severity="alert" widgetVar="cd" styleClass="confirmEliminar">
+                                    <p:commandButton ajax="false" value="Aceptar" actionListener="#{beanRUnidadE.eliminar()}" oncomplete="PF('cd').hide()"/>
+                                    <p:commandButton value="Cancelar" onclick="PF('cd').hide();" type="button" />
+                                </p:confirmDialog>
+                                </h:panelGroup>
                                 <p:commandButton ajax="false" icon="ui-icon-circle-arrow-w" value="Limpiar" actionListener="#{beanRUnidadE.limpiarFormulario()}" styleClass="botonstyle" disabled="#{beanRUnidadE.deshabilitarBotonCrearTema()}"/>
                             </h:panelGrid>
                         </h:panelGrid>
@@ -107,19 +112,19 @@
                             <p:inputText id="txtDominio" label="Dominio:" size="40" value="#{beanRTema.tema.dominio}">
                             </p:inputText>
                             <p:message for="txtDominio"/>
-                            
+
                             <h:panelGroup></h:panelGroup>
-                            
+
                         </h:panelGrid>
                         <center>
                             <p:commandButton value="Actualizar" ajax="false" actionListener="#{beanRTema.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check"/>
                             <p:commandButton ajax="false" value="Eliminar" title="Eliminar" actionListener="#{beanRTema.eliminar()}" onclick="if (!confirm('Desea eliminar el tema'))
-                                            return false;" styleClass="botonstyle" icon="ui-icon-trash"/>
+                                        return false;" styleClass="botonstyle" icon="ui-icon-trash"/>
                         </center>
                     </p:dialog>
                 </h:form>
-                
-                
+
+
                 <h:form id="frmCrearTema">
                     <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
                     <p:dialog header="Datos del tema" widgetVar="dialogCrearTema" modal="true">
@@ -145,9 +150,9 @@
                             <p:inputText id="txtDominio" label="Dominio:" size="40" value="#{beanRTema.tema.dominio}">
                             </p:inputText>
                             <p:message for="txtDominio"/>
-                            
+
                             <h:panelGroup></h:panelGroup>
-                            
+
                         </h:panelGrid>
                         <center>
                             <p:commandButton value="Guardar" ajax="false" actionListener="#{beanRTema.registrar(beanRUnidadE.unidadE)}" styleClass="botonstyle" icon="ui-icon-circle-plus"/>
