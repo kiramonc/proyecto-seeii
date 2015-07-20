@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./../../templates/templateEstudiante.xhtml">
+            <ui:define name="content">
+
+                <h1>PASO 1: Aprendizaje mediante Fichas</h1>
+                <p:carousel id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;">  
+                    <p:graphicImage value="http://localhost:8080/seeii/faces/resources/imagen/school/backpack.jpg"/>
+                    <p:graphicImage value="http://localhost:8080/seeii/faces/resources/imagen/school/backpack.jpg"/>
+                </p:carousel>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

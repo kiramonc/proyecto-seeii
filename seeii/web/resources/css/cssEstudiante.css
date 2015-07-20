@@ -9,7 +9,7 @@
 
 #bottom {
     position: relative;
-    background-color: #dcdcdc;
+    background-color: #d4e4ef;
     padding: 5px;
     margin: 10px 0px 0px 0px;
     text-shadow: 0.3px 0.3px 0px #036fab;
@@ -32,10 +32,10 @@
 
 .center_content {
     position: relative;
-    box-shadow: 0px 0px 2px black;
-    background-color: #d4e4ef;
+    /*box-shadow: 0px 0px 2px black;*/
+    background-image: url("http://localhost:8080/seeii/faces/resources/imagen/school/fondo.png");
     padding: 5px;
-    }
+}
 
 .left_content {
     background-color: #dddddd;
@@ -50,15 +50,15 @@
 }
 
 #top a:link, #top a:visited {
-  color: #036fab;
-  font-weight : bold;
-  text-decoration: none;
+    color: #036fab;
+    font-weight : bold;
+    text-decoration: none;
 }
 
 #top a:link:hover, #top a:visited:hover  {
-  color: black;
-  font-weight : bold;
-  text-decoration : underline;
+    color: black;
+    font-weight : bold;
+    text-decoration : underline;
 }
 
 #sesionUsuarioEst{
@@ -66,15 +66,34 @@
     right: 20px;
     top: 15px;
     color: #ffffff;
-    
+
 }
 
-#frmMenuPrincipal\3a j_idt14.ui-commandlink.ui-widget:link, #frmMenuPrincipal\3a j_idt14.ui-commandlink.ui-widget:visited{
+frmMenuPrincipalEstudiante\3a j_idt14.ui-commandlink.ui-widget:link, frmMenuPrincipalEstudiante\3a j_idt14.ui-commandlink.ui-widget:visited{
     color: lightcoral;
     text-decoration: underline;
     text-shadow: 0.5px 0.5px 0px #000000
 }
-#frmMenuPrincipal\3a j_idt14.ui-commandlink.ui-widget:link:hover, #frmMenuPrincipal\3a j_idt14.ui-commandlink.ui-widget:visited:hover  {
+frmMenuPrincipalEstudiante\3a j_idt14.ui-commandlink.ui-widget:link:hover, frmMenuPrincipalEstudiante\3a j_idt14.ui-commandlink.ui-widget:visited:hover  {
     color: #ffffff;
     text-shadow: 0.5px 0.5px 0px #000000
+}
+#frmEnsenanzaFicha{
+    margin-left: 20%;
+    margin-right: 20%;
+    background: #eee;
+    margin-top: 1%;  /*margen superior*/
+    margin-bottom: 1%; /*margen inferior*/
+    border: 3px #036fab solid;
+    padding: 5px; 
+    position: inherit;
+}
+h1 {
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    border-bottom: 1px solid #AFAFAF; 
+    font-size:  18px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #036fab;
 }
