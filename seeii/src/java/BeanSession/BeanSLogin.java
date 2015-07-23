@@ -54,6 +54,9 @@ public class BeanSLogin {
                 if(usuarioLogeado.getPassword().equals(Encrypt.sha512(passwordLogin))){
                     HttpSession httpSession=(HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
                     httpSession.setAttribute("usernameLogin", this.usernameLogin);
+                    if(usuarioLogeado.getRol().getTipo().equals("Estudiante")){
+                        return "/estudiante/inicioEstudiante";
+                    }
                     return "/admin/buscar";
                 }
             }

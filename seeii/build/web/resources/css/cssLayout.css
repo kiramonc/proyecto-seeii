@@ -4,12 +4,12 @@
     background-color: #036fab;
     color: white;
     padding: 5px;
-    margin: 0px 0px 10px 0px;
+    margin: 0px 0px 10px 0px;    
 }
 
 #bottom {
     position: relative;
-    background-color: #c2dfef;
+    background-color: #dcdcdc;
     padding: 5px;
     margin: 10px 0px 0px 0px;
     text-shadow: 0.3px 0.3px 0px #036fab;
@@ -33,9 +33,9 @@
 .center_content {
     position: relative;
     box-shadow: 0px 0px 2px black;
-    background-color: #dddddd;
+    background-color: #d4e4ef;
     padding: 5px;
-}
+    }
 
 .left_content {
     background-color: #dddddd;
@@ -79,9 +79,12 @@
 }
 
 .estiloTablaClass tbody tr>td{
-    width: 200px;
+    width: 100%;
 }
-
+.tablaTemas tbody tr>td{
+    width: 10%;
+    height: 35%;
+}
 
 #panelAdministracionUsuario{
     
@@ -90,7 +93,17 @@
 #panelAdministracionUnidades{
     
 }
-
+#frmDatosUsuario{
+    border: 2px cadetblue solid;
+    background: #eee;
+    padding-bottom: 30px;
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border: 2px cadetblue solid;
+    position: inherit;
+}
+ 
 #espacioFormulario{
     width: 50%;
     margin-right: 10px;
@@ -109,8 +122,8 @@
 
 #frmDatosUnidades{
     background: #eee;
-    margin-left: 20%;
-    margin-right: -20%;
+    margin-left: 5%;
+    margin-right:5%;
     padding-bottom: 30px;
     padding-left: 30px;
     padding-right: 30px;

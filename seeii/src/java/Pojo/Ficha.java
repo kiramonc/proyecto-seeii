@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 26/06/2015 06:18:16 PM by Hibernate Tools 3.6.0
+// Generated 22/07/2015 06:58:23 PM by Hibernate Tools 3.6.0
 
 
 import java.util.HashSet;
@@ -17,24 +17,27 @@ public class Ficha  implements java.io.Serializable {
      private String descripcion;
      private byte[] imagen;
      private byte[] sonido;
+     private String estado;
      private Set fichainterrogacions = new HashSet(0);
 
     public Ficha() {
     }
 
 	
-    public Ficha(int idFicha, Tema tema, String nombreFicha) {
+    public Ficha(int idFicha, Tema tema, String nombreFicha, String estado) {
         this.idFicha = idFicha;
         this.tema = tema;
         this.nombreFicha = nombreFicha;
+        this.estado = estado;
     }
-    public Ficha(int idFicha, Tema tema, String nombreFicha, String descripcion, byte[] imagen, byte[] sonido, Set fichainterrogacions) {
+    public Ficha(int idFicha, Tema tema, String nombreFicha, String descripcion, byte[] imagen, byte[] sonido, String estado, Set fichainterrogacions) {
        this.idFicha = idFicha;
        this.tema = tema;
        this.nombreFicha = nombreFicha;
        this.descripcion = descripcion;
        this.imagen = imagen;
        this.sonido = sonido;
+       this.estado = estado;
        this.fichainterrogacions = fichainterrogacions;
     }
    
@@ -79,6 +82,13 @@ public class Ficha  implements java.io.Serializable {
     
     public void setSonido(byte[] sonido) {
         this.sonido = sonido;
+    }
+    public String getEstado() {
+        return this.estado;
+    }
+    
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
     public Set getFichainterrogacions() {
         return this.fichainterrogacions;

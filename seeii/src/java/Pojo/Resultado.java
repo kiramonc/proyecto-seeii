@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 26/06/2015 06:18:16 PM by Hibernate Tools 3.6.0
+// Generated 22/07/2015 06:58:23 PM by Hibernate Tools 3.6.0
 
 
 import java.util.Date;
@@ -10,7 +10,7 @@ import java.util.Date;
 public class Resultado  implements java.io.Serializable {
 
 
-     private int idResultado;
+     private Integer idResultado;
      private Test test;
      private Estudiante estudiante;
      private Date fechaResultado;
@@ -18,18 +18,17 @@ public class Resultado  implements java.io.Serializable {
     public Resultado() {
     }
 
-    public Resultado(int idResultado, Test test, Estudiante estudiante, Date fechaResultado) {
-       this.idResultado = idResultado;
+    public Resultado(Test test, Estudiante estudiante, Date fechaResultado) {
        this.test = test;
        this.estudiante = estudiante;
        this.fechaResultado = fechaResultado;
     }
    
-    public int getIdResultado() {
+    public Integer getIdResultado() {
         return this.idResultado;
     }
     
-    public void setIdResultado(int idResultado) {
+    public void setIdResultado(Integer idResultado) {
         this.idResultado = idResultado;
     }
     public Test getTest() {
