@@ -7,7 +7,6 @@ package Dao;
 
 import Pojo.Item;
 import Pojo.Pregunta;
-import com.mysql.jdbc.PreparedStatement;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
