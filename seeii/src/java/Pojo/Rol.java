@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 22/07/2015 07:29:31 PM by Hibernate Tools 3.6.0
+// Generated 23/07/2015 06:24:00 PM by Hibernate Tools 3.6.0
 
 
 import java.util.HashSet;
@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public class Rol  implements java.io.Serializable {
 
-    
+
      private String tipo;
      private String descripcion;
      private Set usuarios = new HashSet(0);
@@ -51,13 +51,13 @@ public class Rol  implements java.io.Serializable {
     }
 
     
-     @Override
+    @Override
     public int hashCode() {
         int hash = 0;
         hash += (tipo != null ? tipo.hashCode() : 0);
         return hash;
     }
- 
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 22/07/2015 07:29:32 PM by Hibernate Tools 3.6.0 -->
+<!-- Generated 23/07/2015 06:24:02 PM by Hibernate Tools 3.6.0 -->
 <hibernate-mapping>
     <class name="Pojo.Usuario" table="usuario" catalog="proyectoinglescopia">
         <id name="idUsuario" type="int">
@@ -32,6 +32,12 @@
         <property name="estado" type="boolean">
             <column name="estado" not-null="true" />
         </property>
+        <set name="estudiantes" table="estudiante" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="usuarioEst" not-null="true" />
+            </key>
+            <one-to-many class="Pojo.Estudiante" />
+        </set>
         <set name="administradors" table="administrador" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="usuarioAdmin" not-null="true" />

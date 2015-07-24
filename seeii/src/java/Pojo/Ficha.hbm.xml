@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 22/07/2015 06:58:24 PM by Hibernate Tools 3.6.0 -->
+<!-- Generated 23/07/2015 06:24:02 PM by Hibernate Tools 3.6.0 -->
 <hibernate-mapping>
     <class name="Pojo.Ficha" table="ficha" catalog="proyectoinglescopia">
         <id name="idFicha" type="int">
@@ -23,8 +23,11 @@
         <property name="sonido" type="binary">
             <column name="sonido" />
         </property>
-        <property name="estado" type="string">
-            <column name="estado" length="50" not-null="true" />
+        <property name="estadoAprendizaje" type="string">
+            <column name="estadoAprendizaje" length="50" not-null="true" />
+        </property>
+        <property name="estado" type="boolean">
+            <column name="estado" not-null="true" />
         </property>
         <set name="fichainterrogacions" table="fichainterrogacion" inverse="true" lazy="true" fetch="select">
             <key>

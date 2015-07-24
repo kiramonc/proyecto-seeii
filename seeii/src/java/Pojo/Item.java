@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 22/07/2015 07:29:31 PM by Hibernate Tools 3.6.0
+// Generated 23/07/2015 06:24:00 PM by Hibernate Tools 3.6.0
 
 
 
@@ -12,18 +12,20 @@ public class Item  implements java.io.Serializable {
      private int idItem;
      private Pregunta pregunta;
      private String nombreItem;
-     private byte[] imgItem;
-     private int traduccion;
+     private String imgItem;
+     private String traduccion;
+     private boolean estado;
 
     public Item() {
     }
 
-    public Item(int idItem, Pregunta pregunta, String nombreItem, byte[] imgItem, int traduccion) {
+    public Item(int idItem, Pregunta pregunta, String nombreItem, String imgItem, String traduccion, boolean estado) {
        this.idItem = idItem;
        this.pregunta = pregunta;
        this.nombreItem = nombreItem;
        this.imgItem = imgItem;
        this.traduccion = traduccion;
+       this.estado = estado;
     }
    
     public int getIdItem() {
@@ -47,19 +49,26 @@ public class Item  implements java.io.Serializable {
     public void setNombreItem(String nombreItem) {
         this.nombreItem = nombreItem;
     }
-    public byte[] getImgItem() {
+    public String getImgItem() {
         return this.imgItem;
     }
     
-    public void setImgItem(byte[] imgItem) {
+    public void setImgItem(String imgItem) {
         this.imgItem = imgItem;
     }
-    public int getTraduccion() {
+    public String getTraduccion() {
         return this.traduccion;
     }
     
-    public void setTraduccion(int traduccion) {
+    public void setTraduccion(String traduccion) {
         this.traduccion = traduccion;
+    }
+    public boolean isEstado() {
+        return this.estado;
+    }
+    
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
 
 

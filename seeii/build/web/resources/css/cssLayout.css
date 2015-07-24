@@ -85,6 +85,10 @@
     width: 10%;
     height: 35%;
 }
+.tablaTest tbody tr>td{
+    width: 30%;
+    height: 35%;
+}
 
 #panelAdministracionUsuario{
     

@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 22/07/2015 07:29:31 PM by Hibernate Tools 3.6.0
+// Generated 23/07/2015 06:24:00 PM by Hibernate Tools 3.6.0
 
 
 import java.util.HashSet;
@@ -12,21 +12,23 @@ public class Test  implements java.io.Serializable {
 
 
      private int idTest;
-     private int temaTest;
+     private Tema tema;
      private Set preguntas = new HashSet(0);
+     private Set resultados = new HashSet(0);
 
     public Test() {
     }
 
 	
-    public Test(int idTest, int temaTest) {
+    public Test(int idTest, Tema tema) {
         this.idTest = idTest;
-        this.temaTest = temaTest;
+        this.tema = tema;
     }
-    public Test(int idTest, int temaTest, Set preguntas) {
+    public Test(int idTest, Tema tema, Set preguntas, Set resultados) {
        this.idTest = idTest;
-       this.temaTest = temaTest;
+       this.tema = tema;
        this.preguntas = preguntas;
+       this.resultados = resultados;
     }
    
     public int getIdTest() {
@@ -36,12 +38,12 @@ public class Test  implements java.io.Serializable {
     public void setIdTest(int idTest) {
         this.idTest = idTest;
     }
-    public int getTemaTest() {
-        return this.temaTest;
+    public Tema getTema() {
+        return this.tema;
     }
     
-    public void setTemaTest(int temaTest) {
-        this.temaTest = temaTest;
+    public void setTema(Tema tema) {
+        this.tema = tema;
     }
     public Set getPreguntas() {
         return this.preguntas;
@@ -49,6 +51,13 @@ public class Test  implements java.io.Serializable {
     
     public void setPreguntas(Set preguntas) {
         this.preguntas = preguntas;
+    }
+    public Set getResultados() {
+        return this.resultados;
+    }
+    
+    public void setResultados(Set resultados) {
+        this.resultados = resultados;
     }
 
 

@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 22/07/2015 07:29:31 PM by Hibernate Tools 3.6.0
+// Generated 23/07/2015 06:24:00 PM by Hibernate Tools 3.6.0
 
 
 import java.util.HashSet;
@@ -10,76 +10,86 @@ import java.util.Set;
  */
 public class Unidadensenianza implements java.io.Serializable {
 
-    private int id;
-    private Administrador administrador;
-    private String nombreUnidad;
-    private Set temas = new HashSet(0);
-    private Set estudiantes = new HashSet(0);
+
+     private int id;
+     private Administrador administrador;
+     private String nombreUnidad;
+     private boolean estado;
+     private Set temas = new HashSet(0);
+     private Set estudiantes = new HashSet(0);
 
     public Unidadensenianza() {
     }
-
-    public Unidadensenianza(int id, Administrador administrador, String nombreUnidad) {
+	
+    public Unidadensenianza(int id, Administrador administrador, String nombreUnidad, boolean estado) {
         this.id = id;
         this.administrador = administrador;
         this.nombreUnidad = nombreUnidad;
+        this.estado = estado;
     }
-
-    public Unidadensenianza(int id, Administrador administrador, String nombreUnidad, Set temas, Set estudiantes) {
-        this.id = id;
-        this.administrador = administrador;
-        this.nombreUnidad = nombreUnidad;
-        this.temas = temas;
-        this.estudiantes = estudiantes;
+    
+    public Unidadensenianza(int id, Administrador administrador, String nombreUnidad, boolean estado, Set temas, Set estudiantes) {
+       this.id = id;
+       this.administrador = administrador;
+       this.nombreUnidad = nombreUnidad;
+       this.estado = estado;
+       this.temas = temas;
+       this.estudiantes = estudiantes;
     }
-
+   
     public int getId() {
         return this.id;
     }
-
+    
     public void setId(int id) {
         this.id = id;
     }
-
+    
     public Administrador getAdministrador() {
         return this.administrador;
     }
-
+    
     public void setAdministrador(Administrador administrador) {
         this.administrador = administrador;
     }
-
+    
     public String getNombreUnidad() {
         return this.nombreUnidad;
     }
-
+    
     public void setNombreUnidad(String nombreUnidad) {
         this.nombreUnidad = nombreUnidad;
     }
-
+    public boolean isEstado() {
+        return this.estado;
+    }
+    
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
     public Set getTemas() {
         return this.temas;
     }
-
+    
     public void setTemas(Set temas) {
         this.temas = temas;
     }
-
+    
     public Set getEstudiantes() {
         return this.estudiantes;
     }
-
+    
     public void setEstudiantes(Set estudiantes) {
         this.estudiantes = estudiantes;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (nombreUnidad != null ? nombreUnidad.hashCode() : 0);
         return hash;
     }
- 
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -92,5 +102,5 @@ public class Unidadensenianza implements java.io.Serializable {
         }
         return true;
     }
-    
+
 }

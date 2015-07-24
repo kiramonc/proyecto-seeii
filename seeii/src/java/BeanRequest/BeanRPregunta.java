@@ -5,11 +5,10 @@
  */
 package BeanRequest;
 
-import Dao.DaoTema;
-import Dao.DaoUnidadE;
+import Dao.DaoPregunta;
 import HibernateUtil.HibernateUtil;
-import Pojo.Tema;
-import Pojo.Unidadensenianza;
+import Pojo.Pregunta;
+import Pojo.Test;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -21,51 +20,37 @@ import org.primefaces.context.RequestContext;
 
 /**
  *
- * @author silvy
+ * @author KathyR
  */
 @ManagedBean
 @ViewScoped
-public class BeanRTema {
-    
-    private Tema tema;
-    private Unidadensenianza unidadensenianza;
-     private List<Unidadensenianza> listaUnidadensenianza;
-    private List<Tema> listaTemas;
-    //Atributos de sesion y transaccion.
+public class BeanRPregunta {
+
+    private Pregunta pregunta;
+    private Test test;
+    private List<Pregunta> listaPreguntas;
     private Session session;
     private Transaction transaction;
- 
-   
-   //constructor
-    public BeanRTema() {
-        this.tema= new Tema();
+
+    //constructor
+    public BeanRPregunta() {
+        this.pregunta = new Pregunta();
     }
-    //    metodos para crear,actualizar y ver temas
-    
-    public void registrar(Unidadensenianza unidadE) {     
+
+    public void registrar(Test test) {
         this.session = null;
         this.transaction = null;
         try {
-            
-            Dao.DaoTema daoTema = new DaoTema();
+
+            DaoPregunta daoPregunta = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            System.out.println("abre la sesion y transaccion correctamente");
-            Tema t= daoTema.verPorTemaname(session, tema.getNombre()) ;
-            System.out.println("consulta de existencia de tema realizada con éxito");
-            if (t != null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "El nombre de Tema ya se encuentra registrado"));
-                return;
-            }
-            this.tema.setUnidadensenianza(unidadE);
-            this.tema.setEstado(true);
-            daoTema.registrar(this.session, this.tema);
+            this.pregunta.setTest(test);
+            this.pregunta.setEstado(true);
+            daoPregunta.registrar(this.session, this.pregunta);
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
-
-            this.tema = new Tema();
-            
-            
+            this.pregunta = new Pregunta();
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -77,23 +62,17 @@ public class BeanRTema {
             }
         }
     }
-    
-    public List<Tema> getTemasPorUnidad(int codigo) {
-        this.session=null;
-        this.transaction=null;
+
+    public List<Pregunta> getPreguntasPorTest(int codigo) {
+        this.session = null;
+        this.transaction = null;
         try {
-            DaoTema daoTema= new DaoTema();
-//            DaoUnidadE daoUnidad = new DaoUnidadE();
+            DaoPregunta daoPregunta = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-//            HttpSession sesionUnidad = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-//            Unidadensenianza u = daoUnidad.verPorNombreUnidad(session, sesionUnidad.getAttribute("unidadSeleccionada").toString());
-            
-            List<Tema> t=daoTema.verPorUnidad(session, codigo);
+            List<Pregunta> t = daoPregunta.verPorTest(session, codigo);
             transaction.commit();
-            System.out.println("NO EXISTE ERROR EN LOS TEMAS");
             return t;
-
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -105,51 +84,51 @@ public class BeanRTema {
             }
         }
     }
-    
-    public void abrirDialogoCrearTema(){
+
+    public void abrirDialogoCrearPregunta() {
         try {
-            this.tema=new Tema();
-            RequestContext.getCurrentInstance().update("frmCrearTema:panelCrearTema");
-            RequestContext.getCurrentInstance().execute("PF('dialogCrearTema').show()");            
+            this.pregunta = new Pregunta();
+            RequestContext.getCurrentInstance().update("frmCrearPregunta:panelCrearPregunta");
+            RequestContext.getCurrentInstance().execute("PF('dialogCrearPregunta').show()");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
         } catch (Exception ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR TEMA CREAR:", "Contacte con el administrador" + ex.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR PREGUNTA CREAR:", "Contacte con el administrador" + ex.getMessage()));
         }
     }
-    
-    public void cargarTemaEditar(int codigo){
+
+    public void cargarPreguntaEditar(int codigo) {
         this.session = null;
         this.transaction = null;
         try {
-            DaoTema daoTema = new DaoTema();
+            DaoPregunta daoPregunta = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            this.tema=daoTema.verPorCodigoTema(session, codigo);
-            
-            RequestContext.getCurrentInstance().update("frmEditarTema:panelEditarTema");
-            RequestContext.getCurrentInstance().execute("PF('dialogEditarTema').show()");            
+            this.pregunta = daoPregunta.verPorCodigoPregunta(session, codigo);
+
+            RequestContext.getCurrentInstance().update("frmEditarPregunta:panelEditarPregunta");
+            RequestContext.getCurrentInstance().execute("PF('dialogEditarPregunta').show()");
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
             }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR TEMA EDITAR:", "Contacte con el administrador" + ex.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR PREGUNTA EDITAR:", "Contacte con el administrador" + ex.getMessage()));
         } finally {
             if (this.session != null) {
                 this.session.close();
             }
         }
     }
-    
+
     public void actualizar() {
         this.session = null;
         this.transaction = null;
         try {
-            DaoTema daoTema = new DaoTema();
+            DaoPregunta daoPregunta = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            daoTema.actualizar(this.session, this.tema);
+            daoPregunta.actualizar(this.session, this.pregunta);
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
         } catch (Exception ex) {
@@ -163,17 +142,17 @@ public class BeanRTema {
             }
         }
     }
-    
+
     public void eliminar() {
         this.session = null;
         this.transaction = null;
         try {
-            DaoTema daoTema = new DaoTema();
+            DaoPregunta daoPregunta = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            daoTema.eliminar(this.session, this.tema);
+            daoPregunta.eliminar(this.session, this.pregunta);
             this.transaction.commit();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Tema eliminado correctamente."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Pregunta eliminada correctamente."));
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -186,47 +165,28 @@ public class BeanRTema {
         }
     }
 
-
-    
-    //    setter and getter de atributos
-    public Tema getTema() {
-        return tema;
+    public Pregunta getPregunta() {
+        return pregunta;
     }
 
-    public void setTema(Tema tema) {
-        this.tema = tema;
+    public void setPregunta(Pregunta pregunta) {
+        this.pregunta = pregunta;
     }
 
-    public Unidadensenianza getUnidadensenianza() {
-        return unidadensenianza;
+    public Test getTest() {
+        return test;
     }
 
-    public void setUnidadensenianza(Unidadensenianza unidadensenianza) {
-        this.unidadensenianza = unidadensenianza;
+    public void setTest(Test test) {
+        this.test = test;
     }
 
-    public List<Tema> getListaTemas() {
-        return listaTemas;
+    public List<Pregunta> getListaPreguntas() {
+        return listaPreguntas;
     }
 
-    public void setListaTemas(List<Tema> listaTemas) {
-        this.listaTemas = listaTemas;
-    }
-    
-      //Recupera la lista de unidades de enseñanza de la BD
-    public List<Unidadensenianza> getListaUnidadensenianza() {
-         DaoUnidadE daoUnidad = new DaoUnidadE();
-        List<Unidadensenianza> unidades=daoUnidad.verTodo();
-        this.listaUnidadensenianza= unidades;
-        return listaUnidadensenianza;
+    public void setListaPreguntas(List<Pregunta> listaPreguntas) {
+        this.listaPreguntas = listaPreguntas;
     }
 
-    public void setListaUnidadensenianza(List<Unidadensenianza> listaUnidadensenianza) {
-        this.listaUnidadensenianza = listaUnidadensenianza;
-    }
-    
-    
-  
-  
-    
 }

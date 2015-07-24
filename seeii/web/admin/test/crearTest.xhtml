@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../templates/template.xhtml">
+            <ui:define name="content">
+
+                <center><h2>ADMINISTRACIÓN DE TEST</h2></center><hr/>
+
+                <h:panelGrid id="panelAdministracionTest" columns="2" cellspacing="25px">
+                    <h:form id="frmListarTest">
+                        <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+
+                        <h:panelGroup id="listaTest">
+                            <center><h3>Lista de tests</h3></center>
+                            <p:dataTable id="tablaListaTest" var="item" value="#{beanRTest.allTest}" selection="#{beanRTest.test}" selectionMode="single" rowKey="#{item.idTest}" paginator="true" rows="10" filteredValue="#{beanRTest.listaTestFiltrada}" styleClass="estiloTablaUnidad" tableStyleClass="tablaTest">
+                                <p:ajax event="rowSelect" update=":frmDatosTest:panelDatosTest"/>
+                                <p:column headerText="NOMBRE TEMA" filterBy="tema.nombre">
+                                    <p:outputLabel value="#{item.tema.nombre}"/>
+                                </p:column>
+                                <p:column headerText="NOMBRE UNIDAD" filterBy="tema.unidadensenianza.nombreUnidad">
+                                    <p:outputLabel value="#{item.tema.unidadensenianza.nombreUnidad}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGroup>
+                    </h:form>
+
+
+                    <h:form id="frmDatosTest">
+                        <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+
+                        <h:panelGrid columns="1" id="panelDatosTest">
+                            <h:panelGrid columns="3">
+                                <p:outputLabel value="Nombre Unidad: " for="txtNombreUnidad"/>
+                                <p:inputText id="txtNombreUnidad" label="Unidad" value="#{beanRTest.test.tema.unidadensenianza.nombreUnidad}" disabled="true">
+                                    <f:validator validatorId="validatorVacio"/>
+                                </p:inputText>
+                                <p:message for="txtNombreUnidad"/>
+
+                                <p:outputLabel value="Nombre Tema: " for="txtNombreTema"/>
+                                <p:inputText id="txtNombreTema" label="Tema" value="#{beanRTest.test.tema.nombre}" disabled="true">
+                                    <f:validator validatorId="validatorVacio"/>
+                                </p:inputText>
+                                <p:message for="txtNombreTema"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2">
+                                <h3>Preguntas:</h3>
+                                <p:commandButton value="Crear Pregunta" actionListener="#{beanRPregunta.abrirDialogoCrearPregunta()}" styleClass="botonCrearNuevo" icon="ui-icon-circle-plus" disabled="#{beanRTest.deshabilitarBotonCrearPregunta()}"/>
+                            </h:panelGrid>
+
+                            <p:dataTable id="tablaPreguntas" var="item" value="#{beanRPregunta.getPreguntasPorTest(beanRTest.test.idTest)}" selection="#{beanRPregunta.pregunta}" selectionMode="single" rowKey="#{item.idPregunta}" paginator="true" rows="10" >
+                                <p:ajax event="rowSelect" update=":frmEditarPregunta:panelEditarPregunta" oncomplete="dialogEditarPregunta.show()"/>
+                                <p:column headerText="CONCEPTO">
+                                    <p:outputLabel value="#{item.concepto.nombreConcepto}"/>
+                                </p:column>
+                                <p:column headerText="DESCRIPCIÓN">
+                                    <p:outputLabel value="#{item.descripcion}"/>
+                                </p:column>
+                                <p:column headerText="PESO">
+                                    <p:outputLabel value="#{item.peso}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="Ver Detalle" onclick="PF('dialogVerItems').show()"/>
+                                </p:column>
+                            </p:dataTable>
+
+                            <h:panelGrid columns="4">
+                                <p:commandButton ajax="false" value="Crear Test" actionListener="#{beanRTest.registrar()}" styleClass="botonstyle" icon="ui-icon-circle-plus" disabled="#{!beanRTest.deshabilitarBotonCrearPregunta()}"/>
+                                <p:commandButton ajax="false" value="Actualizar" actionListener="#{beanRTest.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check" disabled="#{beanRTest.deshabilitarBotonCrearPregunta()}"/>
+                                <h:panelGroup>
+                                    <p:commandButton value="Eliminar" title="Eliminar"  onclick="PF('cd').show()" styleClass="botonstyle" icon="ui-icon-trash" disabled="#{beanRTest.deshabilitarBotonCrearPregunta()}"/>
+                                    <p:confirmDialog message="El test será eliminado" header="Eliminar" severity="alert" widgetVar="cd" styleClass="confirmEliminar">
+                                        <p:commandButton ajax="false" value="Aceptar" actionListener="#{beanRTest.eliminar()}" oncomplete="PF('cd').hide()"/>
+                                        <p:commandButton value="Cancelar" onclick="PF('cd').hide();" type="button" />
+                                    </p:confirmDialog>
+                                </h:panelGroup>
+                                <p:commandButton ajax="false" icon="ui-icon-circle-arrow-w" value="Limpiar" actionListener="#{beanRTest.limpiarFormulario()}" styleClass="botonstyle" disabled="#{beanRTest.deshabilitarBotonCrearPregunta()}"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <p:dialog header="Datos de la pregunta" widgetVar="dialogVerItems" modal="true">
+                            <h:panelGrid columns="2">
+                                <h3>ITEMS:</h3>
+                                <p:commandButton value="Crear Item" actionListener="#{beanRItem.abrirDialogoCrearItem()}" styleClass="botonCrearNuevo" icon="ui-icon-circle-plus" disabled="false"/>
+                            </h:panelGrid>
+                            <p:dataTable id="tablaItems" var="item" value="#{beanRItem.getItemsPorPregunta(beanRPregunta.pregunta.idPregunta)}" selection="#{beanRItem.item}" selectionMode="single" rowKey="#{item.idItem}" paginator="true" rows="10" >
+                                <p:ajax event="rowSelect" update=":frmEditarItems:panelEditarItems" oncomplete="dialogEditarItems.show()"/>
+                                <p:column headerText="NOMBRE ITEM">
+                                    <p:outputLabel value="#{item.nombreItem}"/>
+                                </p:column>
+                                <p:column headerText="TRADUCCIÓN">
+                                    <p:outputLabel value="#{item.traduccion}"/>
+                                </p:column>
+                            </p:dataTable>
+
+                            <center>
+                                <p:commandButton value="Guardar cambios" actionListener="#{beanRPregunta.actualizar()}" update="frmDatosTest" styleClass="botonstyle"/>
+                            </center>
+                        </p:dialog>
+
+                    </h:form>
+                </h:panelGrid>
+
+
+                <h:form id="frmEditarPregunta">
+                    <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                    <p:dialog header="Datos de la pregunta" widgetVar="dialogEditarPregunta" modal="true">
+                        <h:panelGrid id="panelEditarPregunta" columns="3">
+                            <p:outputLabel value="Concepto: " for="menuConcepto"/>
+                            <p:selectOneMenu converter="conceptoConverter" id="menuConcepto" value="#{beanRPregunta.pregunta.concepto}" >
+                                <f:selectItems id="itemsConcepto" value="#{beanRConcepto.allConcepto}" var="p" itemLabel="#{p.nombreConcepto}"/>
+                                <f:converter converterId="conceptoConverter"/>
+                            </p:selectOneMenu>
+                            <h:panelGroup></h:panelGroup>
+
+                            <p:outputLabel value="Descripcion: "  for="txtDescripcionPregunta"/>
+                            <p:inputTextarea id="txtDescripcionPregunta" label="Descripcion" value="#{beanRPregunta.pregunta.descripcion}">
+                                <!--    <f:validator validatorId="validatorVacio"/>-->
+                            </p:inputTextarea>
+                            <p:message for="txtDescripcionPregunta"/>
+
+                            <p:outputLabel value="Peso: " for="txtPeso"/>
+                            <p:inputText id="txtPeso" label="Peso:" size="40" value="#{beanRPregunta.pregunta.peso}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtPeso"/>
+
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton value="Actualizar" ajax="false" actionListener="#{beanRPregunta.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check"/>
+                            <p:commandButton ajax="false" value="Eliminar" title="Eliminar" actionListener="#{beanRPregunta.eliminar()}" onclick="if (!confirm('Desea eliminar la pregunta'))
+                                        return false;" styleClass="botonstyle" icon="ui-icon-trash"/>
+                        </center>
+                    </p:dialog>
+                </h:form>
+
+
+                <h:form id="frmCrearPregunta">
+                    <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                    <p:dialog header="Datos de la pregunta" widgetVar="dialogCrearPregunta" modal="true">
+                        <h:panelGrid id="panelCrearPregunta" columns="3">
+                            <p:outputLabel value="Concepto: " for="menuConcepto"/>
+                            <p:selectOneMenu converter="conceptoConverter" id="menuConcepto" value="#{beanRPregunta.pregunta.concepto}" >
+                                <f:selectItems id="itemsConcepto" value="#{beanRConcepto.allConcepto}" var="p" itemLabel="#{p.nombreConcepto}"/>
+                                <f:converter converterId="conceptoConverter"/>
+                            </p:selectOneMenu>
+                            <h:panelGroup></h:panelGroup>
+
+                            <p:outputLabel value="Descripcion: "  for="txtDescripcionPregunta"/>
+                            <p:inputTextarea id="txtDescripcionPregunta" label="Descripcion" value="#{beanRPregunta.pregunta.descripcion}">
+                                <!--<f:validator validatorId="validatorVacio"/>-->
+                            </p:inputTextarea>
+                            <p:message for="txtDescripcionPregunta"/>
+
+                            <p:outputLabel value="Peso: " for="txtPeso"/>
+                            <p:inputText id="txtPeso" label="Peso:" size="40" value="#{beanRPregunta.pregunta.peso}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtPeso"/>
+
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton value="Guardar" ajax="false" actionListener="#{beanRPregunta.registrar(beanRTest.test)}" styleClass="botonstyle" icon="ui-icon-circle-plus"/>
+                        </center>
+                    </p:dialog>
+                </h:form>
+
+                    <p:dialog header="Datos de la pregunta" widgetVar="dialogEditarItems" modal="true">
+                        <h:form id="frmEditarItems" enctype="multipart/form-data">
+                        <h:panelGrid id="panelEditarItems" columns="3">
+
+                            <p:outputLabel value="Nombre Item: " for="txtNombreItem"/>
+                            <p:inputText id="txtNombreItem" label="Peso:" size="40" value="#{beanRItem.item.nombreItem}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtNombreItem"/>
+
+                            <p:outputLabel value="Traducción: " for="txtTraduccion"/>
+                            <p:inputText id="txtTraduccion" label="Peso:" size="40" value="#{beanRItem.item.traduccion}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtTraduccion"/>
+
+                            <p:outputLabel value="Imagen: " for="uploadImagen"/>
+                            <p:fileUpload id="uploadImagen" value="#{beanRItem.imagen}" mode="simple" />
+                            <p:message for="uploadImagen"/>
+                            
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton value="Actualizar" ajax="false" actionListener="#{beanRItem.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check"/>
+                            <p:commandButton ajax="false" value="Eliminar" title="Eliminar" actionListener="#{beanRItem.eliminar()}" onclick="if (!confirm('Desea eliminar el item'))
+                                        return false;" styleClass="botonstyle" icon="ui-icon-trash"/>
+                        </center>
+                        </h:form>
+                    </p:dialog>
+                
+                    <p:dialog header="Datos de la pregunta" widgetVar="dialogCrearItems" modal="true">
+                        <h:form id="frmCrearItems" enctype="multipart/form-data">
+                        <h:panelGrid id="panelCrearItems" columns="3">
+                            <p:outputLabel value="Nombre Item: " for="txtNombreItem"/>
+                            <p:inputText id="txtNombreItem" label="Peso:" size="40" value="#{beanRItem.item.nombreItem}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtNombreItem"/>
+
+                            <p:outputLabel value="Traducción: " for="txtTraduccion"/>
+                            <p:inputText id="txtTraduccion" label="Peso:" size="40" value="#{beanRItem.item.traduccion}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtTraduccion"/>
+
+                            <p:outputLabel value="Imagen: " for="uploadImagen"/>
+                            <p:fileUpload id="uploadImagen" value="#{beanRItem.imagen}" mode="simple" />
+                            <p:message for="uploadImagen"/>
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton ajax="false" value="Guardar" actionListener="#{beanRItem.registrar(beanRPregunta.pregunta)}" styleClass="botonstyle" icon="ui-icon-circle-plus"/>
+                        </center>
+                            </h:form>
+                    </p:dialog>
+                
+
+            </ui:define>
+        </ui:composition>
+
+    </body>
+</html>

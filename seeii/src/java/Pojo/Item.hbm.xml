@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 22/07/2015 07:29:32 PM by Hibernate Tools 3.6.0 -->
+<!-- Generated 23/07/2015 06:24:02 PM by Hibernate Tools 3.6.0 -->
 <hibernate-mapping>
     <class name="Pojo.Item" table="item" catalog="proyectoinglescopia">
         <id name="idItem" type="int">
@@ -12,13 +12,16 @@
             <column name="preguntaItem" not-null="true" />
         </many-to-one>
         <property name="nombreItem" type="string">
-            <column name="nombreItem" length="100" not-null="true" />
+            <column name="nombreItem" length="200" not-null="true" />
         </property>
-        <property name="imgItem" type="binary">
-            <column name="imgItem" not-null="true" />
+        <property name="imgItem" type="string">
+            <column name="imgItem" length="150" not-null="true" />
         </property>
-        <property name="traduccion" type="int">
-            <column name="traduccion" not-null="true" />
+        <property name="traduccion" type="string">
+            <column name="traduccion" length="200" not-null="true" />
+        </property>
+        <property name="estado" type="boolean">
+            <column name="estado" not-null="true" />
         </property>
     </class>
 </hibernate-mapping>

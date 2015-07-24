@@ -63,6 +63,7 @@ public class BeanRUnidadE {
             DaoAdministrador daoAdmin = new DaoAdministrador();
             Administrador admin = daoAdmin.verPorCodigoUsuario(session, usuario.getIdUsuario());
             this.unidadE.setAdministrador(admin);
+            this.unidadE.setEstado(true);
             daoUnidadE.registrar(this.session, this.unidadE);
 
             this.transaction.commit();

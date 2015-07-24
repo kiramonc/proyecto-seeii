@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 22/07/2015 07:29:31 PM by Hibernate Tools 3.6.0
+// Generated 23/07/2015 06:24:00 PM by Hibernate Tools 3.6.0
 
 
 import java.util.HashSet;
@@ -16,25 +16,28 @@ public class Pregunta  implements java.io.Serializable {
      private Concepto concepto;
      private String descripcion;
      private double peso;
+     private boolean estado;
      private Set items = new HashSet(0);
 
     public Pregunta() {
     }
 
 	
-    public Pregunta(int idPregunta, Test test, Concepto concepto, String descripcion, double peso) {
+    public Pregunta(int idPregunta, Test test, Concepto concepto, String descripcion, double peso, boolean estado) {
         this.idPregunta = idPregunta;
         this.test = test;
         this.concepto = concepto;
         this.descripcion = descripcion;
         this.peso = peso;
+        this.estado = estado;
     }
-    public Pregunta(int idPregunta, Test test, Concepto concepto, String descripcion, double peso, Set items) {
+    public Pregunta(int idPregunta, Test test, Concepto concepto, String descripcion, double peso, boolean estado, Set items) {
        this.idPregunta = idPregunta;
        this.test = test;
        this.concepto = concepto;
        this.descripcion = descripcion;
        this.peso = peso;
+       this.estado = estado;
        this.items = items;
     }
    
@@ -72,6 +75,13 @@ public class Pregunta  implements java.io.Serializable {
     
     public void setPeso(double peso) {
         this.peso = peso;
+    }
+    public boolean isEstado() {
+        return this.estado;
+    }
+    
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
     public Set getItems() {
         return this.items;
