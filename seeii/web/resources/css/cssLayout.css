@@ -77,6 +77,10 @@
     width: 100%;
   padding-right: 50px; 
 }
+.estiloTablaPregunta{
+    width: 600px;
+  padding-right: 50px; 
+}
 
 .estiloTablaClass tbody tr>td{
     width: 100%;
@@ -88,6 +92,9 @@
 .tablaTest tbody tr>td{
     width: 30%;
     height: 35%;
+}
+.tablaPregunta{
+    width: 100%;
 }
 
 #panelAdministracionUsuario{

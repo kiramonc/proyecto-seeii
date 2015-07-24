@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 23/07/2015 06:24:00 PM by Hibernate Tools 3.6.0
+// Generated 24/07/2015 12:27:41 PM by Hibernate Tools 3.6.0
 
 
 import java.util.HashSet;
@@ -18,11 +18,12 @@ public class Tema implements java.io.Serializable {
      private String dominio;
      private boolean estado;
      private Set fichas = new HashSet(0);
+     private Set conceptos = new HashSet(0);
      private Set tests = new HashSet(0);
 
     public Tema() {
     }
-	
+
     public Tema(int idTema, Unidadensenianza unidadensenianza, String nombre, String vocabulario, boolean estado) {
         this.idTema = idTema;
         this.unidadensenianza = unidadensenianza;
@@ -30,7 +31,7 @@ public class Tema implements java.io.Serializable {
         this.vocabulario = vocabulario;
         this.estado = estado;
     }
-    public Tema(int idTema, Unidadensenianza unidadensenianza, String nombre, String vocabulario, String objetivo, String dominio, boolean estado, Set fichas, Set tests) {
+    public Tema(int idTema, Unidadensenianza unidadensenianza, String nombre, String vocabulario, String objetivo, String dominio, boolean estado, Set fichas, Set conceptos, Set tests) {
        this.idTema = idTema;
        this.unidadensenianza = unidadensenianza;
        this.nombre = nombre;
@@ -39,6 +40,7 @@ public class Tema implements java.io.Serializable {
        this.dominio = dominio;
        this.estado = estado;
        this.fichas = fichas;
+       this.conceptos = conceptos;
        this.tests = tests;
     }
    
@@ -97,6 +99,13 @@ public class Tema implements java.io.Serializable {
     
     public void setFichas(Set fichas) {
         this.fichas = fichas;
+    }
+    public Set getConceptos() {
+        return this.conceptos;
+    }
+    
+    public void setConceptos(Set conceptos) {
+        this.conceptos = conceptos;
     }
     public Set getTests() {
         return this.tests;

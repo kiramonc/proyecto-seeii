@@ -6,7 +6,6 @@
 package Interface;
 
 import Pojo.Concepto;
-import Pojo.Test;
 import java.util.List;
 import org.hibernate.Session;
 
@@ -22,6 +21,6 @@ public interface InterfaceConcepto {
     public Concepto verPorCodigoConcepto(Session session, int idConcepto) throws Exception;
     public boolean actualizar(Session session, Concepto concepto) throws Exception;
     public boolean eliminar(Session session, Concepto concepto)throws Exception;
-    public Concepto verPorTema(Session session, int tema) throws Exception;
+    public List<Concepto> verPorTema(Session session, int tema) throws Exception;
     
 }

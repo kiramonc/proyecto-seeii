@@ -37,29 +37,29 @@ public class BeanRTest {
     }
 
     //Metodos
-    public void registrar() {
-        this.session = null;
-        this.transaction = null;
-        try {
-            DaoTest daoTest = new DaoTest();
-            this.session = HibernateUtil.getSessionFactory().openSession();
-            this.transaction = session.beginTransaction();
-            daoTest.registrar(this.session, this.test);
-
-            this.transaction.commit();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
-        } catch (Exception ex) {
-            if (this.transaction != null) {
-                this.transaction.rollback();
-            }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR REGISTRO:", "Contacte con el administrador" + ex.getMessage()));
-        } finally {
-            if (this.session != null) {
-                this.session.close();
-            }
-            this.test = new Test();
-        }
-    }
+//    public void registrar() {
+//        this.session = null;
+//        this.transaction = null;
+//        try {
+//            DaoTest daoTest = new DaoTest();
+//            this.session = HibernateUtil.getSessionFactory().openSession();
+//            this.transaction = session.beginTransaction();
+//            daoTest.registrar(this.session, this.test);
+//
+//            this.transaction.commit();
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
+//        } catch (Exception ex) {
+//            if (this.transaction != null) {
+//                this.transaction.rollback();
+//            }
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR REGISTRO:", "Contacte con el administrador" + ex.getMessage()));
+//        } finally {
+//            if (this.session != null) {
+//                this.session.close();
+//            }
+//            this.test = new Test();
+//        }
+//    }
 
     public void actualizar() {
         this.session = null;

@@ -6,13 +6,14 @@
 package BeanRequest;
 
 import Dao.DaoConcepto;
-import Dao.DaoTest;
-import Dao.DaoUnidadE;
+import Dao.DaoItem;
+import Dao.DaoPregunta;
+import Dao.DaoTema;
 import HibernateUtil.HibernateUtil;
 import Pojo.Concepto;
+import Pojo.Item;
 import Pojo.Pregunta;
-import Pojo.Test;
-import Pojo.Unidadensenianza;
+import Pojo.Tema;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -20,6 +21,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -34,20 +36,24 @@ public class BeanRConcepto {
     private List<Concepto> listaConceptoFiltrado;
     private Session session;
     private Transaction transaction;
+    private Tema tema;
 
     public BeanRConcepto() {
 
     }
 
     //Metodos
-    public void registrar() {
+    public void registrar(int codigo) {
         this.session = null;
         this.transaction = null;
         try {
             DaoConcepto daoConcepto = new DaoConcepto();
+            DaoTema daoTema = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            this.concepto.setEstado(true);
+            this.tema=daoTema.verPorCodigoTema(session, codigo);
+            System.out.println("EL TEMA QUE SE ESTÁ CARGANDO ES: "+this.tema.getNombre());            this.concepto.setEstado(true);
+            this.concepto.setTema(tema);
             daoConcepto.registrar(this.session, this.concepto);
 
             this.transaction.commit();
@@ -176,9 +182,63 @@ public class BeanRConcepto {
             }
         }
     }
+    
+    public void abrirDialogoCrearConcepto(int codigo) {
+        this.session=null;
+        this.transaction=null;
+        try {
+            this.concepto= new Concepto();
+            DaoTema daoTema = new DaoTema();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            this.tema=daoTema.verPorCodigoTema(session, codigo);
+            System.out.println("EL TEMA QUE SE ESTÁ CARGANDO ES: "+this.tema.getNombre());
+            RequestContext.getCurrentInstance().update("frmEditarConcepto:panelEditarConcepto");
+            RequestContext.getCurrentInstance().execute("PF('dialogEditarConcepto').show()");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR CONCEPTO CREAR:", "Contacte con el administrador" + ex.getMessage()));
+        }
+    }
+    
+    public List<Concepto> getConceptosPorTema(Tema tema) {
+        this.session = null;
+        this.transaction = null;
+        this.tema=tema;
+        try {
+            DaoConcepto daoConcepto = new DaoConcepto();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            List<Concepto> t = daoConcepto.verPorTema(session, this.tema.getIdTema());
+            transaction.commit();
+            return t;
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR LISTA DE CONCEPTO POR TEMA:", "Contacte con el administrador" + ex.getMessage()));
+
+            return null;
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+    }
+    
+    public boolean deshabilitarBotonCrearTema(){
+        
+            return false;
+        
+    }
+
+
 
     public void limpiarFormulario() {
         this.concepto = new Concepto();
+        RequestContext.getCurrentInstance().update("frmVerConceptos:panelVerConceptos");
+            RequestContext.getCurrentInstance().execute("PF('dialogVerConceptos').show()");
+            
     }
 
 //    public boolean deshabilitarBotonCrearPregunta() {
@@ -187,53 +247,7 @@ public class BeanRConcepto {
 //        }
 //        return true;
 //    }
-//    public void cargarTestEditar(int codigo){
-//        this.session = null;
-//        this.transaction = null;
-//        try {
-//            DaoTest daoConcepto = new DaoTest();
-//            this.session = HibernateUtil.getSessionFactory().openSession();
-//            this.transaction = session.beginTransaction();
-//            this.concepto=daoConcepto.verPorCodigoTest(session, codigo);
-//            
-//            RequestContext.getCurrentInstance().update("frmEditarTest:panelEditarTest");
-//            RequestContext.getCurrentInstance().execute("PF('dialogEditarTest').show()");            
-//            this.transaction.commit();
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
-//        } catch (Exception ex) {
-//            if (this.transaction != null) {
-//                this.transaction.rollback();
-//            }
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR TEST EDITAR:", "Contacte con el administrador" + ex.getMessage()));
-//        } finally {
-//            if (this.session != null) {
-//                this.session.close();
-//            }
-//        }
-//    }
-//
-//    public void cargarTestEliminar(int idTest) {
-//        this.session = null;
-//        this.transaction = null;
-//        try {
-//            DaoTest daoConcepto = new DaoTest();
-//            this.session = HibernateUtil.getSessionFactory().openSession();
-//            this.transaction = session.beginTransaction();
-//            this.concepto = daoConcepto.verPorCodigoTest(session, idTest);
-//            daoConcepto.eliminar(this.session, this.concepto);
-//            this.transaction.commit();
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Test eliminado correctamente."));
-//        } catch (Exception ex) {
-//            if (this.transaction != null) {
-//                this.transaction.rollback();
-//            }
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL ELIMINAR:", "Contacte con el administrador, " + ex));
-//        } finally {
-//            if (this.session != null) {
-//                this.session.close();
-//            }
-//        }
-//    }
+
     public Concepto getConcepto() {
         return concepto;
     }

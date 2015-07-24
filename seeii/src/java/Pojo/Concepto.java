@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 23/07/2015 06:24:00 PM by Hibernate Tools 3.6.0
+// Generated 24/07/2015 12:27:41 PM by Hibernate Tools 3.6.0
 
 
 import java.util.HashSet;
@@ -12,6 +12,7 @@ public class Concepto  implements java.io.Serializable {
 
 
      private int idConcepto;
+     private Tema tema;
      private String nombreConcepto;
      private String traduccion;
      private String descripcion;
@@ -22,15 +23,17 @@ public class Concepto  implements java.io.Serializable {
     }
 
 	
-    public Concepto(int idConcepto, String nombreConcepto, String traduccion, String descripcion, boolean estado) {
+    public Concepto(int idConcepto, Tema tema, String nombreConcepto, String traduccion, String descripcion, boolean estado) {
         this.idConcepto = idConcepto;
+        this.tema = tema;
         this.nombreConcepto = nombreConcepto;
         this.traduccion = traduccion;
         this.descripcion = descripcion;
         this.estado = estado;
     }
-    public Concepto(int idConcepto, String nombreConcepto, String traduccion, String descripcion, boolean estado, Set preguntas) {
+    public Concepto(int idConcepto, Tema tema, String nombreConcepto, String traduccion, String descripcion, boolean estado, Set preguntas) {
        this.idConcepto = idConcepto;
+       this.tema = tema;
        this.nombreConcepto = nombreConcepto;
        this.traduccion = traduccion;
        this.descripcion = descripcion;
@@ -44,6 +47,13 @@ public class Concepto  implements java.io.Serializable {
     
     public void setIdConcepto(int idConcepto) {
         this.idConcepto = idConcepto;
+    }
+    public Tema getTema() {
+        return this.tema;
+    }
+    
+    public void setTema(Tema tema) {
+        this.tema = tema;
     }
     public String getNombreConcepto() {
         return this.nombreConcepto;
@@ -94,7 +104,7 @@ public class Concepto  implements java.io.Serializable {
         if (!(object instanceof Concepto)) {
             return false;
         }
-        Concepto other = (Concepto) object;
+    Concepto other = (Concepto) object;
         if ((this.nombreConcepto == null && other.nombreConcepto != null) || (this.nombreConcepto != null && !this.nombreConcepto.equals(other.nombreConcepto))) {
             return false;
         }

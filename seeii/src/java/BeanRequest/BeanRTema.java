@@ -5,10 +5,13 @@
  */
 package BeanRequest;
 
+import Dao.DaoPregunta;
 import Dao.DaoTema;
+import Dao.DaoTest;
 import Dao.DaoUnidadE;
 import HibernateUtil.HibernateUtil;
 import Pojo.Tema;
+import Pojo.Test;
 import Pojo.Unidadensenianza;
 import java.util.List;
 import javax.faces.application.FacesMessage;
@@ -60,6 +63,11 @@ public class BeanRTema {
             this.tema.setUnidadensenianza(unidadE);
             this.tema.setEstado(true);
             daoTema.registrar(this.session, this.tema);
+            
+            Test test= new Test();
+            test.setTema(daoTema.verPorTemaname(session, tema.getNombre()));
+            DaoTest daoTest= new DaoTest();
+            daoTest.registrar(session, test);
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
 
@@ -185,7 +193,30 @@ public class BeanRTema {
             }
         }
     }
-
+    
+    public void abrirDialogoVerConceptos(int codigo) {
+        this.session = null;
+        this.transaction = null;
+        try {
+            DaoTema daoTema = new DaoTema();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            this.tema=daoTema.verPorCodigoTema(session, codigo);
+            RequestContext.getCurrentInstance().update("frmVerConceptos:panelVerConceptos");
+            RequestContext.getCurrentInstance().execute("PF('dialogVerConceptos').show()");
+            this.transaction.commit();
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR CONCEPTO:", "Contacte con el administrador" + ex.getMessage()));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+    }
 
     
     //    setter and getter de atributos

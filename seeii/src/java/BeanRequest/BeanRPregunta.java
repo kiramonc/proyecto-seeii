@@ -95,6 +95,31 @@ public class BeanRPregunta {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR PREGUNTA CREAR:", "Contacte con el administrador" + ex.getMessage()));
         }
     }
+    
+    public void abrirDialogoVerItems(int codigo) {
+        this.session = null;
+        this.transaction = null;
+        try {
+            DaoPregunta daoItem = new DaoPregunta();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            this.pregunta=daoItem.verPorCodigoPregunta(session, codigo);
+            RequestContext.getCurrentInstance().update("frmVerItems:panelVerItems");
+            RequestContext.getCurrentInstance().execute("PF('dialogVerItems').show()");
+            this.transaction.commit();
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR ITEM EDITAR:", "Contacte con el administrador" + ex.getMessage()));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+    }
+
 
     public void cargarPreguntaEditar(int codigo) {
         this.session = null;

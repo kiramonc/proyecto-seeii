@@ -66,7 +66,7 @@ public class BeanRItem {
             DaoItem daoItem = new DaoItem();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            this.item.setPregunta(pregunta);
+            this.item.setPregunta(this.pregunta);
             this.item.setImgItem(nombreImagen);
             this.item.setEstado(true);
             daoItem.registrar(session, item);
@@ -86,14 +86,15 @@ public class BeanRItem {
         }
     }
 
-    public List<Item> getItemsPorPregunta(int codigo) {
+    public List<Item> getItemsPorPregunta(Pregunta pregunta) {
         this.session = null;
         this.transaction = null;
+        this.pregunta=pregunta;
         try {
             DaoItem daoItem = new DaoItem();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            List<Item> t = daoItem.verPorPregunta(session, codigo);
+            List<Item> t = daoItem.verPorPregunta(session, this.pregunta.getIdPregunta());
             transaction.commit();
             return t;
         } catch (Exception ex) {
@@ -108,9 +109,16 @@ public class BeanRItem {
         }
     }
 
-    public void abrirDialogoCrearItem() {
+    public void abrirDialogoCrearItem(int codigo) {
+        this.session=null;
+        this.transaction=null;
         try {
             this.item = new Item();
+            DaoPregunta daoItem = new DaoPregunta();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            this.pregunta=daoItem.verPorCodigoPregunta(session, codigo);
+            System.out.println("LA PREGUNTA QUE SE ESTÁ CARGANDO ES: "+this.pregunta.getDescripcion());
             RequestContext.getCurrentInstance().update("frmCrearItems:panelCrearItems");
             RequestContext.getCurrentInstance().execute("PF('dialogCrearItems').show()");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
@@ -143,14 +151,45 @@ public class BeanRItem {
             }
         }
     }
+    
+    public void cargarItemsPregunta(int codigo) {
+        this.session = null;
+        this.transaction = null;
+        try {
+            DaoPregunta daoItem = new DaoPregunta();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            this.pregunta=daoItem.verPorCodigoPregunta(session, codigo);
+            RequestContext.getCurrentInstance().update("frmVerItems:panelVerItems");
+            RequestContext.getCurrentInstance().execute("PF('dialogVerItems').show()");
+            this.transaction.commit();
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR ITEM EDITAR:", "Contacte con el administrador" + ex.getMessage()));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+    }
 
     public void actualizar() {
         this.session = null;
         this.transaction = null;
         try {
+            actualizarImg();
+        } catch (IOException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR DE LECTURA ESCRITURA:", "Contacte con el administrador" + ex.getMessage()));
+        }
+        
+        try {
             DaoItem daoItem = new DaoItem();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
+            this.item.setImgItem(nombreImagen);
             daoItem.actualizar(this.session, this.item);
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));

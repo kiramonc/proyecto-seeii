@@ -8,6 +8,7 @@ package Dao;
 
 import HibernateUtil.HibernateUtil;
 import Pojo.Concepto;
+import Pojo.Item;
 import Pojo.Test;
 import Pojo.Unidadensenianza;
 import java.util.List;
@@ -43,10 +44,10 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
         String hql = "from Concepto";
         Query query = session.createQuery(hql);
         List<Concepto> listaConceptos = (List<Concepto>) query.list();
-//        for (Concepto lista : listaConceptos) {
-//            Hibernate.initialize(lista.getTema());
+        for (Concepto lista : listaConceptos) {
+            Hibernate.initialize(lista.getTema());
 //            Hibernate.initialize(lista.getTema().getUnidadensenianza());
-//        }
+        }
         return listaConceptos;
     }
 
@@ -56,7 +57,7 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
         Query query = session.createQuery(hql);
         query.setParameter("idConcepto", idConcepto);
         Concepto concepto = (Concepto) query.uniqueResult();
-//        Hibernate.initialize(concepto.getTema());
+        Hibernate.initialize(concepto.getTema());
 //        Hibernate.initialize(concepto.getTema().getUnidadensenianza());
         return concepto;
 
@@ -84,10 +85,16 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
     }
 
     @Override
-    public Concepto verPorTema(Session session, int tema) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Concepto> verPorTema(Session session, int tema) throws Exception {
+            String hql = "from Concepto where tema=:tema";
+        Query query = session.createQuery(hql);
+        query.setInteger("tema", tema);
+        List<Concepto> listaItems = (List<Concepto>) query.list();
+        for (Concepto lista : listaItems) {
+            Hibernate.initialize(lista.getTema());
+//            Hibernate.initialize(lista.getTest().getTema());
+        }
+        return listaItems;
     }
-    
-    
-    
+        
 }

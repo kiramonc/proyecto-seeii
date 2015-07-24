@@ -57,10 +57,10 @@ public class DaoTema implements InterfaceTema {
     }
 
     @Override
-    public Tema verPorTemaname(Session session, String nombreTema) throws Exception {
+    public Tema verPorTemaname(Session session, String nombre) throws Exception {
         String hql = "from Tema where nombre=:nombre";
         Query query = session.createQuery(hql);
-        query.setParameter("nombre", nombreTema);
+        query.setParameter("nombre", nombre);
         Tema tema = (Tema) query.uniqueResult();
         return tema;
     }
