@@ -6,6 +6,7 @@
 package BeanRequest;
 
 import Dao.DaoPregunta;
+import Dao.DaoTest;
 import HibernateUtil.HibernateUtil;
 import Pojo.Pregunta;
 import Pojo.Test;
@@ -85,9 +86,16 @@ public class BeanRPregunta {
         }
     }
 
-    public void abrirDialogoCrearPregunta() {
+    public void abrirDialogoCrearPregunta(int codigo) {
+        this.session = null;
+        this.transaction = null;
         try {
+            DaoTest daoTest = new DaoTest();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            this.test = daoTest.verPorCodigoTest(session, codigo);
             this.pregunta = new Pregunta();
+            
             RequestContext.getCurrentInstance().update("frmCrearPregunta:panelCrearPregunta");
             RequestContext.getCurrentInstance().execute("PF('dialogCrearPregunta').show()");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));

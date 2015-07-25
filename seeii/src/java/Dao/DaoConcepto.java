@@ -90,9 +90,11 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
         Query query = session.createQuery(hql);
         query.setInteger("tema", tema);
         List<Concepto> listaItems = (List<Concepto>) query.list();
+        if(listaItems!=null){
         for (Concepto lista : listaItems) {
             Hibernate.initialize(lista.getTema());
 //            Hibernate.initialize(lista.getTest().getTema());
+        }
         }
         return listaItems;
     }

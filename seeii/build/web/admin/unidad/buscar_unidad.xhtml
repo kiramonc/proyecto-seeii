@@ -172,7 +172,7 @@
                                 <h3>CONCEPTOS:</h3>
                             </h:panelGrid>
                             <p:dataTable id="tablaItems" var="item" value="#{beanRConcepto.getConceptosPorTema(beanRTema.tema)}" selection="#{beanRConcepto.concepto}" selectionMode="single" rowKey="#{item.idConcepto}" paginator="true" rows="10" >
-                                <p:ajax event="rowSelect" update=":frmVerConceptos:panelEditarConcepto" oncomplete="dialogVerConceptos.show()"/>
+                                <p:ajax event="rowSelect" update=":frmEditarConcepto:panelEditarConcepto" oncomplete="dialogVerConceptos.show()"/>
                                 <p:column headerText="NOMBRE CONCEPTO">
                                     <p:outputLabel value="#{item.nombreConcepto}"/>
                                 </p:column>
@@ -182,48 +182,47 @@
                             </p:dataTable>
 
                         </h:panelGrid>
-                    
-                    <h:panelGrid id="panelEditarConcepto">
-                        <h:panelGrid  columns="3">
-                            <p:outputLabel value="Nombre Concepto: " for="txtNombreConcepto"/>
-                            <p:inputText id="txtNombreConcepto" label="Peso:" size="40" value="#{beanRConcepto.concepto.nombreConcepto}">
-                                <f:validator validatorId="validatorVacio"/>
-                            </p:inputText>
-                            <p:message for="txtNombreConcepto"/>
+                    </h:form>
+                    <h:form id="frmEditarConcepto">
+                        <h:panelGrid id="panelEditarConcepto">
+                            <h:panelGrid  columns="3">
+                                <p:outputLabel value="Nombre Concepto: " for="txtNombreConcepto"/>
+                                <p:inputText id="txtNombreConcepto" label="Peso:" size="40" value="#{beanRConcepto.concepto.nombreConcepto}">
+                                    <f:validator validatorId="validatorVacio"/>
+                                </p:inputText>
+                                <p:message for="txtNombreConcepto"/>
 
-                            <p:outputLabel value="Traducción: " for="txtTraduccionConcepto"/>
-                            <p:inputText id="txtTraduccionConcepto" label="Peso:" size="40" value="#{beanRConcepto.concepto.traduccion}">
-                                <f:validator validatorId="validatorVacio"/>
-                            </p:inputText>
-                            <p:message for="txtTraduccionConcepto"/>
+                                <p:outputLabel value="Traducción: " for="txtTraduccionConcepto"/>
+                                <p:inputText id="txtTraduccionConcepto" label="Peso:" size="40" value="#{beanRConcepto.concepto.traduccion}">
+                                    <f:validator validatorId="validatorVacio"/>
+                                </p:inputText>
+                                <p:message for="txtTraduccionConcepto"/>
 
-                            <p:outputLabel value="Descripción: " for="txtDescripcion"/>
-                            <p:inputText id="txtDescripcion" label="Peso:" size="40" value="#{beanRConcepto.concepto.descripcion}">
-                                <f:validator validatorId="validatorVacio"/>
-                            </p:inputText>
-                            <p:message for="txtDescripcion"/>
-                            
-                        </h:panelGrid>
-                        <h:panelGrid columns="4">
-                            <p:commandButton ajax="false" value="Crear Concepto" actionListener="#{beanRConcepto.registrar(beanRTema.tema.idTema)}" styleClass="botonstyle" icon="ui-icon-circle-plus" disabled="false"/>
-                            <p:commandButton ajax="false" value="Actualizar" actionListener="#{beanRConcepto.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>
+                                <p:outputLabel value="Descripción: " for="txtDescripcion"/>
+                                <p:inputText id="txtDescripcion" label="Peso:" size="40" value="#{beanRConcepto.concepto.descripcion}">
+                                    <f:validator validatorId="validatorVacio"/>
+                                </p:inputText>
+                                <p:message for="txtDescripcion"/>
+
+                            </h:panelGrid>
+                            <h:panelGrid columns="4">
+                                <p:commandButton ajax="false" value="Crear Concepto" actionListener="#{beanRConcepto.registrar()}" styleClass="botonstyle" icon="ui-icon-circle-plus" disabled="false"/>
+                                <p:commandButton ajax="false" value="Actualizar" actionListener="#{beanRConcepto.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>
                                 <h:panelGroup>
-                                    <p:commandButton value="Eliminar" title="Eliminar"  onclick="PF('cdc').show()" styleClass="botonstyle" icon="ui-icon-trash" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>
-                                    <p:confirmDialog message="El concepto será eliminado" header="Eliminar" severity="alert" widgetVar="cdc" styleClass="confirmEliminar">
-                                        <p:commandButton ajax="false" value="Aceptar" actionListener="#{beanRConcepto.eliminar()}" oncomplete="PF('cdc').hide()"/>
-                                        <p:commandButton value="Cancelar" onclick="PF('cd').hide();" type="button" />
+                                    <p:commandButton value="Eliminar" title="Eliminar"  onclick="PF('cdc').show();" styleClass="botonstyle" icon="ui-icon-trash" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>
+                                    <p:confirmDialog message="El concepto será eliminado" header="Eliminar" severity="alert" widgetVar="cdc" styleClass="confirmEliminar" appendTo="@(body)">
+                                            <p:commandButton ajax="false" value="Aceptar" actionListener="#{beanRConcepto.eliminar()}" oncomplete="PF('cdc').hide()"/>
+                                            <p:commandButton value="Cancelar" onclick="PF('cdc').hide();" type="button" />
                                     </p:confirmDialog>
                                 </h:panelGroup>
-                            <p:commandButton ajax="false" icon="ui-icon-circle-arrow-w" value="Limpiar" actionListener="#{beanRConcepto.limpiarFormulario()}" styleClass="botonstyle" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>
+                                <p:commandButton ajax="false" icon="ui-icon-circle-arrow-w" value="Limpiar" actionListener="#{beanRConcepto.limpiarFormulario()}" styleClass="botonstyle" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>
                             </h:panelGrid>
-                    </h:panelGrid>
-                        </h:form>
-                    
+                        </h:panelGrid>
+                    </h:form>
+
                 </p:dialog>
 
-
             </ui:define>
-
         </ui:composition>
 
     </body>

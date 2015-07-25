@@ -52,7 +52,7 @@
 
                             <h:panelGrid columns="2">
                                 <h3>Preguntas:</h3>
-                                <p:commandButton value="Crear Pregunta" actionListener="#{beanRPregunta.abrirDialogoCrearPregunta()}" styleClass="botonCrearNuevo" icon="ui-icon-circle-plus" disabled="#{beanRTest.deshabilitarBotonCrearPregunta()}"/>
+                                <p:commandButton value="Crear Pregunta" actionListener="#{beanRPregunta.abrirDialogoCrearPregunta(beanRTest.test.idTest)}" styleClass="botonCrearNuevo" icon="ui-icon-circle-plus" disabled="#{beanRTest.deshabilitarBotonCrearPregunta()}"/>
                             </h:panelGrid>
 
                             <p:dataTable id="tablaPreguntas" var="item" value="#{beanRPregunta.getPreguntasPorTest(beanRTest.test.idTest)}" selection="#{beanRPregunta.pregunta}" selectionMode="single" rowKey="#{item.idPregunta}" paginator="true" rows="10" styleClass="estiloTablaPregunta" tableStyleClass="tablaPregunta">
@@ -92,7 +92,7 @@
                             <h:panelGrid columns="3">
                             <p:outputLabel value="Concepto: " for="menuConcepto"/>
                             <p:selectOneMenu converter="conceptoConverter" id="menuConcepto" value="#{beanRPregunta.pregunta.concepto}" >
-                                <f:selectItems id="itemsConcepto" value="#{beanRConcepto.allConcepto}" var="p" itemLabel="#{p.nombreConcepto}"/>
+                                <f:selectItems id="itemsConcepto" value="#{beanRConcepto.getConceptosPorTema(beanRTest.test.tema)}" var="p" itemLabel="#{p.nombreConcepto}"/>
                                 <f:converter converterId="conceptoConverter"/>
                             </p:selectOneMenu>
                             <h:panelGroup></h:panelGroup>
@@ -138,7 +138,7 @@
                         <h:panelGrid id="panelEditarPregunta" columns="3">
                             <p:outputLabel value="Concepto: " for="menuConcepto"/>
                             <p:selectOneMenu converter="conceptoConverter" id="menuConcepto" value="#{beanRPregunta.pregunta.concepto}" >
-                                <f:selectItems id="itemsConcepto" value="#{beanRConcepto.allConcepto}" var="p" itemLabel="#{p.nombreConcepto}"/>
+                                <f:selectItems id="itemsConcepto" value="#{beanRConcepto.getConceptosPorTema(beanRTest.test.tema)}" var="p" itemLabel="#{p.nombreConcepto}"/>
                                 <f:converter converterId="conceptoConverter"/>
                             </p:selectOneMenu>
                             <h:panelGroup></h:panelGroup>
@@ -171,7 +171,7 @@
                         <h:panelGrid id="panelCrearPregunta" columns="3">
                             <p:outputLabel value="Concepto: " for="menuConcepto"/>
                             <p:selectOneMenu converter="conceptoConverter" id="menuConcepto" value="#{beanRPregunta.pregunta.concepto}" >
-                                <f:selectItems id="itemsConcepto" value="#{beanRConcepto.allConcepto}" var="p" itemLabel="#{p.nombreConcepto}"/>
+                                <f:selectItems id="itemsConcepto" value="#{beanRConcepto.getConceptosPorTema(beanRTest.test.tema)}" var="p" itemLabel="#{p.nombreConcepto}"/>
                                 <f:converter converterId="conceptoConverter"/>
                             </p:selectOneMenu>
                             <h:panelGroup></h:panelGroup>

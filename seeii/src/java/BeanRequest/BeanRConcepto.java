@@ -39,11 +39,11 @@ public class BeanRConcepto {
     private Tema tema;
 
     public BeanRConcepto() {
-
+        this.tema=null;
     }
 
     //Metodos
-    public void registrar(int codigo) {
+    public void registrar() {
         this.session = null;
         this.transaction = null;
         try {
@@ -51,8 +51,9 @@ public class BeanRConcepto {
             DaoTema daoTema = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            this.tema=daoTema.verPorCodigoTema(session, codigo);
-            System.out.println("EL TEMA QUE SE ESTÁ CARGANDO ES: "+this.tema.getNombre());            this.concepto.setEstado(true);
+//            this.tema=daoTema.verPorCodigoTema(session, codigo);
+            System.out.println("EL TEMA QUE SE ESTÁ CARGANDO ES: "+this.tema.getNombre());
+            this.concepto.setEstado(true);
             this.concepto.setTema(tema);
             daoConcepto.registrar(this.session, this.concepto);
 
@@ -96,11 +97,14 @@ public class BeanRConcepto {
     public void eliminar() {
         this.session = null;
         this.transaction = null;
+        System.out.println("VAMOS A ELIMINAR EL CONCEPTO: "+this.concepto.getNombreConcepto());
         try {
             DaoConcepto daoConcepto = new DaoConcepto();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
+            System.out.println("A PUNTO DE ELIMINAR EL CONCEPTO: "+this.concepto.getNombreConcepto());
             daoConcepto.eliminar(this.session, this.concepto);
+            System.out.println("SEGÚN ESTO DEBIÓ HABERSE ELIMINADO: "+this.concepto.getNombreConcepto());
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Concepto eliminado correctamente."));
         } catch (Exception ex) {
@@ -202,6 +206,7 @@ public class BeanRConcepto {
     }
     
     public List<Concepto> getConceptosPorTema(Tema tema) {
+        if(tema!=null){
         this.session = null;
         this.transaction = null;
         this.tema=tema;
@@ -209,6 +214,7 @@ public class BeanRConcepto {
             DaoConcepto daoConcepto = new DaoConcepto();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
+            
             List<Concepto> t = daoConcepto.verPorTema(session, this.tema.getIdTema());
             transaction.commit();
             return t;
@@ -224,6 +230,8 @@ public class BeanRConcepto {
                 this.session.close();
             }
         }
+        }
+        return null;
     }
     
     public boolean deshabilitarBotonCrearTema(){

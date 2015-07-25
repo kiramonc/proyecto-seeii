@@ -8,17 +8,46 @@
 
     <body>
 
-        <ui:composition template="./../../templates/templateEstudiante.xhtml">
+        <ui:composition template="./../../templates/templateEstudianteTest.xhtml">
 
             <ui:define name="content">
-                <h:form id="frmRegistrarUsuario">
-                    <center><h2>TEST</h2></center>
-                    <hr/>
-                    <p:outputLabel value="PREGUNTA"/>
-                    
+                <h:form id="frmMostrarTest">
+                    <p:growl id="mensajeGeneral" showDetail="true" sticky="false" life="4000"/>
+                    <br/>
+                    <center>
+                        <p:outputLabel value="#{beanRPresentarTest.obtenerPregunta(1).descripcion}" style="font-size: 22px; color: #036fab; text-shadow: 1px 1px 1px; font-family: cursive,sans-serif;"/>
+                    </center>
+                    <br/>
+
+                    <p:dataGrid var="item" value="#{beanRPresentarTest.itemsPorPregunta(1)}" columns="3" rows="12" id="gridItemsPregunta">
+                        <p:column>
+                            <p:panel header="#{item.nombreItem}" style="font-size: 18px; color: #036fab; text-shadow: 1px 1px 1px; font-family: cursive,sans-serif; text-transform: uppercase">
+                                <h:panelGrid columns="1">
+                                    <center>
+                                        <h:commandLink actionListener="#{beanRPresentarTest.guardarRespuestaTemp(item.nombreItem)}">
+                                            <p:graphicImage value="#{FacesContext.getCurrentInstance().getExternalContext()}/imgItems/#{item.imgItem}" width="200" height="200" cache="false"/>
+                                        </h:commandLink>
+                                    </center>
+                                    <!--<h:outputText value="#{beanRPresentarTest}" />-->
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:column>
+                    </p:dataGrid>
+
                 </h:form>
+                
 
+                <h:form id="frmRespuesta">
+                    <p:dialog widgetVar="dialogRespuesta" modal="true" showEffect="fade" hideEffect="explode">
+                        <h:panelGrid id="panelRespuesta" columns="2">
+                            <!--
+                            <p:graphicImage library="imagen/imgDialog/" value="#{beanRPresentarTest.correcto ? 'Correcto.gif':'Incorrecto.png'}" width="100" height="100" cache="false"/>
+                            <p:outputLabel value="#{beanRPresentarTest.correcto ? '¡CORRECTO!':'INCORRECTO, Vuelve a intentarlo'}"/>
+                            -->
+                        </h:panelGrid>
 
+                    </p:dialog>
+                </h:form>
             </ui:define>
 
         </ui:composition>

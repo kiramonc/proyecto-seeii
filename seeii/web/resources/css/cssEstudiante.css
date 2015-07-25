@@ -97,3 +97,47 @@ h1 {
     padding: 0px;
     color: #036fab;
 }
+.ui-widget-header{
+    border: none;
+    text-align: center;
+    background: transparent;
+    background: #c4c4c4 -moz-linear-gradient(top, rgba(255,255,255,0.8), rgba(255,255,255,0));
+    color: #333;
+    font-weight: bold;
+    text-shadow: 0px 1px 0px rgba(255,255,255,0.7);
+}
+#frmMostrarTest\3a gridItemsPregunta_content{
+    border: none;
+    background: transparent;
+    color: #4f4f4f;
+}
+
+.gridItemsPregunta.ui-widget{
+    border:none;
+    background: transparent;
+    color:#4f4f4f;
+    margin-left: 30px;
+    margin-right: 50px;
+}
+
+.ui-growl {
+    top: 45%;
+    left: 45%;
+}
+
+#dockEstudiante{
+    background-color: #ffffff;
+}
+
+#left{
+    float: left;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 200px;
+}
+
+.left_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin-left: 220px;
+}
