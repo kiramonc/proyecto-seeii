@@ -5,10 +5,13 @@
  */
 package Dao;
 
+import HibernateUtil.HibernateUtil;
 import Interface.InterfaceTema;
 import Pojo.Tema;
 import Pojo.Unidadensenianza;
 import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -30,7 +33,22 @@ public class DaoTema implements InterfaceTema {
 
     @Override
     public List<Tema> verTodo(Session session) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String hql = "from Tema";
+        Query query = session.createQuery(hql);
+        List<Tema> listaTemas = (List<Tema>) query.list();
+        for (Tema lista : listaTemas) {
+            Hibernate.initialize(lista.getUnidadensenianza());
+        }
+        return listaTemas;
+    }
+    
+    public List<Tema> verTodo() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        Criteria criteria=session.createCriteria(Tema.class);
+        List<Tema> listaTemas=(List<Tema>) criteria.list();
+        session.close();
+        return listaTemas;
     }
 
     @Override

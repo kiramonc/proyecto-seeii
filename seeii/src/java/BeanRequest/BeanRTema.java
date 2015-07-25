@@ -218,6 +218,29 @@ public class BeanRTema {
         }
     }
 
+    public Tema consultarTemaPorNombre(String tema) {
+        try {
+            DaoTema daotema=new DaoTema();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            Tema t = daotema.verPorTemaname(session, tema);
+            transaction.commit();
+            return t;
+
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            return null;
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+
+    }
+    
+    
     
     //    setter and getter de atributos
     public Tema getTema() {

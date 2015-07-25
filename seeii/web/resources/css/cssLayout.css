@@ -72,6 +72,10 @@
 .estiloTabla{
     width: 100%;
 }
+.estiloTablaFicha{
+    width: 80%;
+  padding-right: 50px; 
+}
 
 .estiloTablaUnidad{
     width: 100%;
@@ -103,6 +107,16 @@
 
 #panelAdministracionUnidades{
     
+}
+#frmDatosFicha{
+    border: 2px cadetblue solid;
+    background: #eee;
+    padding-bottom: 30px;
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border: 2px cadetblue solid;
+    position: inherit;
 }
 #frmDatosUsuario{
     border: 2px cadetblue solid;
