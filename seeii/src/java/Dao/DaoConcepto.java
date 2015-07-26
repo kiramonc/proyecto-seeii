@@ -81,6 +81,16 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
         Query query=session.createQuery(hql);
         query.setParameter("nombreConcepto", nombreConcepto);
         Concepto concepto=(Concepto) query.uniqueResult();
+        Hibernate.initialize(concepto.getTema());
+        return concepto;     
+    }
+    
+    public Concepto verPorNombreConceptoConverter(Session session, String nombreConcepto, int idTema) throws Exception {
+        String hql="from Concepto where nombreConcepto=:nombreConcepto and tema=:tema";
+        Query query=session.createQuery(hql);
+        query.setParameter("nombreConcepto", nombreConcepto);
+        query.setInteger("tema", idTema);
+        Concepto concepto=(Concepto) query.uniqueResult();
         return concepto;     
     }
 
@@ -97,6 +107,17 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
         }
         }
         return listaItems;
+    }
+    
+    public Concepto verConceptoGeneral(Session session, int idTema, String nombreTema){
+        String hql="from Concepto where nombreConcepto=:nombreConcepto and traduccion=:traduccion and descripcion=:descripcion and tema=:tema";
+        Query query=session.createQuery(hql);
+        query.setParameter("nombreConcepto", nombreTema+" Vocabulary");
+        query.setParameter("traduccion", "TODO");
+        query.setParameter("descripcion", "VOCABULARY");
+        query.setInteger("tema", idTema);
+        Concepto concepto=(Concepto) query.uniqueResult();
+        return concepto;     
     }
         
 }

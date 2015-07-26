@@ -17,6 +17,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.primefaces.model.menu.DefaultMenuItem;
@@ -41,9 +42,8 @@ public class BeanRConsultarTest {
 
     public BeanRConsultarTest() {
         model = new DefaultMenuModel();
-        
-    }
 
+    }
 
     public Test consultarTestPorCodigo(int idTest) {
         this.session = null;
@@ -128,29 +128,41 @@ public class BeanRConsultarTest {
         this.transaction = null;
         try {
             DaoTest daoTest = new DaoTest();
-            DaoTema daoTema= new DaoTema();
+            DaoTema daoTema = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            List<Tema> temas= daoTema.verPorUnidad(session, 1);
-            
-            Test t=null;
-            List<Test> listaTests=new ArrayList<>();
+            List<Tema> temas = daoTema.verPorUnidad(session, 1);
+
+            Test t = null;
+            List<Test> listaTests = new ArrayList<>();
             for (int i = 0; i < temas.size(); i++) {
-                t=daoTest.verPorTema(session, temas.get(i).getIdTema());
+                t = daoTest.verPorTema(session, temas.get(i).getIdTema());
                 listaTests.add(t);
             }
-            this.listaTest=listaTests;
-            
+            this.listaTest = listaTests;
+
             this.transaction.commit();
-            System.out.println("Lista Test tiene un total de: "+listaTest.size()+" elementos");
+            System.out.println("Lista Test tiene un total de: " + listaTest.size() + " elementos");
+            MenuModel model = new DefaultMenuModel();
             DefaultMenuItem item = null;
-            for (int i = 0; i < listaTest.size(); i++) {
-                item= new DefaultMenuItem(listaTest.get(i).getTema().getNombre());
-                item.setIcon(FacesContext.getCurrentInstance().getExternalContext()+"/resources/iconos/Organize.ico");
-                item.setOutcome("/estudiante/estudianteK/test");
-                this.model.addElement(item);
-            }
             
+            for (int i = 0; i < listaTest.size(); i++) {
+                item = new DefaultMenuItem(listaTest.get(i).getTema().getNombre());                
+                item.setIcon("/resources/iconos/Tutorial.ico");
+                if(i==0){
+                item.setOutcome("/estudiante/estudianteK/test");
+                }else{
+                    if(i==1){
+                    item.setOutcome("/estudiante/estudianteK/testListening1");
+                    }else{
+                        item.setOutcome("/estudiante/estudianteK/testSpeaking3");
+                    }
+                }
+                model.addElement(item);
+            }
+            this.model = model;
+            System.out.println("El modelo tiene " + this.model.getElements().size() + " elementos");
+
             
             return this.model;
 
@@ -166,7 +178,5 @@ public class BeanRConsultarTest {
             }
         }
     }
-    
-    
 
 }

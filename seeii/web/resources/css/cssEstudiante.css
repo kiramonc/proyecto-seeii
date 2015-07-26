@@ -140,4 +140,11 @@ h1 {
     background-color: #dddddd;
     padding: 5px;
     margin-left: 220px;
+    min-height: 292px; 
+}
+
+.ui-dock-container-top{
+    position: relative;
+    height: 128px;
+    text-align: center;
 }

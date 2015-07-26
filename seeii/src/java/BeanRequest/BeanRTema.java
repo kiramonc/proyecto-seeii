@@ -5,11 +5,13 @@
  */
 package BeanRequest;
 
+import Dao.DaoConcepto;
 import Dao.DaoPregunta;
 import Dao.DaoTema;
 import Dao.DaoTest;
 import Dao.DaoUnidadE;
 import HibernateUtil.HibernateUtil;
+import Pojo.Concepto;
 import Pojo.Tema;
 import Pojo.Test;
 import Pojo.Unidadensenianza;
@@ -68,6 +70,17 @@ public class BeanRTema {
             test.setTema(daoTema.verPorTemaname(session, tema.getNombre()));
             DaoTest daoTest= new DaoTest();
             daoTest.registrar(session, test);
+            
+            /*REGISTRO DE CONCEPTO GENERAL PARA PREGUNTA LISTENING(1)*/
+            DaoConcepto daoConcepto= new DaoConcepto();
+            Concepto c=new Concepto();
+            c.setEstado(true);
+            c.setDescripcion("VOCABULARY");
+            c.setNombreConcepto(tema.getNombre()+" Vocabulary");
+            c.setTraduccion("TODO");
+            c.setTema(daoTema.verPorTemaname(session, tema.getNombre()));
+            daoConcepto.registrar(session, c);
+            
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
 

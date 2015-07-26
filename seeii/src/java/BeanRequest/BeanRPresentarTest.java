@@ -5,12 +5,16 @@
  */
 package BeanRequest;
 
+import Dao.DaoConcepto;
 import Dao.DaoItem;
 import Dao.DaoPregunta;
+import Dao.DaoTema;
 import Dao.DaoTest;
 import HibernateUtil.HibernateUtil;
+import Pojo.Concepto;
 import Pojo.Item;
 import Pojo.Pregunta;
+import Pojo.Tema;
 import Pojo.Test;
 import java.util.List;
 import javax.faces.application.FacesMessage;
@@ -38,16 +42,15 @@ public class BeanRPresentarTest {
     private List<Item> listaItems;
     private String respuestTemp;
     private boolean correcto;
-    
 
     public BeanRPresentarTest() {
 
     }
-    
-    public Pregunta obtenerPregunta(int codigo){
+
+    public Pregunta obtenerPregunta(int codigo) {
         this.session = null;
         this.transaction = null;
-        
+
         try {
             DaoPregunta daoItem = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
@@ -67,25 +70,69 @@ public class BeanRPresentarTest {
             }
         }
     }
-    
-    public void guardarRespuestaTemp(String respuesta){
-        this.respuestTemp=respuesta;
-        if(this.preguntaSeleccionada.getConcepto().getNombreConcepto().equalsIgnoreCase(respuesta)){
-            this.correcto=true;
+
+    public void guardarRespuestaTemp(String respuesta) {
+        this.respuestTemp = respuesta;
+        if (this.preguntaSeleccionada.getConcepto().getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
+            this.correcto = true;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
-        }else{
-            this.correcto=false;
+        } else {
+            this.correcto = false;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
-            
+
         }
 //        RequestContext.getCurrentInstance().update("frmRespuesta:panelRespuesta");
 //        RequestContext.getCurrentInstance().execute("PF('dialogRespuesta').show()");
     }
-    
-    public List<Item> itemsPorPregunta(int codigo){
+
+    public void compRespuestaListening1(String respuesta) {
+        this.respuestTemp = respuesta;
         this.session = null;
         this.transaction = null;
-        
+
+        try {
+            DaoConcepto daoConcepto = new DaoConcepto();
+            DaoTema daoTema= new DaoTema();
+            DaoTest daoTest= new DaoTest();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            System.out.println("La pregunta que se está evaluando es: "+preguntaSeleccionada.getDescripcion());
+            Test test=daoTest.verPorCodigoTest(session, preguntaSeleccionada.getTest().getIdTest());
+            Tema tema = daoTema.verPorCodigoTema(session, test.getTema().getIdTema());
+            System.out.println("el tema que está obteniendo es: "+tema.getNombre());
+            List<Concepto> listaConceptos = daoConcepto.verPorTema(session, tema.getIdTema());
+            System.out.println("la lista de los conceptos por el tema son: "+listaConceptos.size());
+            transaction.commit();
+            this.correcto=false;
+            for (int i = 0; i < listaConceptos.size(); i++) {
+                if (listaConceptos.get(i).getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
+                    this.correcto = true;
+                    break;
+                }
+            }
+            
+            if(correcto){
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
+            }else{
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
+            }
+
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CONSULTAR CONCEPTO POR TEST - TEMA:", "Contacte con el administrador" + ex.getMessage()));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+    }
+
+    public List<Item> itemsPorPregunta(int codigo) {
+        this.session = null;
+        this.transaction = null;
+
         try {
             DaoItem daoItem = new DaoItem();
             this.session = HibernateUtil.getSessionFactory().openSession();
@@ -105,11 +152,11 @@ public class BeanRPresentarTest {
             }
         }
     }
-    
-    public List<Pregunta> cargarListaPreguntas(){
+
+    public List<Pregunta> cargarListaPreguntas() {
         this.session = null;
         this.transaction = null;
-        
+
         try {
             DaoPregunta daoPregunta = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
@@ -129,8 +176,6 @@ public class BeanRPresentarTest {
             }
         }
     }
-    
-    
 
     public Test consultarTestPorCodigo(int idTest) {
         this.session = null;
@@ -177,7 +222,6 @@ public class BeanRPresentarTest {
             }
         }
     }
-
 
     public boolean deshabilitarBotonCrearPregunta() {
         if (this.test.getTema() != null) {
@@ -241,7 +285,5 @@ public class BeanRPresentarTest {
     public void setCorrecto(boolean correcto) {
         this.correcto = correcto;
     }
-    
-    
- 
+
 }

@@ -14,6 +14,7 @@ import Pojo.Concepto;
 import Pojo.Item;
 import Pojo.Pregunta;
 import Pojo.Tema;
+import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -31,7 +32,7 @@ import org.primefaces.context.RequestContext;
 @ViewScoped
 public class BeanRConcepto {
 
-    private Concepto concepto = new Concepto();
+    private Concepto concepto;
     private List<Concepto> listaConceptos;
     private List<Concepto> listaConceptoFiltrado;
     private Session session;
@@ -40,6 +41,7 @@ public class BeanRConcepto {
 
     public BeanRConcepto() {
         this.tema=null;
+        concepto = new Concepto();
     }
 
     //Metodos
@@ -81,6 +83,7 @@ public class BeanRConcepto {
             this.transaction = session.beginTransaction();
             daoConcepto.actualizar(this.session, this.concepto);
             this.transaction.commit();
+            this.concepto=null;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
         } catch (Exception ex) {
             if (this.transaction != null) {
@@ -97,15 +100,13 @@ public class BeanRConcepto {
     public void eliminar() {
         this.session = null;
         this.transaction = null;
-        System.out.println("VAMOS A ELIMINAR EL CONCEPTO: "+this.concepto.getNombreConcepto());
         try {
             DaoConcepto daoConcepto = new DaoConcepto();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            System.out.println("A PUNTO DE ELIMINAR EL CONCEPTO: "+this.concepto.getNombreConcepto());
             daoConcepto.eliminar(this.session, this.concepto);
-            System.out.println("SEGÚN ESTO DEBIÓ HABERSE ELIMINADO: "+this.concepto.getNombreConcepto());
             this.transaction.commit();
+            this.concepto=null;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Concepto eliminado correctamente."));
         } catch (Exception ex) {
             if (this.transaction != null) {
@@ -204,8 +205,47 @@ public class BeanRConcepto {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR CONCEPTO CREAR:", "Contacte con el administrador" + ex.getMessage()));
         }
     }
-    
+    // para el selectOneMenu al crear el test
     public List<Concepto> getConceptosPorTema(Tema tema) {
+        if(tema!=null){
+        this.session = null;
+        this.transaction = null;
+        this.tema=tema;
+        try {
+            DaoConcepto daoConcepto = new DaoConcepto();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            
+            List<Concepto> temp = daoConcepto.verPorTema(session, this.tema.getIdTema());
+            Concepto c=daoConcepto.verConceptoGeneral(session, this.tema.getIdTema(), this.tema.getNombre());
+            List<Concepto> conceptos= new ArrayList<>();
+            conceptos.add(c);
+            for (int i = 0; i < temp.size(); i++) {
+                if(!temp.get(i).equals(c)){
+                    conceptos.add(temp.get(i));
+                }
+                
+            }
+            
+            transaction.commit();
+            return conceptos;
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR LISTA DE CONCEPTO POR TEMA:", "Contacte con el administrador" + ex.getMessage()));
+
+            return null;
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+        }
+        return null;
+    }
+    
+    public List<Concepto> getConceptosPorTemaTabla(Tema tema) {
         if(tema!=null){
         this.session = null;
         this.transaction = null;
@@ -217,6 +257,8 @@ public class BeanRConcepto {
             
             List<Concepto> t = daoConcepto.verPorTema(session, this.tema.getIdTema());
             transaction.commit();
+            Concepto c=daoConcepto.verConceptoGeneral(session, this.tema.getIdTema(), this.tema.getNombre());
+            t.remove(c);
             return t;
         } catch (Exception ex) {
             if (this.transaction != null) {

@@ -91,7 +91,7 @@
                         <p:dialog header="Datos de la pregunta" widgetVar="dialogVerItems" modal="true">
                             <h:panelGrid columns="3">
                             <p:outputLabel value="Concepto: " for="menuConcepto"/>
-                            <p:selectOneMenu converter="conceptoConverter" id="menuConcepto" value="#{beanRPregunta.pregunta.concepto}" >
+                            <p:selectOneMenu converter="conceptoConverter" id="menuConcepto" value="#{beanRPregunta.pregunta.concepto}"  >
                                 <f:selectItems id="itemsConcepto" value="#{beanRConcepto.getConceptosPorTema(beanRTest.test.tema)}" var="p" itemLabel="#{p.nombreConcepto}"/>
                                 <f:converter converterId="conceptoConverter"/>
                             </p:selectOneMenu>

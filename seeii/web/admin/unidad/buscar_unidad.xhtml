@@ -171,7 +171,7 @@
                             <h:panelGrid columns="2">
                                 <h3>CONCEPTOS:</h3>
                             </h:panelGrid>
-                            <p:dataTable id="tablaItems" var="item" value="#{beanRConcepto.getConceptosPorTema(beanRTema.tema)}" selection="#{beanRConcepto.concepto}" selectionMode="single" rowKey="#{item.idConcepto}" paginator="true" rows="10" >
+                            <p:dataTable id="tablaItems" var="item" value="#{beanRConcepto.getConceptosPorTemaTabla(beanRTema.tema)}" selection="#{beanRConcepto.concepto}" selectionMode="single" rowKey="#{item.idConcepto}" paginator="true" rows="10" >
                                 <p:ajax event="rowSelect" update=":frmEditarConcepto:panelEditarConcepto" oncomplete="dialogVerConceptos.show()"/>
                                 <p:column headerText="NOMBRE CONCEPTO">
                                     <p:outputLabel value="#{item.nombreConcepto}"/>
@@ -209,8 +209,9 @@
                                 <p:commandButton ajax="false" value="Crear Concepto" actionListener="#{beanRConcepto.registrar()}" styleClass="botonstyle" icon="ui-icon-circle-plus" disabled="false"/>
                                 <p:commandButton ajax="false" value="Actualizar" actionListener="#{beanRConcepto.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>
                                 <h:panelGroup>
-                                    <p:commandButton value="Eliminar" title="Eliminar"  onclick="PF('cdc').show();" styleClass="botonstyle" icon="ui-icon-trash" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>
-                                    <p:confirmDialog message="El concepto será eliminado" header="Eliminar" severity="alert" widgetVar="cdc" styleClass="confirmEliminar" appendTo="@(body)">
+                                    <p:commandButton ajax="false" value="Eliminar" title="Eliminar" actionListener="#{beanRConcepto.eliminar()}" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}" onclick="if (!confirm('Desea eliminar el concepto'))
+                                        return false;" styleClass="botonstyle" icon="ui-icon-trash"/>
+                                    <p:confirmDialog message="El concepto será eliminado" header="Eliminar" severity="alert" widgetVar="cdc" styleClass="confirmEliminar">
                                             <p:commandButton ajax="false" value="Aceptar" actionListener="#{beanRConcepto.eliminar()}" oncomplete="PF('cdc').hide()"/>
                                             <p:commandButton value="Cancelar" onclick="PF('cdc').hide();" type="button" />
                                     </p:confirmDialog>

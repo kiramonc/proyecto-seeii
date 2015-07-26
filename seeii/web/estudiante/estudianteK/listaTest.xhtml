@@ -11,10 +11,13 @@
         <ui:composition template="./../../templates/templateEstudianteTest.xhtml">
 
             <ui:define name="content">
+                <center><h2>LISTA DE TEST DISPONIBLES</h2></center><hr/>
                 <h:form id="dockTest">
-                    <p:dock position="center" model="#{beanRConsultarTest.model}"></p:dock>
-                    </h:form>
-                
+                    <p:dock position="top" model="#{beanRConsultarTest.model}"></p:dock>
+
+                    
+                </h:form>
+
             </ui:define>
 
         </ui:composition>
