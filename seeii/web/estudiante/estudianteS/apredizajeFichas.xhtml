@@ -10,11 +10,13 @@
         <ui:composition template="./../../templates/templateEstudiante.xhtml">
             <ui:define name="content">
 
-                <h1>PASO 1: Aprendizaje mediante Fichas</h1>
-                <p:carousel id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;">  
-                    <p:graphicImage value="http://localhost:8080/seeii/faces/resources/imagen/school/backpack.jpg"/>
-                    <p:graphicImage value="http://localhost:8080/seeii/faces/resources/imagen/school/backpack.jpg"/>
-                </p:carousel>
+                <h1>PASO 1: Aprendizaje mediante Fichas</h1> 
+                <p:carousel id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;"
+                            value="#{beanRaprendizajeFicha.generar(1, 10, 3)}" var="var">  
+                    
+                    <p:graphicImage value="#{FacesContext.getCurrentInstance()}/imgFicha/#{var.nombre}.jpg" />
+
+                     </p:carousel>
 
             </ui:define>
 

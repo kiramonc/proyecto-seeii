@@ -32,6 +32,7 @@ public class BeanRFicha {
     private List<Ficha> listaFichas;
     private Tema tema;
     private List<Tema> listaTemas;
+    private List<Tema> listaTemasfiltrado;
     private String unidad = "";
 
     private Session session;
@@ -100,6 +101,31 @@ public class BeanRFicha {
             }
         }
     }
+    
+    public List<Tema> getAllTemas() {
+        this.session = null;
+        this.transaction = null;
+        try {
+            DaoTema daoTema = new DaoTema();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            this.listaTemas = daoTema.verTodo(session);
+            this.transaction.commit();
+            return this.listaTemas;
+
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR:", "Contacte con el administrador" + ex.getMessage()));
+            return null;
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+    }
+    
 //metodo para fijar la unidad al elegir un tema
 
     public void onChangeSelect2() {
@@ -132,10 +158,10 @@ public class BeanRFicha {
         this.tema = tema;
     }
 
-    public List<Tema> getListaTemas() {
-        DaoTema daoTemas = new DaoTema();
-        List<Tema> temas = daoTemas.verTodo();
-        listaTemas = temas;
+    public List<Tema> getListaTemas() throws Exception {
+//        DaoTema daoTemas = new DaoTema();
+//        List<Tema> temas = daoTemas.verTodo();
+//        listaTemas = temas;
         return listaTemas;
     }
 
@@ -149,6 +175,14 @@ public class BeanRFicha {
 
     public void setUnidad(String unidad) {
         this.unidad = unidad;
+    }
+
+    public List<Tema> getListaTemasfiltrado() {
+        return listaTemasfiltrado;
+    }
+
+    public void setListaTemasfiltrado(List<Tema> listaTemasfiltrado) {
+        this.listaTemasfiltrado = listaTemasfiltrado;
     }
 
 }
