@@ -15,11 +15,11 @@
                     <p:growl id="mensajeGeneral" showDetail="true" sticky="false" life="4000"/>
                     <br/>
                     <center>
-                        <p:outputLabel value="#{beanRPresentarTest.obtenerPregunta(1).descripcion}" style="font-size: 22px; color: #036fab; text-shadow: 1px 1px 1px; font-family: cursive,sans-serif;"/>
+                        <p:outputLabel value="#{beanRPresentarTest.obtenerPregunta(beanSTest.codigoTest).descripcion}" style="font-size: 22px; color: #036fab; text-shadow: 1px 1px 1px; font-family: cursive,sans-serif;"/>
                     </center>
                     <br/>
 
-                    <p:dataGrid var="item" value="#{beanRPresentarTest.itemsPorPregunta(1)}" columns="3" rows="12" id="gridItemsPregunta">
+                    <p:dataGrid var="item" value="#{beanRPresentarTest.itemsPorPregunta()}" columns="3" rows="12" id="gridItemsPregunta">
                         <p:column>
                             <p:panel header="#{item.nombreItem}" style="font-size: 18px; color: #036fab; text-shadow: 1px 1px 1px; font-family: cursive,sans-serif; text-transform: uppercase">
                                 <h:panelGrid columns="1">

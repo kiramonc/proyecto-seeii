@@ -13,9 +13,23 @@
             <ui:define name="content">
                 <center><h2>LISTA DE TEST DISPONIBLES</h2></center><hr/>
                 <h:form id="dockTest">
-                    <p:dock position="top" model="#{beanRConsultarTest.model}"></p:dock>
 
-                    
+
+                    <p:dataGrid var="menuItem" value="#{beanRConsultarTest.itemsMenu}" columns="7" rows="12"  >
+                        <p:column style="text-align: center;">
+                            
+                            <p:panel footer="#{menuItem.tema.nombre}" styleClass="panelStyle" style="font-size: 12px; text-shadow: 0px 0px 1.5px; font-family: cursive,sans-serif; text-transform: uppercase;">
+                                    <h:commandLink action="#{beanSTest.iniciarTest(menuItem.idTest)}">
+                                    <p:graphicImage styleClass="imgItem" value="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/iconos/Tutorial.ico" width="70" height="70" cache="false"/>
+                                    </h:commandLink>
+                                </p:panel>
+                            
+
+                        </p:column>
+                    </p:dataGrid>
+
+
+
                 </h:form>
 
             </ui:define>

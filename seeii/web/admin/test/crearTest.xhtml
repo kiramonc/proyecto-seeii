@@ -212,9 +212,11 @@
                             <p:message for="txtTraduccion"/>
 
                             <p:outputLabel value="Imagen: " for="uploadImagen"/>
-                            <p:fileUpload id="uploadImagen" value="#{beanRItem.imagen}" mode="simple" />
+                            <p:fileUpload id="uploadImagen" value="#{beanRItem.imagen}" mode="simple"/>
                             <p:message for="uploadImagen"/>
                             
+                            <p:graphicImage value="#{FacesContext.getCurrentInstance().getExternalContext()}/imgItems/#{beanRItem.item.imgItem}" width="60" height="60" cache="false"/>
+                            <p:outputLabel value="#{beanRItem.item.imgItem}"/>
                         </h:panelGrid>
                         <center>
                             <p:commandButton value="Actualizar" ajax="false" actionListener="#{beanRItem.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check"/>
@@ -240,7 +242,7 @@
                             <p:message for="txtTraduccion"/>
 
                             <p:outputLabel value="Imagen: " for="uploadImagen"/>
-                            <p:fileUpload id="uploadImagen" value="#{beanRItem.imagen}" mode="simple" />
+                            <p:fileUpload id="uploadImagen" value="#{beanRItem.imagen}" mode="simple" previewWidth="50" update="vistaprevia" />
                             <p:message for="uploadImagen"/>
                         </h:panelGrid>
                         <center>

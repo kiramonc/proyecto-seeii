@@ -53,6 +53,7 @@ public class BeanRConsultarTest {
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
             Test t = daoUnidad.verPorCodigoTest(session, idTest);
+            this.test=t;
             transaction.commit();
             return t;
         } catch (Exception ex) {
@@ -123,7 +124,7 @@ public class BeanRConsultarTest {
         this.listaPreguntas = listaPreguntas;
     }
 
-    public MenuModel getModel() {
+    public List<Test> getItemsMenu() {
         this.session = null;
         this.transaction = null;
         try {
@@ -140,32 +141,8 @@ public class BeanRConsultarTest {
                 listaTests.add(t);
             }
             this.listaTest = listaTests;
-
             this.transaction.commit();
-            System.out.println("Lista Test tiene un total de: " + listaTest.size() + " elementos");
-            MenuModel model = new DefaultMenuModel();
-            DefaultMenuItem item = null;
-            
-            for (int i = 0; i < listaTest.size(); i++) {
-                item = new DefaultMenuItem(listaTest.get(i).getTema().getNombre());                
-                item.setIcon("/resources/iconos/Tutorial.ico");
-                if(i==0){
-                item.setOutcome("/estudiante/estudianteK/test");
-                }else{
-                    if(i==1){
-                    item.setOutcome("/estudiante/estudianteK/testListening1");
-                    }else{
-                        item.setOutcome("/estudiante/estudianteK/testSpeaking3");
-                    }
-                }
-                model.addElement(item);
-            }
-            this.model = model;
-            System.out.println("El modelo tiene " + this.model.getElements().size() + " elementos");
-
-            
-            return this.model;
-
+            return this.listaTest;
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -178,5 +155,63 @@ public class BeanRConsultarTest {
             }
         }
     }
+        
+//    public MenuModel getModel() {
+//        this.session = null;
+//        this.transaction = null;
+//        try {
+//            DaoTest daoTest = new DaoTest();
+//            DaoTema daoTema = new DaoTema();
+//            this.session = HibernateUtil.getSessionFactory().openSession();
+//            this.transaction = session.beginTransaction();
+//            List<Tema> temas = daoTema.verPorUnidad(session, 1);
+//
+//            Test t = null;
+//            List<Test> listaTests = new ArrayList<>();
+//            for (int i = 0; i < temas.size(); i++) {
+//                t = daoTest.verPorTema(session, temas.get(i).getIdTema());
+//                listaTests.add(t);
+//            }
+//            this.listaTest = listaTests;
+//
+//            this.transaction.commit();
+//            System.out.println("Lista Test tiene un total de: " + listaTest.size() + " elementos");
+//            MenuModel model = new DefaultMenuModel();
+//            DefaultMenuItem item = null;
+//            
+//            for (int i = 0; i < listaTest.size(); i++) {
+//                item = new DefaultMenuItem(listaTest.get(i).getTema().getNombre());
+//                item.setIcon("/resources/iconos/Tutorial.ico");
+////                item.setCommand("#{beanSTest.iniciarTest('"+Integer.toString(listaTests.get(i).getIdTest())+"')}");
+//                if(i==0){
+////                item.setOutcome("/estudiante/estudianteK/test");
+//                item.setCommand("#{beanSTest.iniciarTest(\"1\")}");
+//                }else{
+//                    if(i==1){
+////                    item.setOutcome("/estudiante/estudianteK/testListening1");
+//                    }else{
+////                        item.setOutcome("/estudiante/estudianteK/testSpeaking3");
+//                    }
+//                }
+//                model.addElement(item);
+//            }
+//            this.model = model;
+//            System.out.println("El modelo tiene " + this.model.getElements().size() + " elementos");
+//
+//            
+//            return this.model;
+//
+//        } catch (Exception ex) {
+//            if (this.transaction != null) {
+//                this.transaction.rollback();
+//            }
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CREAR MENU DINÁMICO:", "Contacte con el administrador" + ex.getMessage()));
+//            return null;
+//        } finally {
+//            if (this.session != null) {
+//                this.session.close();
+//            }
+//        }
+//    }
 
 }

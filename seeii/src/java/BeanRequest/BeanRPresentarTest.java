@@ -5,6 +5,7 @@
  */
 package BeanRequest;
 
+import Clases.BayesNetworkIngles;
 import Dao.DaoConcepto;
 import Dao.DaoItem;
 import Dao.DaoPregunta;
@@ -52,10 +53,17 @@ public class BeanRPresentarTest {
         this.transaction = null;
 
         try {
-            DaoPregunta daoItem = new DaoPregunta();
+            DaoPregunta daoPregunta = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            preguntaSeleccionada = daoItem.verPorCodigoPregunta(session, codigo);
+            List<Pregunta> listaPregunta = daoPregunta.verPorTest(session, codigo);
+
+            // Crear objeto del análisis de la red bayesiana
+            BayesNetworkIngles bn = new BayesNetworkIngles();
+            //obtención de una pregunta según el análisis
+            preguntaSeleccionada = listaPregunta.get(bn.generarCodigoPregunta(listaPregunta));
+            System.out.println("La pregunta mostrada en el enunciado es:" + preguntaSeleccionada.getDescripcion());
+//            preguntaSeleccionada = daoPregunta.verPorCodigoPregunta(session, codigo);
             transaction.commit();
             return preguntaSeleccionada;
         } catch (Exception ex) {
@@ -73,16 +81,58 @@ public class BeanRPresentarTest {
 
     public void guardarRespuestaTemp(String respuesta) {
         this.respuestTemp = respuesta;
-        if (this.preguntaSeleccionada.getConcepto().getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
-            this.correcto = true;
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
-        } else {
-            this.correcto = false;
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
+        if (preguntaSeleccionada.getPeso() == 2.0) {
+            if (this.preguntaSeleccionada.getConcepto().getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
+                this.correcto = true;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
+            } else {
+                this.correcto = false;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
 
+            }
+            System.out.println("LA RESPUESTA INDICADA ES PARA LA PREGUNTA " + preguntaSeleccionada.getDescripcion());
+            System.out.println("LA RESPUESTA correcta era " + preguntaSeleccionada.getConcepto().getNombreConcepto());
+        } else {
+            if (preguntaSeleccionada.getPeso() == 1.0) {
+                this.session = null;
+                this.transaction = null;
+
+                try {
+                    DaoConcepto daoConcepto = new DaoConcepto();
+                    DaoTema daoTema = new DaoTema();
+                    DaoTest daoTest = new DaoTest();
+                    this.session = HibernateUtil.getSessionFactory().openSession();
+                    this.transaction = session.beginTransaction();
+                    Test test = daoTest.verPorCodigoTest(session, preguntaSeleccionada.getTest().getIdTest());
+                    Tema tema = daoTema.verPorCodigoTema(session, test.getTema().getIdTema());
+                    List<Concepto> listaConceptos = daoConcepto.verPorTema(session, tema.getIdTema());
+                    transaction.commit();
+                    this.correcto = false;
+                    for (int i = 0; i < listaConceptos.size(); i++) {
+                        if (listaConceptos.get(i).getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
+                            this.correcto = true;
+                            break;
+                        }
+                    }
+                    if (correcto) {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
+                    }
+
+                } catch (Exception ex) {
+                    if (this.transaction != null) {
+                        this.transaction.rollback();
+                    }
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CONSULTAR CONCEPTO POR TEST - TEMA:", "Contacte con el administrador" + ex.getMessage()));
+                } finally {
+                    if (this.session != null) {
+                        this.session.close();
+                    }
+                }
+            }
         }
-//        RequestContext.getCurrentInstance().update("frmRespuesta:panelRespuesta");
-//        RequestContext.getCurrentInstance().execute("PF('dialogRespuesta').show()");
+
     }
 
     public void compRespuestaListening1(String respuesta) {
@@ -92,28 +142,24 @@ public class BeanRPresentarTest {
 
         try {
             DaoConcepto daoConcepto = new DaoConcepto();
-            DaoTema daoTema= new DaoTema();
-            DaoTest daoTest= new DaoTest();
+            DaoTema daoTema = new DaoTema();
+            DaoTest daoTest = new DaoTest();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            System.out.println("La pregunta que se está evaluando es: "+preguntaSeleccionada.getDescripcion());
-            Test test=daoTest.verPorCodigoTest(session, preguntaSeleccionada.getTest().getIdTest());
+            Test test = daoTest.verPorCodigoTest(session, preguntaSeleccionada.getTest().getIdTest());
             Tema tema = daoTema.verPorCodigoTema(session, test.getTema().getIdTema());
-            System.out.println("el tema que está obteniendo es: "+tema.getNombre());
             List<Concepto> listaConceptos = daoConcepto.verPorTema(session, tema.getIdTema());
-            System.out.println("la lista de los conceptos por el tema son: "+listaConceptos.size());
             transaction.commit();
-            this.correcto=false;
+            this.correcto = false;
             for (int i = 0; i < listaConceptos.size(); i++) {
                 if (listaConceptos.get(i).getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
                     this.correcto = true;
                     break;
                 }
             }
-            
-            if(correcto){
+            if (correcto) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
-            }else{
+            } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
             }
 
@@ -129,7 +175,7 @@ public class BeanRPresentarTest {
         }
     }
 
-    public List<Item> itemsPorPregunta(int codigo) {
+    public List<Item> itemsPorPregunta() {
         this.session = null;
         this.transaction = null;
 
@@ -137,7 +183,8 @@ public class BeanRPresentarTest {
             DaoItem daoItem = new DaoItem();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            List<Item> t = daoItem.verPorPregunta(session, codigo);
+            List<Item> t = daoItem.verPorPregunta(session, preguntaSeleccionada.getIdPregunta());
+            System.out.println("LOS ITEMS MOSTRADOS SON PARA LA PREGUNTA:" + preguntaSeleccionada.getDescripcion());
             transaction.commit();
             return t;
         } catch (Exception ex) {
@@ -186,6 +233,7 @@ public class BeanRPresentarTest {
             this.transaction = session.beginTransaction();
             Test t = daoUnidad.verPorCodigoTest(session, idTest);
             transaction.commit();
+            this.test = t;
             return t;
         } catch (Exception ex) {
             if (this.transaction != null) {
