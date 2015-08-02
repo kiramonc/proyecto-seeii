@@ -38,7 +38,7 @@
 }
 
 .left_content {
-    background-color: #dddddd;
+    background-image: url("http://localhost:8080/seeii/faces/resources/imagen/school/fondo.png");
     padding: 5px;
     margin-left: 170px;
 }
@@ -147,4 +147,52 @@ h1 {
     position: relative;
     height: 128px;
     text-align: center;
+}
+
+.imgItem{
+    position: inherit;
+    padding-left: 0px;
+}
+
+.panelStyle{
+    width: 80px;
+    height: 100px;
+    border:none;
+    background: #ffffff;
+}
+
+
+.ui-widget-content {
+    border: 1px solid transparent;
+    background: transparent;
+    color: #4f4f4f;
+}
+
+.ui-widget {
+    font-family: Arial,sans-serif;
+    font-size: 1.1em;
+}
+
+.ui-panel {
+    padding: 0;
+}
+
+.ui-panel .ui-panel-content {
+    border: 0;
+    background: none;
+    padding: 0.2em 0.2em;
+}
+.ui-panel .ui-panel-footer {
+    border-width: 1px 0 0;
+    margin: -8px 0 0 !important;
+    padding: 0em 1em !important;
+    text-align: center !important;
+    color: #036fab;
+    font-weight : bold;
+
+}
+
+
+#dockTest{
+   background: transparent;
 }
