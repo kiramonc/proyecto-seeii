@@ -20,7 +20,7 @@
                         <h:panelGroup id="listaFicha">
                             <center><h3>Lista de Temas</h3></center>
                             <h4>NOTA: Elegir un tema para crear una ficha</h4>                           
-                            <p:dataTable id="tablaListaFicha" var="item" value="#{beanRFicha.getAllTemas}" tyleClass="estiloTablaFicha" tableStyleClass="tablaTest">
+                            <p:dataTable id="tablaListaFicha" var="item" value="#{beanRFicha.getAllTemas}" styleClass="estiloTablaFicha" tableStyleClass="tablaTest">
                             <!--p:ajax event="rowSelect" update=":frmDatosFicha:panelDatosFicha"/-->
                             <p:column headerText="TEMA" >
                                 <p:outputLabel value="#{item.nombre}"/>
