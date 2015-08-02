@@ -7,13 +7,19 @@ package BeanRequest;
 
 import Clases.ListFicha;
 import Pojo.Ficha;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.servlet.ServletContext;
+import org.primefaces.model.DashboardColumn;
+import org.primefaces.model.DashboardModel;
+import org.primefaces.model.DefaultDashboardColumn;
+import org.primefaces.model.DefaultDashboardModel;
 
 /**
  *
@@ -21,24 +27,42 @@ import javax.servlet.ServletContext;
  */
 @ManagedBean
 @RequestScoped
-public class BeanRaprendizajeFicha {
+public class BeanRaprendizajeFicha implements Serializable {
 
     private Ficha ficha;
 //    private ListFicha listaF;
 //    private List<ListFicha> fichaList;
 //    private List<Integer> aleatorios;
-
-    public BeanRaprendizajeFicha() {
-        
+    private DashboardModel model;
+    @PostConstruct
+    public void init() {
+        model = new DefaultDashboardModel();
+        DashboardColumn column1 = new DefaultDashboardColumn();
+        DashboardColumn column2 = new DefaultDashboardColumn();
+         
+        column1.addWidget("sports");
+        column1.addWidget("finance");
+         
+        column2.addWidget("lifestyle");
+        column2.addWidget("weather");
+         
+        column2.addWidget("politics");
+ 
+        model.addColumn(column1);
+        model.addColumn(column2);
     }
 
-    
+    public BeanRaprendizajeFicha() {
+
+    }
+
     public List<ListFicha> generar(int valorInicial, int valorFinal, int numAleatorio) {
-       ArrayList listaNumero = new ArrayList();
-       List<ListFicha> listaN= new ArrayList();
-       
+        ArrayList listaNumero = new ArrayList();
+        List<ListFicha> listaN = new ArrayList();
+
         for (int i = 0; i < numAleatorio;) {
-            int numero = (int) (Math.random() * (valorFinal - valorInicial + 1) + valorInicial);//genero un numero
+            int numero = (int) (Math.random() * (valorFinal - valorInicial + 1
+                    ) + valorInicial);//genero un numero
             if (listaNumero.isEmpty()) {//si la lista esta vacia
                 listaNumero.add(numero);
                 i++;
@@ -50,17 +74,17 @@ public class BeanRaprendizajeFicha {
                 }
             }
         }
-        System.out.println(".............................................."+listaNumero);
+        System.out.println(".............................................." + listaNumero);
         for (int i = 0; i < listaNumero.size(); i++) {
-            ListFicha lista=new ListFicha((Integer)listaNumero.get(i));
+            ListFicha lista = new ListFicha((Integer) listaNumero.get(i));
             System.out.println(lista);
             listaN.add(lista);
         }
-                System.out.println(listaN);
+        System.out.println(listaN);
 
         return listaN;
     }
-    
+
     public Ficha getFicha() {
         return ficha;
     }
@@ -69,10 +93,6 @@ public class BeanRaprendizajeFicha {
         this.ficha = ficha;
 
     }
-
-   
-
-    
 
 }
 //private List<String> urls;

@@ -9,15 +9,41 @@
 
         <ui:composition template="./../../templates/templateEstudiante.xhtml">
             <ui:define name="content">
-
                 <h1>PASO 1: Aprendizaje mediante Fichas</h1> 
-                <p:carousel id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;"
-                            value="#{beanRaprendizajeFicha.generar(1, 10, 3)}" var="var">  
-                    
-                    <p:graphicImage value="#{FacesContext.getCurrentInstance()}/imgFicha/#{var.nombre}.jpg" />
+                <h:panelGrid id="panelAprendizaje" columns="3" cellspacing="25px">
+                    <p:carousel id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;"
+                                value="#{beanRaprendizajeFicha.generar(1, 10, 3)}" var="var">  
+                        <p:graphicImage value="#{FacesContext.getCurrentInstance()}/imgFicha/#{var.nombre}.jpg" />
+                    </p:carousel>
+                    <p:commandButton value="Test"  styleClass="botonstyle"/>
+                    <h:form>
+                        <p:dashboard id="board" model="#{dashboardView.model}">
 
-                     </p:carousel>
+                            <p:panel id="sports" header="Sports">
+                                <h:outputText value="Sports Content" />
+                            </p:panel>
 
+                            <p:panel id="finance" header="Finance">
+                                <h:outputText value="Finance Content" />
+                            </p:panel>
+
+                            <p:panel id="lifestyle" header="Lifestyle">
+                                <h:outputText value="Lifestyle Content"  />
+                            </p:panel>
+
+                            <p:panel id="weather" header="Weather">
+                                <h:outputText value="Weather Content" />
+                            </p:panel>
+
+                            <p:panel id="politics" header="Politics">
+                                <h:outputText value="Politics Content" />
+                            </p:panel>
+                        </p:dashboard>
+
+                        <div style="clear:both" />
+                    </h:form>
+
+                </h:panelGrid>
             </ui:define>
 
         </ui:composition>
