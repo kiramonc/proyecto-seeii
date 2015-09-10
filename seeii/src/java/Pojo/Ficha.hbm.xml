@@ -17,23 +17,17 @@
         <property name="descripcion" type="string">
             <column name="descripcion" length="100" />
         </property>
-        <property name="imagen" type="binary">
-            <column name="imagen" />
-        </property>
-        <property name="sonido" type="binary">
-            <column name="sonido" />
-        </property>
         <property name="estadoAprendizaje" type="string">
             <column name="estadoAprendizaje" length="50" not-null="true" />
         </property>
         <property name="estado" type="boolean">
             <column name="estado" not-null="true" />
         </property>
-        <set name="fichainterrogacions" table="fichainterrogacion" inverse="true" lazy="true" fetch="select">
+        <set name="fichaPreguntas" table="ficha_pregunta" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="ficha" not-null="true" />
             </key>
-            <one-to-many class="Pojo.Fichainterrogacion" />
+            <one-to-many class="Pojo.FichaPregunta" />
         </set>
     </class>
 </hibernate-mapping>

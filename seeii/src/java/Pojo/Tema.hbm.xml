@@ -32,6 +32,12 @@
             </key>
             <one-to-many class="Pojo.Ficha" />
         </set>
+        <set name="entrenamientos" table="entrenamiento" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idtema" not-null="true" />
+            </key>
+            <one-to-many class="Pojo.Entrenamiento" />
+        </set>
         <set name="conceptos" table="concepto" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="tema" not-null="true" />

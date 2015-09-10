@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 24/07/2015 12:27:41 PM by Hibernate Tools 3.6.0
+// Generated Sep 10, 2015 3:19:42 PM by Hibernate Tools 4.3.1
 
 
 import java.util.HashSet;
@@ -14,6 +14,7 @@ public class Estudiante  implements java.io.Serializable {
      private int idEst;
      private Unidadensenianza unidadensenianza;
      private Usuario usuario;
+     private Set entrenamientos = new HashSet(0);
      private Set resultados = new HashSet(0);
 
     public Estudiante() {
@@ -25,10 +26,11 @@ public class Estudiante  implements java.io.Serializable {
         this.unidadensenianza = unidadensenianza;
         this.usuario = usuario;
     }
-    public Estudiante(int idEst, Unidadensenianza unidadensenianza, Usuario usuario, Set resultados) {
+    public Estudiante(int idEst, Unidadensenianza unidadensenianza, Usuario usuario, Set entrenamientos, Set resultados) {
        this.idEst = idEst;
        this.unidadensenianza = unidadensenianza;
        this.usuario = usuario;
+       this.entrenamientos = entrenamientos;
        this.resultados = resultados;
     }
    
@@ -52,6 +54,13 @@ public class Estudiante  implements java.io.Serializable {
     
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+    public Set getEntrenamientos() {
+        return this.entrenamientos;
+    }
+    
+    public void setEntrenamientos(Set entrenamientos) {
+        this.entrenamientos = entrenamientos;
     }
     public Set getResultados() {
         return this.resultados;

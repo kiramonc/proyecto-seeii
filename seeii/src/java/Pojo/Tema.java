@@ -18,6 +18,7 @@ public class Tema implements java.io.Serializable {
      private String dominio;
      private boolean estado;
      private Set fichas = new HashSet(0);
+     private Set entrenamientos = new HashSet(0);
      private Set conceptos = new HashSet(0);
      private Set tests = new HashSet(0);
 
@@ -31,7 +32,7 @@ public class Tema implements java.io.Serializable {
         this.vocabulario = vocabulario;
         this.estado = estado;
     }
-    public Tema(int idTema, Unidadensenianza unidadensenianza, String nombre, String vocabulario, String objetivo, String dominio, boolean estado, Set fichas, Set conceptos, Set tests) {
+    public Tema(int idTema, Unidadensenianza unidadensenianza, String nombre, String vocabulario, String objetivo, String dominio, boolean estado, Set fichas, Set entrenamientos, Set conceptos, Set tests) {
        this.idTema = idTema;
        this.unidadensenianza = unidadensenianza;
        this.nombre = nombre;
@@ -40,6 +41,7 @@ public class Tema implements java.io.Serializable {
        this.dominio = dominio;
        this.estado = estado;
        this.fichas = fichas;
+       this.entrenamientos = entrenamientos;
        this.conceptos = conceptos;
        this.tests = tests;
     }
@@ -99,6 +101,13 @@ public class Tema implements java.io.Serializable {
     
     public void setFichas(Set fichas) {
         this.fichas = fichas;
+    }
+    public Set getEntrenamientos() {
+        return this.entrenamientos;
+    }
+    
+    public void setEntrenamientos(Set entrenamientos) {
+        this.entrenamientos = entrenamientos;
     }
     public Set getConceptos() {
         return this.conceptos;

@@ -14,6 +14,12 @@
         <many-to-one name="usuario" class="Pojo.Usuario" fetch="select">
             <column name="usuarioEst" not-null="true" />
         </many-to-one>
+        <set name="entrenamientos" table="entrenamiento" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idestudiante" not-null="true" />
+            </key>
+            <one-to-many class="Pojo.Entrenamiento" />
+        </set>
         <set name="resultados" table="resultado" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="estResultado" not-null="true" />

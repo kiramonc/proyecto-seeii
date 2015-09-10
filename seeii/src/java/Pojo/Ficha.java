@@ -15,11 +15,9 @@ public class Ficha  implements java.io.Serializable {
      private Tema tema;
      private String nombreFicha;
      private String descripcion;
-     private byte[] imagen;
-     private byte[] sonido;
      private String estadoAprendizaje;
      private boolean estado;
-     private Set fichainterrogacions = new HashSet(0);
+     private Set fichaPreguntas = new HashSet(0);
 
     public Ficha() {
     }
@@ -32,16 +30,14 @@ public class Ficha  implements java.io.Serializable {
         this.estadoAprendizaje = estadoAprendizaje;
         this.estado = estado;
     }
-    public Ficha(int idFicha, Tema tema, String nombreFicha, String descripcion, byte[] imagen, byte[] sonido, String estadoAprendizaje, boolean estado, Set fichainterrogacions) {
+    public Ficha(int idFicha, Tema tema, String nombreFicha, String descripcion, String estadoAprendizaje, boolean estado, Set fichaPreguntas) {
        this.idFicha = idFicha;
        this.tema = tema;
        this.nombreFicha = nombreFicha;
        this.descripcion = descripcion;
-       this.imagen = imagen;
-       this.sonido = sonido;
        this.estadoAprendizaje = estadoAprendizaje;
        this.estado = estado;
-       this.fichainterrogacions = fichainterrogacions;
+       this.fichaPreguntas = fichaPreguntas;
     }
    
     public int getIdFicha() {
@@ -72,20 +68,6 @@ public class Ficha  implements java.io.Serializable {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-    public byte[] getImagen() {
-        return this.imagen;
-    }
-    
-    public void setImagen(byte[] imagen) {
-        this.imagen = imagen;
-    }
-    public byte[] getSonido() {
-        return this.sonido;
-    }
-    
-    public void setSonido(byte[] sonido) {
-        this.sonido = sonido;
-    }
     public String getEstadoAprendizaje() {
         return this.estadoAprendizaje;
     }
@@ -100,12 +82,12 @@ public class Ficha  implements java.io.Serializable {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
-    public Set getFichainterrogacions() {
-        return this.fichainterrogacions;
+    public Set getFichaPreguntas() {
+        return this.fichaPreguntas;
     }
     
-    public void setFichainterrogacions(Set fichainterrogacions) {
-        this.fichainterrogacions = fichainterrogacions;
+    public void setFichaPreguntas(Set fichaPreguntas) {
+        this.fichaPreguntas = fichaPreguntas;
     }
 
 
