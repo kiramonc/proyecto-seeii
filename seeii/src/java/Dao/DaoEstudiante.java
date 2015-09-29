@@ -9,7 +9,7 @@ package Dao;
 import HibernateUtil.HibernateUtil;
 import Pojo.Administrador;
 import Pojo.Estudiante;
-import Pojo.Usuario;
+import Pojo.Tema;
 import java.util.List;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -34,13 +34,24 @@ public class DaoEstudiante implements Interface.InterfaceEstudiante{
     }
 
     @Override
-    public Estudiante verPorCodigoEstudiante(Session session, int idEst) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Estudiante verPorCodigoEstudiante(Session session, int idEstud) throws Exception {
+        String hql="from Estudiante where idEst=:idEst";
+        Query query=session.createQuery(hql);
+        query.setParameter("idEst", idEstud);
+        Estudiante estudiante=(Estudiante) query.uniqueResult();
+//        Hibernate.initialize(tema.getUnidadensenianza());
+        return estudiante;
     }
 
     @Override
     public Estudiante verPorCodigoUsuario(Session session, int idUsuario) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+     String hql="from Estudiante where usuarioEst=:usuarioEst";
+        Query query=session.createQuery(hql);
+        query.setParameter("usuarioEst", idUsuario);
+        Estudiante estudiante=(Estudiante) query.uniqueResult();
+//        Hibernate.initialize(tema.getUnidadensenianza());
+        return estudiante;
     }
 
     @Override

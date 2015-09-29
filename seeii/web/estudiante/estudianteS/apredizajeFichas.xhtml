@@ -3,20 +3,36 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <body>
 
         <ui:composition template="./../../templates/templateEstudiante.xhtml">
             <ui:define name="content">
+                
                 <h1>PASO 1: Aprendizaje mediante Fichas</h1> 
-                <h:panelGrid id="panelAprendizaje" columns="3" cellspacing="25px">
-                    <p:carousel id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;"
-                                value="#{beanRaprendizajeFicha.generar(1, 10, 3)}" var="var">  
-                        <p:graphicImage value="#{FacesContext.getCurrentInstance()}/imgFicha/#{var.nombre}.jpg" />
+
+                <h:panelGrid id="panelAprendizaje" columns="2" cellspacing="10px">
+                    <p:carousel  id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;"
+                                 value="#{beansRFichaPregunta.crearFichasPreguntas(beanSEntrenar.idEntrenamiento, beanSEntrenar.idPrenguntaEnt)}"
+                                 var="var"  effect="easeInStrong"  >  
+                        <p:graphicImage   id="grafico" value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{var.ficha.idFicha}.jpg" />
+
                     </p:carousel>
-                    <p:commandButton value="Test"  styleClass="botonstyle"/>
-                    <h:form>
+
+                    <p:commandButton value="Test" action="aprendizajeTest" icon="ui-icon-home" 
+                                     style="padding: 15px; margin: 10px 55px 0px 0px; float: right;" />
+                </h:panelGrid>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+
+<!---h:form>
                         <p:dashboard id="board" model="#{dashboardView.model}">
 
                             <p:panel id="sports" header="Sports">
@@ -41,12 +57,4 @@
                         </p:dashboard>
 
                         <div style="clear:both" />
-                    </h:form>
-
-                </h:panelGrid>
-            </ui:define>
-
-        </ui:composition>
-
-    </body>
-</html>
+                    </h:form-->

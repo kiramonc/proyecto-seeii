@@ -16,5 +16,7 @@ import org.hibernate.Session;
 public interface InterfaceFicha {
     public boolean registrar(Session session, Ficha ficha) throws Exception;
     public List<Ficha> verTodo(Session session) throws Exception ;
+    public Ficha verPorCodigoFicha(Session session, int idFicha) throws Exception;
+    public List<Ficha> verListfichasPorTema(Session session, int idTema) throws Exception;
     
 }

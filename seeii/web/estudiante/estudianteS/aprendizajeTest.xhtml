@@ -1,21 +1,54 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 
-    <body>
+    <h:body>
 
         <ui:composition template="./../../templates/templateEstudiante.xhtml">
-
-            <ui:define name="top">
-                top
-            </ui:define>
-
             <ui:define name="content">
-                content
+                <h1>PASO 2: Prueba de la asociación de las fichas con sonidos</h1> 
+
+
+                <h:panelGrid id="panelTest" columns="2" cellspacing="25px">
+                    <h:form>
+                        <p:dashboard id="board" model="#{beanRaprendizajeFicha.model}" >
+
+                            <p:panel id="sports" header="IMAGEN" >
+                                <p:graphicImage  id="grafico" value="#{FacesContext.getCurrentInstance()}/imgFicha/1.jpg" 
+                                                 width="150px" height="100px"/>
+                            </p:panel>
+
+                            <p:panel id="finance" header="IMAGEN" >
+                                <p:graphicImage  id="grafico1" value="#{FacesContext.getCurrentInstance()}/imgFicha/1.jpg" 
+                                                 width="150px" height="100px"/>
+                            </p:panel>
+
+                            <p:panel id="lifestyle" header="IMAGEN">
+                                <p:graphicImage  id="grafico2" value="#{FacesContext.getCurrentInstance()}/imgFicha/1.jpg" 
+                                                 width="150px" height="100px"/>
+                            </p:panel>
+
+                            <p:panel id="weather" header="SONIDO">
+                                <audio src="../../resources/imagenSonido/1.mp3" controls="controls"  />
+                            </p:panel>
+
+                            <p:panel id="politics" header="SONIDO">
+                                <audio src="../../resources/imagenSonido/1.mp3" controls="controls"  />
+                            </p:panel>
+                        </p:dashboard>
+
+                        <div style="clear:both" />
+                    </h:form>
+
+                    <p:commandButton value="Test" action="aprendizajeTest" icon="ui-icon-home"/>
+                </h:panelGrid>
+
             </ui:define>
 
         </ui:composition>
 
-    </body>
+    </h:body>
 </html>

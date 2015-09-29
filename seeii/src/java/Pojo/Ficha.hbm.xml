@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 24/07/2015 12:27:42 PM by Hibernate Tools 3.6.0 -->
+<!-- Generated Sep 29, 2015 12:50:38 PM by Hibernate Tools 4.3.1 -->
 <hibernate-mapping>
-    <class name="Pojo.Ficha" table="ficha" catalog="proyectoinglescopia">
+    <class name="Pojo.Ficha" table="ficha" catalog="proyectoinglescopia" optimistic-lock="version">
         <id name="idFicha" type="int">
             <column name="idFicha" />
             <generator class="assigned" />
@@ -23,11 +23,11 @@
         <property name="estado" type="boolean">
             <column name="estado" not-null="true" />
         </property>
-        <set name="fichaPreguntas" table="ficha_pregunta" inverse="true" lazy="true" fetch="select">
+        <set name="fichaspreguntas" table="fichaspregunta" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="ficha" not-null="true" />
             </key>
-            <one-to-many class="Pojo.FichaPregunta" />
+            <one-to-many class="Pojo.Fichaspregunta" />
         </set>
     </class>
 </hibernate-mapping>

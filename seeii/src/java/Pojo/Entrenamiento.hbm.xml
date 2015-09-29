@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Sep 10, 2015 3:19:43 PM by Hibernate Tools 4.3.1 -->
+<!-- Generated Sep 29, 2015 12:50:38 PM by Hibernate Tools 4.3.1 -->
 <hibernate-mapping>
-    <class name="Pojo.Entrenamiento" table="entrenamiento" catalog="proyectoinglescopia">
+    <class name="Pojo.Entrenamiento" table="entrenamiento" catalog="proyectoinglescopia" optimistic-lock="version">
         <id name="idEntrena" type="int">
             <column name="idEntrena" />
             <generator class="assigned" />
@@ -23,14 +23,14 @@
         <property name="puntaje" type="int">
             <column name="puntaje" not-null="true" />
         </property>
-        <property name="fecha" type="date">
-            <column name="fecha" length="10" not-null="true" />
+        <property name="fecha" type="timestamp">
+            <column name="fecha" length="19" not-null="true" />
         </property>
-        <set name="preguntEntrenars" table="pregunt_entrenar" inverse="true" lazy="true" fetch="select">
+        <set name="preguntaentrenars" table="preguntaentrenar" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="identrenar" not-null="true" />
             </key>
-            <one-to-many class="Pojo.PreguntEntrenar" />
+            <one-to-many class="Pojo.Preguntaentrenar" />
         </set>
     </class>
 </hibernate-mapping>

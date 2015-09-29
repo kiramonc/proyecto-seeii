@@ -36,4 +36,24 @@ public class DaoFicha implements InterfaceFicha{
         return listaficha;
     }
     
+    @Override
+    public Ficha verPorCodigoFicha(Session session, int idFicha) throws Exception {
+        String hql="from Ficha where idFicha=:idFicha";
+        Query query=session.createQuery(hql);
+        query.setParameter("idFicha", idFicha);
+        Ficha ficha=(Ficha) query.uniqueResult();
+        return ficha;
+    }
+    @Override
+    public List<Ficha> verListfichasPorTema(Session session, int idTema) throws Exception {
+        String hql = "from Ficha where temaFicha=:temaFicha"; 
+        Query query = session.createQuery(hql);
+        query.setInteger("temaFicha", idTema);
+        List<Ficha> listaFichasPreguntas = (List<Ficha>) query.list();
+        for (Ficha lista : listaFichasPreguntas) {
+            Hibernate.initialize(lista.getTema());
+        }
+        return listaFichasPreguntas;
+    }
+    
 }

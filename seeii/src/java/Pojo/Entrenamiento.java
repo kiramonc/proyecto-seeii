@@ -1,5 +1,5 @@
 package Pojo;
-// Generated Sep 10, 2015 3:19:42 PM by Hibernate Tools 4.3.1
+// Generated Sep 29, 2015 12:50:34 PM by Hibernate Tools 4.3.1
 
 
 import java.util.Date;
@@ -19,7 +19,7 @@ public class Entrenamiento  implements java.io.Serializable {
      private int tiempo;
      private int puntaje;
      private Date fecha;
-     private Set preguntEntrenars = new HashSet(0);
+     private Set preguntaentrenars = new HashSet(0);
 
     public Entrenamiento() {
     }
@@ -34,7 +34,7 @@ public class Entrenamiento  implements java.io.Serializable {
         this.puntaje = puntaje;
         this.fecha = fecha;
     }
-    public Entrenamiento(int idEntrena, Estudiante estudiante, Tema tema, int error, int tiempo, int puntaje, Date fecha, Set preguntEntrenars) {
+    public Entrenamiento(int idEntrena, Estudiante estudiante, Tema tema, int error, int tiempo, int puntaje, Date fecha, Set preguntaentrenars) {
        this.idEntrena = idEntrena;
        this.estudiante = estudiante;
        this.tema = tema;
@@ -42,7 +42,7 @@ public class Entrenamiento  implements java.io.Serializable {
        this.tiempo = tiempo;
        this.puntaje = puntaje;
        this.fecha = fecha;
-       this.preguntEntrenars = preguntEntrenars;
+       this.preguntaentrenars = preguntaentrenars;
     }
    
     public int getIdEntrena() {
@@ -94,12 +94,12 @@ public class Entrenamiento  implements java.io.Serializable {
     public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
-    public Set getPreguntEntrenars() {
-        return this.preguntEntrenars;
+    public Set getPreguntaentrenars() {
+        return this.preguntaentrenars;
     }
     
-    public void setPreguntEntrenars(Set preguntEntrenars) {
-        this.preguntEntrenars = preguntEntrenars;
+    public void setPreguntaentrenars(Set preguntaentrenars) {
+        this.preguntaentrenars = preguntaentrenars;
     }
 
 

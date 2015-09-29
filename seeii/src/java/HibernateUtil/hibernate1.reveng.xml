@@ -10,9 +10,9 @@
     <table-filter match-name="test"/>
     <table-filter match-name="resultado"/>
     <table-filter match-name="rol"/>
-    <table-filter match-name="ficha_pregunta"/>
+    <table-filter match-name="fichaspregunta"/>
     <table-filter match-name="estudiante"/>
-    <table-filter match-name="pregunt_entrenar"/>
+    <table-filter match-name="preguntaentrenar"/> 
     <table-filter match-name="administrador"/>
     <table-filter match-name="entrenamiento"/>
     <table-filter match-name="concepto"/>

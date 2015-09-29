@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 24/07/2015 12:27:41 PM by Hibernate Tools 3.6.0
+// Generated Sep 29, 2015 12:50:34 PM by Hibernate Tools 4.3.1
 
 
 import java.util.HashSet;
@@ -17,7 +17,7 @@ public class Ficha  implements java.io.Serializable {
      private String descripcion;
      private String estadoAprendizaje;
      private boolean estado;
-     private Set fichaPreguntas = new HashSet(0);
+     private Set fichaspreguntas = new HashSet(0);
 
     public Ficha() {
     }
@@ -30,14 +30,14 @@ public class Ficha  implements java.io.Serializable {
         this.estadoAprendizaje = estadoAprendizaje;
         this.estado = estado;
     }
-    public Ficha(int idFicha, Tema tema, String nombreFicha, String descripcion, String estadoAprendizaje, boolean estado, Set fichaPreguntas) {
+    public Ficha(int idFicha, Tema tema, String nombreFicha, String descripcion, String estadoAprendizaje, boolean estado, Set fichaspreguntas) {
        this.idFicha = idFicha;
        this.tema = tema;
        this.nombreFicha = nombreFicha;
        this.descripcion = descripcion;
        this.estadoAprendizaje = estadoAprendizaje;
        this.estado = estado;
-       this.fichaPreguntas = fichaPreguntas;
+       this.fichaspreguntas = fichaspreguntas;
     }
    
     public int getIdFicha() {
@@ -82,12 +82,12 @@ public class Ficha  implements java.io.Serializable {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
-    public Set getFichaPreguntas() {
-        return this.fichaPreguntas;
+    public Set getFichaspreguntas() {
+        return this.fichaspreguntas;
     }
     
-    public void setFichaPreguntas(Set fichaPreguntas) {
-        this.fichaPreguntas = fichaPreguntas;
+    public void setFichaspreguntas(Set fichaspreguntas) {
+        this.fichaspreguntas = fichaspreguntas;
     }
 
 

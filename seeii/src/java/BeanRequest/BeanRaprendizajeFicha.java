@@ -5,17 +5,21 @@
  */
 package BeanRequest;
 
-import Clases.ListFicha;
+import Clases.ListAleatoreos;
 import Pojo.Ficha;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.faces.application.Application;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.servlet.ServletContext;
+import org.primefaces.component.dashboard.Dashboard;
+import org.primefaces.component.graphicimage.GraphicImage;
+import org.primefaces.component.panel.Panel;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
@@ -30,39 +34,39 @@ import org.primefaces.model.DefaultDashboardModel;
 public class BeanRaprendizajeFicha implements Serializable {
 
     private Ficha ficha;
-//    private ListFicha listaF;
+//    private ListAleatoreos listaF;
 //    private List<ListFicha> fichaList;
 //    private List<Integer> aleatorios;
+    private Dashboard dashboar;
     private DashboardModel model;
+
+    public BeanRaprendizajeFicha() {
+//        crearDashboardDinamico();
+    }
+
     @PostConstruct
     public void init() {
         model = new DefaultDashboardModel();
         DashboardColumn column1 = new DefaultDashboardColumn();
         DashboardColumn column2 = new DefaultDashboardColumn();
-         
+
         column1.addWidget("sports");
         column1.addWidget("finance");
-         
-        column2.addWidget("lifestyle");
+
+        column1.addWidget("lifestyle");
         column2.addWidget("weather");
-         
+
         column2.addWidget("politics");
- 
+
         model.addColumn(column1);
         model.addColumn(column2);
     }
-
-    public BeanRaprendizajeFicha() {
-
-    }
-
-    public List<ListFicha> generar(int valorInicial, int valorFinal, int numAleatorio) {
+    public List<ListAleatoreos> generar(int valorInicial, int valorFinal, int numAleatorio) {
         ArrayList listaNumero = new ArrayList();
-        List<ListFicha> listaN = new ArrayList();
+        List<ListAleatoreos> listaN = new ArrayList();
 
         for (int i = 0; i < numAleatorio;) {
-            int numero = (int) (Math.random() * (valorFinal - valorInicial + 1
-                    ) + valorInicial);//genero un numero
+            int numero = (int) (Math.random() * (valorFinal - valorInicial + 1) + valorInicial);//genero un numero
             if (listaNumero.isEmpty()) {//si la lista esta vacia
                 listaNumero.add(numero);
                 i++;
@@ -76,13 +80,60 @@ public class BeanRaprendizajeFicha implements Serializable {
         }
         System.out.println(".............................................." + listaNumero);
         for (int i = 0; i < listaNumero.size(); i++) {
-            ListFicha lista = new ListFicha((Integer) listaNumero.get(i));
+            ListAleatoreos lista = new ListAleatoreos((Integer) listaNumero.get(i));
             System.out.println(lista);
             listaN.add(lista);
         }
         System.out.println(listaN);
 
         return listaN;
+    }
+
+//    public void crearDashboardDinamico() {
+//        FacesContext fc = FacesContext.getCurrentInstance();
+//        Application app = fc.getApplication();
+//
+//        dashboar = (Dashboard) app.createComponent(fc, "org.primefaces.component.Dashboard", "org.primefaces.component.DashboardRenderer");
+//        model = new DefaultDashboardModel();
+//
+//        DashboardColumn column1 = new DefaultDashboardColumn();
+//        DashboardColumn column2 = new DefaultDashboardColumn();
+//        model.addColumn(column1);
+//        model.addColumn(column2);
+//        dashboar.setId("idDahboard");
+//        dashboar.setModel(model);
+//
+//        for (int i = 0; i < 3; i++) {
+//            GraphicImage gImage = (GraphicImage) app.createComponent(fc, "org.primefaces.component.GraphicImage", "org.primefaces.component.GraphicImageRenderer");
+//            gImage.setUrl("1.jpg");
+//            gImage.setId("idImage" + i);
+//            gImage.setHeight("30%");
+//            gImage.setWidth("30%");
+//            Panel panel=(Panel)app.createComponent(fc, "org.primefaces.component.Panel", "org.primefaces.component.PanelRenderer");
+//            panel.setWidgetVar(gImage.getId());
+//            panel.setId("idIPanel" + i);
+//            getDashboar().getChildren().add(panel);
+//            DashboardColumn cl = model.getColumn(0);
+//            cl.addWidget(panel.getId());
+//
+//        }
+//    }
+
+    
+    public Dashboard getDashboar() {
+        return dashboar;
+    }
+
+    public DashboardModel getModel() {
+        return model;
+    }
+
+    public void setModel(DashboardModel model) {
+        this.model = model;
+    }
+
+    public void setDashboar(Dashboard dashboar) {
+        this.dashboar = dashboar;
     }
 
     public Ficha getFicha() {
