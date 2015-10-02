@@ -61,7 +61,7 @@ public class BayesNetworkIngles {
         ProbNet probNet = pgmxReader.loadProbNet(file, bayesNetworkName).getProbNet();
 
         List<ProbNode> lista = probNet.getProbNodes();
-
+        
         for (int i = 0; i < lista.size(); i++) {
             ProbNode probNode = lista.get(i);
 //            System.out.println(probNode.getName());

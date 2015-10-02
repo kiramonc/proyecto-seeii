@@ -18,6 +18,8 @@ import Pojo.Pregunta;
 import Pojo.Tema;
 import Pojo.Test;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -42,6 +44,8 @@ public class BeanRPresentarTest {
     private Pregunta preguntaSeleccionada;
     private List<Item> listaItems;
     private String respuestTemp;
+    private String resultado;
+    private String imgItemSeleccionado;
     private boolean correcto;
 
     public BeanRPresentarTest() {
@@ -81,19 +85,30 @@ public class BeanRPresentarTest {
 
     public void guardarRespuestaTemp(String respuesta) {
         this.respuestTemp = respuesta;
-        if (preguntaSeleccionada.getPeso() == 2.0) {
+        if (preguntaSeleccionada.getPeso() == 2.0 || preguntaSeleccionada.getPeso() == 4.0) {
             if (this.preguntaSeleccionada.getConcepto().getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
                 this.correcto = true;
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
+//                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
             } else {
                 this.correcto = false;
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
-
+//                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
             }
-            System.out.println("LA RESPUESTA INDICADA ES PARA LA PREGUNTA " + preguntaSeleccionada.getDescripcion());
-            System.out.println("LA RESPUESTA correcta era " + preguntaSeleccionada.getConcepto().getNombreConcepto());
+            if (correcto) {
+                if (preguntaSeleccionada.getPeso() == 2.0) {
+                    this.resultado = "¡CONGRATULATIONS!";
+                } else {
+                    this.resultado = respuestTemp;
+                }
+            } else {
+                if (preguntaSeleccionada.getPeso() == 2.0) {
+                    this.resultado = "Try again";
+                } else {
+                    this.resultado = "Try again.";
+                }
+            }
+
         } else {
-            if (preguntaSeleccionada.getPeso() == 1.0) {
+            if (preguntaSeleccionada.getPeso() == 1.0 || preguntaSeleccionada.getPeso() == 3.0) {
                 this.session = null;
                 this.transaction = null;
 
@@ -108,16 +123,44 @@ public class BeanRPresentarTest {
                     List<Concepto> listaConceptos = daoConcepto.verPorTema(session, tema.getIdTema());
                     transaction.commit();
                     this.correcto = false;
-                    for (int i = 0; i < listaConceptos.size(); i++) {
-                        if (listaConceptos.get(i).getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
-                            this.correcto = true;
-                            break;
+                    if (preguntaSeleccionada.getPeso() == 1.0) {
+                        for (int i = 0; i < listaConceptos.size(); i++) {
+                            if (listaConceptos.get(i).getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
+                                this.correcto = true;
+                                break;
+                            }
                         }
-                    }
-                    if (correcto) {
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
                     } else {
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
+                        DaoItem daoItem = new DaoItem();
+                        Item itemSelect = null;
+                        this.transaction = session.beginTransaction();
+                        for (int i = 0; i < listaConceptos.size(); i++) {
+                            if (listaConceptos.get(i).getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
+                                System.out.println("el valor ahora es: "+this.correcto);
+                                this.correcto = true;
+                                itemSelect = daoItem.verPorNombreItem(session, respuestTemp);
+                                imgItemSeleccionado = itemSelect.getImgItem();
+                                break;
+                            }
+                        }
+                        System.out.println("el valor final: "+this.correcto);
+                        transaction.commit();
+                    }
+                    
+                    if (correcto) {
+                        if (preguntaSeleccionada.getPeso() == 1.0) {
+                            this.resultado = respuestTemp;
+                        } else {
+                            this.resultado = "This is " + respuestTemp + ". Now repeat.";
+                        }
+//                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
+                    } else {
+                        if (preguntaSeleccionada.getPeso() == 1.0) {
+                            this.resultado = "Try again";
+                        } else {
+                            this.resultado = "Try again. "+respuestTemp;
+                        }
+//                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Respuesta incorrecta:\n\n", respuestTemp));
                     }
 
                 } catch (Exception ex) {
@@ -131,8 +174,20 @@ public class BeanRPresentarTest {
                     }
                 }
             }
+
+        }
+        if(preguntaSeleccionada.getPeso()==3.0){
+            RequestContext.getCurrentInstance().update("frmResultadoSpeak:panelResultadoSpeak");
+        RequestContext.getCurrentInstance().execute("PF('dialogResultadoSpeak').show()");
+        }else{
+        RequestContext.getCurrentInstance().update("frmResultado:panelResultado");
+        RequestContext.getCurrentInstance().execute("PF('dialogResultado').show()");
         }
 
+    }
+
+    public String actualizarPagina() {
+        return "test";
     }
 
     public void compRespuestaListening1(String respuesta) {
@@ -334,4 +389,20 @@ public class BeanRPresentarTest {
         this.correcto = correcto;
     }
 
+    public String getResultado() {
+        return resultado;
+    }
+
+    public void setResultado(String resultado) {
+        this.resultado = resultado;
+    }
+
+    public String getImgItemSeleccionado() {
+        return imgItemSeleccionado;
+    }
+
+    public void setImgItemSeleccionado(String imgItemSeleccionado) {
+        this.imgItemSeleccionado = imgItemSeleccionado;
+    }
+    
 }

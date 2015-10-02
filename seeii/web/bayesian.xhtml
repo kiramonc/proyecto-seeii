@@ -12,90 +12,33 @@ and open the template in the editor.
     <head>
         <title>Red bayesiana</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<!--        <link href="css/estilo.css" rel="stylesheet" type="text/css" />-->
+        <!--        <link href="css/estilo.css" rel="stylesheet" type="text/css" />-->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.0.0/annyang.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+         <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
     </head>
     <body>
         <div class="body">
+             <div id="audio"></div>
             <div class="contenido">
                 <h1><center><h:outputText value="Red bayesiana con Tema Family"/></center></h1>
-                <h:form>
-                    <!--
-                    <div class="Formulario">
-                        <center><b><h3><h:outputLabel value="Ingreso de datos"/></h3></b></center>
-                        
-                        <h:panelGrid columns="2">
-                            <h:outputText value="Estatura:"></h:outputText>
-                            <h:selectOneMenu value="#{atletaBean.estatura}" required="true" class="item">
-                                <f:selectItem id="item1" itemLabel="Alto" itemValue="alto" />
-                                <f:selectItem id="item2" itemLabel="Medio" itemValue="medio" />
-                                <f:selectItem id="item3" itemLabel="Bajo" itemValue="bajo" />
-                            </h:selectOneMenu>
+                <img src="resources/imagen/imgDialog/Incorrecto.jpg" height="700px"/>
+                <section id="section_hello">
+                    <p id="hola" class="hidden">Demostracion de comandos con Annyang!</p>
+                </section>
 
-                            <h:outputText value="Peso:"></h:outputText>
-                            <h:selectOneMenu value="#{atletaBean.peso}" required="true" class="item">
-                                <f:selectItem id="item4" itemLabel="Alto" itemValue="alto" />
-                                <f:selectItem id="item5" itemLabel="Medio" itemValue="medio" />
-                                <f:selectItem id="item6" itemLabel="Bajo" itemValue="bajo" />
-                            </h:selectOneMenu>
-                            <h:outputText value="Edad:"></h:outputText>
-                            <h:selectOneMenu value="#{atletaBean.edad}" required="true" class="item">
-                                <f:selectItem id="item7" itemLabel="Mayor" itemValue="mayor" />
-                                <f:selectItem id="item8" itemLabel="Menor" itemValue="menor" />
-                            </h:selectOneMenu>
-
-                            <h:outputText value="Record Distancia:"></h:outputText>
-                            <h:selectOneMenu value="#{atletaBean.distancia}" required="true" class="item">
-                                <f:selectItem id="item9" itemLabel="Alto" itemValue="alto" />
-                                <f:selectItem id="item10" itemLabel="Medio" itemValue="medio" />
-                                <f:selectItem id="item11" itemLabel="Bajo" itemValue="bajo" />
-                            </h:selectOneMenu>
-
-                            <h:outputText value="Record Velocidad:"></h:outputText>
-                            <h:selectOneMenu value="#{atletaBean.velocidad}" required="true" class="item">
-                                <f:selectItem id="item12" itemLabel="Alto" itemValue="alto" />
-                                <f:selectItem id="item13" itemLabel="Medio" itemValue="medio" />
-                                <f:selectItem id="item14" itemLabel="Bajo" itemValue="bajo" />
-                            </h:selectOneMenu>
-
-                            <h:outputText value="Record Resistencia:"></h:outputText>
-                            <h:selectOneMenu value="#{atletaBean.resistencia}" required="true" class="item">
-                                <f:selectItem id="item15" itemLabel="Alto" itemValue="alto" />
-                                <f:selectItem id="item16" itemLabel="Medio" itemValue="medio" />
-                                <f:selectItem id="item17" itemLabel="Bajo" itemValue="bajo" />
-                            </h:selectOneMenu>
-
-                            <h:outputText value="Sexo:"></h:outputText>
-                            <h:selectOneMenu value="#{atletaBean.sexo}" required="true" class="item">
-                                <f:selectItem id="item18" itemLabel="Hombre" itemValue="hombre" />
-                                <f:selectItem id="item19" itemLabel="Mujer" itemValue="mujer" />
-                            </h:selectOneMenu>
-
-                            <h:outputText value="Asma:"></h:outputText>
-                            <h:selectOneMenu value="#{atletaBean.asma}" required="true" class="item">
-                                <f:selectItem id="item20" itemLabel="Presente" itemValue="presente" />
-                                <f:selectItem id="item21" itemLabel="Ausente" itemValue="ausente" />
-                            </h:selectOneMenu>
-
-                            <h:outputText value="Presión cardiaca:"></h:outputText>
-                            <h:selectOneMenu value="#{atletaBean.presioncardiaca}" required="true" class="item">
-                                <f:selectItem id="item22" itemLabel="Alto" itemValue="alto" />
-                                <f:selectItem id="item23" itemLabel="Medio" itemValue="medio" />
-                                <f:selectItem id="item24" itemLabel="Bajo" itemValue="bajo" />
-                            </h:selectOneMenu>
-                        </h:panelGrid>
-                        <br/>
-                        <center><h:commandButton styleClass="botonStyle" action="#{bayesianaBean.obtenerBayesianNet()}" value="Calcular probabilidad"></h:commandButton></center>
-                    </div>
-                    -->
+                <p:commandLink onclick='responsiveVoice.speak("Hello World");' value='Play' />
+                <!--<h:form>
                     <center><p:commandButton ajax="false" actionListener="#{bayesianBean.obtenerBayesianNet()}" value="Calcular probabilidad"></p:commandButton></center>
 
                     <div class="resultado">
                         <h3><h:outputText value="Probabilidades:"></h:outputText></h3>
                         <p:outputLabel value="#{bayesianBean.red}"/> 
                     </div>
-                    
-                </h:form>
+
+                </h:form>-->
             </div>
         </div>
+        <script src="resources/js/recognize.js"></script>
     </body>
 </html>
