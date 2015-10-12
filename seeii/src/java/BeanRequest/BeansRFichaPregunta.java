@@ -31,7 +31,7 @@ import org.hibernate.Transaction;
 @ViewScoped//creo que es de cambia el beans tipo view
 public class BeansRFichaPregunta {
 
-    private Fichaspregunta fichaPregunta;
+        private Fichaspregunta fichaPregunta;
     private List<Fichaspregunta> listFichasPregunta;
     private List<Ficha> listFichas;
 
@@ -42,16 +42,16 @@ public class BeansRFichaPregunta {
         fichaPregunta = new Fichaspregunta();
     }
 
-    public List<Fichaspregunta> crearFichasPreguntas(int idEntrenamiento, int idPrenguntaEnt) {
+    public void crearFichasPreguntas(int idEntrenamiento, int idPrenguntaEnt) {
         
         int sizeListaFicha = obtnerListaFichas(idEntrenamiento);
         ArrayList listaAleatorio;
         //si sizeListaFicha(tamaño de la lista de fichas) es diferente de cero(exista fichas)
         System.out.println("tamaño de la lista de fichas ..."+sizeListaFicha+"...............");
-        if (sizeListaFicha >= 3) {
+        if (sizeListaFicha >= 4) {
             //obtiene n(num) numeros aleatorios
-            listaAleatorio = generarAleatoreo(1, sizeListaFicha, 3);
-            for (int i = 0; i < 3; i++) {
+            listaAleatorio = generarAleatoreo(1, sizeListaFicha, 4);
+            for (int i = 0; i < 4; i++) {
                 //aqui  registrar(FichaPregunta) la fija con (idFicha, idPreguntaEntrenar)
                 registrarFichaPregunta((int) listaAleatorio.get(i), idPrenguntaEnt);
             }
@@ -63,7 +63,6 @@ public class BeansRFichaPregunta {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Error:", "NO HAY SUFUCIENTE O NO EXITE )lista de fichas, para este tema"));
             //se debe volver a la pagina inicioAprendizaje.xhtml
         }
-        return listFichasPregunta; //se retorna ya que se inicializa en el MÉTODO listaFichasPregunta
     }
 
     public int obtnerListaFichas(int idEntrenamiento) {

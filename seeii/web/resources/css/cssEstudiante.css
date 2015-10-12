@@ -204,3 +204,21 @@ h1 {
 #dockEntrenar{
    background: transparent;
 }
+
+.imagen1s{ 
+    background: #eee;
+    border:#000000;
+    border-bottom-width: 2px;  
+    margin-bottom:20px;
+    font-size: medium;
+}
+
+.ui-state-hover {
+    margin: 10px;
+    width:200px;
+}
+
+.ui-dashboard-column {
+    width:220px;
+    line-stacking: exclude-ruby;
+}

@@ -10,40 +10,47 @@
         <ui:composition template="./../../templates/templateEstudiante.xhtml">
             <ui:define name="content">
                 <h1>PASO 2: Prueba de la asociación de las fichas con sonidos</h1> 
-
+                <!--inicializamos el metodo inicializarListaFichaPrengunta-->
+                <h:outputLabel value="#{beansRPreguntaEntrena.inicializarListaFichaPrengunta(beanSEntrenar.idPrenguntaEnt)}"/>
 
                 <h:panelGrid id="panelTest" columns="2" cellspacing="25px">
                     <h:form>
-                        <p:dashboard id="board" model="#{beanRaprendizajeFicha.model}" >
+                        <p:dashboard id="board" model="#{beansRPreguntaEntrena.model}" >
 
-                            <p:panel id="sports" header="IMAGEN" >
-                                <p:graphicImage  id="grafico" value="#{FacesContext.getCurrentInstance()}/imgFicha/1.jpg" 
-                                                 width="150px" height="100px"/>
+                            <p:panel id="imagen1" header="IMAGEN" >
+                                <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRPreguntaEntrena.obtnerficha1()}" 
+                                                 width="120px" height="100px"/>
                             </p:panel>
 
-                            <p:panel id="finance" header="IMAGEN" >
-                                <p:graphicImage  id="grafico1" value="#{FacesContext.getCurrentInstance()}/imgFicha/1.jpg" 
-                                                 width="150px" height="100px"/>
+                            <p:panel id="imagen2" header="IMAGEN" >
+                                <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRPreguntaEntrena.obtnerficha2()}" 
+                                                 width="120px" height="100px"/>
                             </p:panel>
 
-                            <p:panel id="lifestyle" header="IMAGEN">
-                                <p:graphicImage  id="grafico2" value="#{FacesContext.getCurrentInstance()}/imgFicha/1.jpg" 
-                                                 width="150px" height="100px"/>
+                            <p:panel id="imagen3" header="IMAGEN">
+                                <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRPreguntaEntrena.obtnerficha3()}" 
+                                                 width="120px" height="100px"/>
                             </p:panel>
 
-                            <p:panel id="weather" header="SONIDO">
-                                <audio src="../../resources/imagenSonido/1.mp3" controls="controls"  />
+                            <p:panel id="sonido1" header="SONIDO">
+                                <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
+                                                width="120px" height="100px"/>
                             </p:panel>
 
-                            <p:panel id="politics" header="SONIDO">
-                                <audio src="../../resources/imagenSonido/1.mp3" controls="controls"  />
+                            <p:panel id="sonido2" header="SONIDO">
+                                <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
+                                                 width="120px" height="100px"/>
+                            </p:panel>
+
+                            <p:panel id="sonido3" header="SONIDO">
+                                <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
+                                                 width="120px" height="100px"/>
                             </p:panel>
                         </p:dashboard>
 
                         <div style="clear:both" />
                     </h:form>
 
-                    <p:commandButton value="Test" action="aprendizajeTest" icon="ui-icon-home"/>
                 </h:panelGrid>
 
             </ui:define>
