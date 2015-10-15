@@ -6,10 +6,12 @@
 package BeanRequest;
 
 import Dao.DaoEntrenar;
+import Dao.DaoFicha;
 import Dao.DaoFichaPregunta;
 import Dao.DaoPreguntaEntrenar;
 import HibernateUtil.HibernateUtil;
 import Pojo.Entrenamiento;
+import Pojo.Ficha;
 import Pojo.Fichaspregunta;
 import Pojo.Preguntaentrenar;
 import java.io.Serializable;
@@ -42,10 +44,16 @@ public class BeansRPreguntaEntrena implements Serializable {
 
     private DashboardModel model;
     int numero;
-    //atributo para utilizar con el metodo (obtenerlistaFichasPregunta)
-    private List<Fichaspregunta> listFichasPregunta;
     //atributo para obtner una listas de fichas para mostrar en test, se utliza en el metodo (listaFichas)
     ArrayList listaNumero = new ArrayList();
+    //atributo para utilizar con el metodo (obtenerlistaFichasPregunta)
+    private List<Fichaspregunta> listFichasPregunta;
+    //atributo para utiliza en el metodo (obtnerSonidoficha)
+    private Ficha ficha;
+    //atributo para obtner el nombre de las fichas.
+    private String nameficha1;
+    private String nameficha2;
+    private String nameficha3;
 
     public BeansRPreguntaEntrena() {
         model = new DefaultDashboardModel();
@@ -168,7 +176,6 @@ public class BeansRPreguntaEntrena implements Serializable {
     }
 
     //------------------------------------------------------------------------------------------------
-
     public void inicializarListaFichaPrengunta(int idPrenguntaEnt) {
         //metodo para obtner la lista de fichas a presentar inicializa el atributo (listaNumero)
         listaFichas(0, 3, 3);//obtner 3 numeros del 0 al 3 
@@ -222,35 +229,80 @@ public class BeansRPreguntaEntrena implements Serializable {
     }
 
     //.........................................................................................
+     public String verfichaPorId(int idFich) {
+        String nombreFicha = "empty";
+        this.session = null;
+        this.transaction = null;
+        try {
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+
+            //para crear Fichaspregunta (lista de fichas en base a un preguntadeENTRENAMIENTO)
+            DaoFicha daofichaPregunta = new DaoFicha();
+            ficha = daofichaPregunta.verPorCodigoFicha(session, idFich);
+            this.transaction.commit();
+            nombreFicha = this.ficha.getNombreFicha();
+
+            System.out.println("Correcto: al obtner ficha (para obtner el nombre)se ha realizado con exito");
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL obtner FICHA en el Test Emparejamiento:", "Contacte con el administrador" + ex.getMessage()));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+        return nombreFicha;
+    }
+     
     public String obtnerficha1() {
         //método (inicializarListaFichaPrengunta) inicializa las variables (listFichasPregunta y listaNumero )
-        int idFicha = this.listFichasPregunta.get((int) listaNumero.get(0)).getFicha().getIdFicha();
-        String dirFicha = idFicha + ".jpg";
+        int idficha1= this.listFichasPregunta.get((int) listaNumero.get(0)).getFicha().getIdFicha();
+        String dirFicha = idficha1 + "";
+        //metodo para sonido de las fichas (verfichaPorId)
+        nameficha1 = verfichaPorId(idficha1);
         return dirFicha;
     }
 
     public String obtnerficha2() {
         //método (inicializarListaFichaPrengunta) inicializa las variables (listFichasPregunta y listaNumero )
-        int idFicha = this.listFichasPregunta.get((int) listaNumero.get(1)).getFicha().getIdFicha();
-        String dirFicha = idFicha + ".jpg";
+        int idficha2 = this.listFichasPregunta.get((int) listaNumero.get(1)).getFicha().getIdFicha();
+        String dirFicha = idficha2 + "";
+        //metodo para sonido de las fichas (verfichaPorId)
+        nameficha2 = verfichaPorId(idficha2);
         return dirFicha;
     }
 
     public String obtnerficha3() {
         //método (inicializarListaFichaPrengunta) inicializa las variables (listFichasPregunta y listaNumero )
-        int idFicha = this.listFichasPregunta.get((int) listaNumero.get(2)).getFicha().getIdFicha();
-        String dirFicha = idFicha + ".jpg";
+        int idficha3= this.listFichasPregunta.get((int) listaNumero.get(2)).getFicha().getIdFicha();
+        String dirFicha = idficha3+ "";
+        //metodo para sonido de las fichas (verfichaPorId)
+        nameficha3 = verfichaPorId(idficha3);
         return dirFicha;
     }
-
-    //........................................................................................
+    //.........................................................................................
     
-    public String finaizarTestPreguntaEntrenar(){
-        System.out.println(model.getColumn(0).getWidget(0)+"id de widgwts................");
-        System.out.println(model.getColumn(0).getWidgetCount()+"colunmnas................");
-        
-    return "aprendizajeFichas1";
+    public String obtnerSonidoficha1() {
+        return nameficha1;
     }
+    public String obtnerSonidoficha2() {
+        return nameficha2;
+    }
+    public String obtnerSonidoficha3() {
+        return nameficha3;
+    }
+   
+    //........................................................................................
+    public String finaizarTestPreguntaEntrenar() {
+        System.out.println(model.getColumn(0).getWidget(0) + "id de widgwts................");
+        System.out.println(model.getColumn(0).getWidgetCount() + "colunmnas................");
+
+        return "aprendizajeFichas1";
+    }
+
     //.............................SETTER AND GETTER...........................................
     public Preguntaentrenar getPreguntaEnt() {
         return preguntaEnt;
@@ -276,8 +328,15 @@ public class BeansRPreguntaEntrena implements Serializable {
         this.listFichasPregunta = listFichasPregunta;
     }
 
-}
+    public Ficha getFicha() {
+        return ficha;
+    }
 
+    public void setFicha(Ficha ficha) {
+        this.ficha = ficha;
+    }
+
+}
 //public void crearPreguntaEntrena(int idEntrenar) {
 //        boolean estado = false;
 //        this.session = null;
