@@ -5,9 +5,10 @@
  */
 package BeanSession;
 
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+//import javax.inject.Named;
 import java.io.Serializable;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import org.hibernate.Session;
@@ -17,7 +18,8 @@ import org.hibernate.Transaction;
  *
  * @author silvy
  */
-@Named(value = "beanSEntrenar")
+//@Named("beanSEntrenar")
+@ManagedBean(name="beanSEntrenar")
 @SessionScoped
 public class BeanSEntrenar implements Serializable {
 
