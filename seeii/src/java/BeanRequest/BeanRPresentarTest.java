@@ -5,7 +5,7 @@
  */
 package BeanRequest;
 
-import Clases.BayesNetworkIngles;
+import Clases.RedBayesiana.BayesNetworkIngles;
 import Dao.DaoConcepto;
 import Dao.DaoItem;
 import Dao.DaoPregunta;

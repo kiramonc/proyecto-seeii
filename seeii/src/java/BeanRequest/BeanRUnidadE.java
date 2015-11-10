@@ -5,6 +5,7 @@
  */
 package BeanRequest;
 
+import Clases.RedBayesiana.CrearBayesNetwork1;
 import Dao.DaoAdministrador;
 import Dao.DaoUnidadE;
 import Dao.DaoUsuario;
@@ -32,7 +33,7 @@ import org.primefaces.context.RequestContext;
 @ViewScoped
 public class BeanRUnidadE {
 
-    private Unidadensenianza unidadE=new Unidadensenianza();
+    private Unidadensenianza unidadE = new Unidadensenianza();
     private List<Unidadensenianza> listaunidadE;
     private List<Unidadensenianza> listaUnidadEFiltrada;
     private List<Tema> listaTemas;
@@ -66,6 +67,10 @@ public class BeanRUnidadE {
             this.unidadE.setEstado(true);
             daoUnidadE.registrar(this.session, this.unidadE);
 
+            // Crear Red Bayesiana y el nodo unidad
+            CrearBayesNetwork1 crearRed = new CrearBayesNetwork1();
+            crearRed.crearUnidad(this.unidadE.getNombreUnidad());
+
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
             this.unidadE = new Unidadensenianza();
@@ -73,7 +78,7 @@ public class BeanRUnidadE {
             if (this.transaction != null) {
                 this.transaction.rollback();
             }
-            this.unidadE=new Unidadensenianza();
+            this.unidadE = new Unidadensenianza();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR REGISTRO:", "Contacte con el administrador" + ex.getMessage()));
         } finally {
             if (this.session != null) {
@@ -89,9 +94,22 @@ public class BeanRUnidadE {
             DaoUnidadE daoUnidadE = new DaoUnidadE();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            System.out.println("EL ID DE LA UNIDAD ANTES ES: " + unidadE.getId());
-            daoUnidadE.actualizar(this.session, this.unidadE);
+            Unidadensenianza unidadAnterior = daoUnidadE.verPorCodigoUnidad(session, unidadE.getId());
+            String nombreAnterior = unidadAnterior.getNombreUnidad();
             this.transaction.commit();
+            this.session.close();
+            unidadAnterior = null;
+
+            //Editar el nombre de la Red Bayesiana
+            if (!nombreAnterior.equals(unidadE.getNombreUnidad())) {
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                this.transaction = session.beginTransaction();
+                daoUnidadE.actualizar(this.session, this.unidadE);
+                CrearBayesNetwork1 redBayesina = new CrearBayesNetwork1();
+                redBayesina.editarUnidad(nombreAnterior, unidadE.getNombreUnidad());
+                this.transaction.commit();
+            }
+
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
         } catch (Exception ex) {
             if (this.transaction != null) {
@@ -103,9 +121,10 @@ public class BeanRUnidadE {
             if (this.session != null) {
                 this.session.close();
             }
+
         }
     }
-    
+
     public void eliminar() {
         this.session = null;
         this.transaction = null;
@@ -114,7 +133,12 @@ public class BeanRUnidadE {
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
             daoUnidadE.eliminar(this.session, this.unidadE);
+
+            //Eliminar Red Bayesiana
+            CrearBayesNetwork1 redBayesina = new CrearBayesNetwork1();
+            redBayesina.eliminarUnidad(unidadE.getNombreUnidad());
             this.transaction.commit();
+//            unidadE=null;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Unidad de enseñanza eliminada correctamente."));
         } catch (Exception ex) {
             if (this.transaction != null) {
@@ -125,9 +149,9 @@ public class BeanRUnidadE {
             if (this.session != null) {
                 this.session.close();
             }
+            this.unidadE = new Unidadensenianza();
         }
     }
-
 
     // Recuperar un determinado unida (se utliza en la clase UnidadConverter)
     public Unidadensenianza consultarUnidadPorNombre(String unidad) {
@@ -151,10 +175,10 @@ public class BeanRUnidadE {
         }
 
     }
-    
+
     public Unidadensenianza consultarUnidadPorCodigo(int idUnidad) {
-        this.session=null;
-        this.transaction=null;
+        this.session = null;
+        this.transaction = null;
         try {
             DaoUnidadE daoUnidad = new DaoUnidadE();
             this.session = HibernateUtil.getSessionFactory().openSession();
@@ -173,18 +197,18 @@ public class BeanRUnidadE {
             }
         }
     }
-    
-        public void cargarUnidadEditar(int codigo){
+
+    public void cargarUnidadEditar(int codigo) {
         this.session = null;
         this.transaction = null;
         try {
             DaoUnidadE daoUnidad = new DaoUnidadE();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            this.unidadE=daoUnidad.verPorCodigoUnidad(session, codigo);
-            
+            this.unidadE = daoUnidad.verPorCodigoUnidad(session, codigo);
+
             RequestContext.getCurrentInstance().update("frmEditarUnidad:panelEditarUnidad");
-            RequestContext.getCurrentInstance().execute("PF('dialogEditarUnidad').show()");            
+            RequestContext.getCurrentInstance().execute("PF('dialogEditarUnidad').show()");
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
         } catch (Exception ex) {
@@ -198,7 +222,6 @@ public class BeanRUnidadE {
             }
         }
     }
-
 
     public List<Unidadensenianza> getAllUnidadE() {
         this.session = null;
@@ -231,9 +254,9 @@ public class BeanRUnidadE {
             DaoUnidadE daoUnidadE = new DaoUnidadE();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            System.out.println("CONSULTA UNIDAD CON ID: "+idUnidad);
+            System.out.println("CONSULTA UNIDAD CON ID: " + idUnidad);
             this.unidadE = daoUnidadE.verPorCodigoUnidad(session, idUnidad);
-            System.out.println("UNIDAD RECUPERADA "+unidadE.getNombreUnidad()+" CON ID: "+unidadE.getId());
+            System.out.println("UNIDAD RECUPERADA " + unidadE.getNombreUnidad() + " CON ID: " + unidadE.getId());
 
             //Para cargar los datos en el panelEditarUnidad del formulario frmEditarUnidad
             RequestContext.getCurrentInstance().update("frmModificarUnidad:panelEditarUnidad");
@@ -241,7 +264,6 @@ public class BeanRUnidadE {
             //Para mostrar el diálogo que contiene los datos de la unidad con el widgetVar: dialogEditarUnidad
 //            RequestContext.getCurrentInstance().execute("PF('frmModificarUnidad').show()");
             this.transaction.commit();
-            System.out.println("HOLA SILVIAAAAAAAAAAAAAAAAAAAA");
 //            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
             return "/admin/unidad/modificar_unidad";
         } catch (Exception ex) {
@@ -256,7 +278,7 @@ public class BeanRUnidadE {
                 this.session.close();
             }
         }
-        
+
     }
 
     public void cargarUnidadEliminar(int idUnidad) {
@@ -306,16 +328,16 @@ public class BeanRUnidadE {
     public void setListaUnidadEFiltrada(List<Unidadensenianza> listaUnidadEFiltrada) {
         this.listaUnidadEFiltrada = listaUnidadEFiltrada;
     }
-    
-    public void limpiarFormulario(){
-        this.unidadE=new Unidadensenianza();
+
+    public void limpiarFormulario() {
+        this.unidadE = new Unidadensenianza();
     }
-    
-    public boolean deshabilitarBotonCrearTema(){
-        if(this.unidadE.getAdministrador()!=null){
+
+    public boolean deshabilitarBotonCrearTema() {
+        if (this.unidadE.getAdministrador() != null) {
             return false;
         }
         return true;
     }
-    
+
 }

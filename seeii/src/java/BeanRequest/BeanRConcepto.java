@@ -5,14 +5,11 @@
  */
 package BeanRequest;
 
+import Clases.RedBayesiana.CrearBayesNetwork1;
 import Dao.DaoConcepto;
-import Dao.DaoItem;
-import Dao.DaoPregunta;
 import Dao.DaoTema;
 import HibernateUtil.HibernateUtil;
 import Pojo.Concepto;
-import Pojo.Item;
-import Pojo.Pregunta;
 import Pojo.Tema;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +37,7 @@ public class BeanRConcepto {
     private Tema tema;
 
     public BeanRConcepto() {
-        this.tema=null;
+        this.tema = null;
         concepto = new Concepto();
     }
 
@@ -54,11 +51,16 @@ public class BeanRConcepto {
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
 //            this.tema=daoTema.verPorCodigoTema(session, codigo);
-            System.out.println("EL TEMA QUE SE ESTÁ CARGANDO ES: "+this.tema.getNombre());
+            System.out.println("EL TEMA QUE SE ESTÁ CARGANDO ES: " + this.tema.getNombre());
             this.concepto.setEstado(true);
             this.concepto.setTema(tema);
             daoConcepto.registrar(this.session, this.concepto);
 
+            System.out.println("VA A GUARDAR LA RED BAYESIANA*********");
+            // Crear nodo Concepto en la red bayesiana
+            CrearBayesNetwork1 redBayesiana = new CrearBayesNetwork1();
+            Tema temaC = daoTema.verPorTemaname(session, tema.getNombre());
+            redBayesiana.crearConcepto(temaC.getUnidadensenianza().getNombreUnidad(), temaC.getNombre(), concepto.getNombreConcepto());
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
         } catch (Exception ex) {
@@ -81,9 +83,22 @@ public class BeanRConcepto {
             DaoConcepto daoConcepto = new DaoConcepto();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            daoConcepto.actualizar(this.session, this.concepto);
+            Concepto conceptoAnterior = daoConcepto.verPorCodigoConcepto(session, concepto.getIdConcepto());
+            String nombreUnidad = conceptoAnterior.getTema().getUnidadensenianza().getNombreUnidad();
+            String nombreConcepto = conceptoAnterior.getNombreConcepto();
             this.transaction.commit();
-            this.concepto=null;
+            this.session.close();
+            conceptoAnterior = null;
+            // Crear nodo Concepto en la red bayesiana
+            if (!nombreConcepto.equals(concepto.getNombreConcepto())) {
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                this.transaction = session.beginTransaction();
+                daoConcepto.actualizar(this.session, this.concepto);
+                CrearBayesNetwork1 redBayesiana = new CrearBayesNetwork1();
+                redBayesiana.editarConcepto(nombreUnidad, nombreConcepto, concepto.getNombreConcepto());
+                this.transaction.commit();
+            }
+
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
         } catch (Exception ex) {
             if (this.transaction != null) {
@@ -94,6 +109,7 @@ public class BeanRConcepto {
             if (this.session != null) {
                 this.session.close();
             }
+            this.concepto = new Concepto();
         }
     }
 
@@ -104,9 +120,20 @@ public class BeanRConcepto {
             DaoConcepto daoConcepto = new DaoConcepto();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            daoConcepto.eliminar(this.session, this.concepto);
+            Concepto conceptoAnterior = daoConcepto.verPorCodigoConcepto(session, concepto.getIdConcepto());
+            String nombreUnidad = conceptoAnterior.getTema().getUnidadensenianza().getNombreUnidad();
+            String nombreTema = conceptoAnterior.getTema().getNombre();
             this.transaction.commit();
-            this.concepto=null;
+            this.session.close();
+            conceptoAnterior = null;
+            
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            daoConcepto.eliminar(this.session, this.concepto);
+            //Eliminar nodo Concepto de la red bayesiana
+            CrearBayesNetwork1 redBayesiana = new CrearBayesNetwork1();
+            redBayesiana.eliminarConcepto(nombreUnidad, nombreTema, concepto.getNombreConcepto());
+            this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Concepto eliminado correctamente."));
         } catch (Exception ex) {
             if (this.transaction != null) {
@@ -117,6 +144,8 @@ public class BeanRConcepto {
             if (this.session != null) {
                 this.session.close();
             }
+            this.concepto = new Concepto();
+
         }
     }
 
@@ -141,6 +170,7 @@ public class BeanRConcepto {
             }
         }
     }
+
     // para el converter
     public Concepto consultarConceptoPorNombre(String nombreConcepto) {
         try {
@@ -187,17 +217,16 @@ public class BeanRConcepto {
             }
         }
     }
-    
+
     public void abrirDialogoCrearConcepto(int codigo) {
-        this.session=null;
-        this.transaction=null;
+        this.session = null;
+        this.transaction = null;
         try {
-            this.concepto= new Concepto();
+            this.concepto = new Concepto();
             DaoTema daoTema = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            this.tema=daoTema.verPorCodigoTema(session, codigo);
-            System.out.println("EL TEMA QUE SE ESTÁ CARGANDO ES: "+this.tema.getNombre());
+            this.tema = daoTema.verPorCodigoTema(session, codigo);
             RequestContext.getCurrentInstance().update("frmEditarConcepto:panelEditarConcepto");
             RequestContext.getCurrentInstance().execute("PF('dialogEditarConcepto').show()");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
@@ -205,90 +234,89 @@ public class BeanRConcepto {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR CONCEPTO CREAR:", "Contacte con el administrador" + ex.getMessage()));
         }
     }
+
     // para el selectOneMenu al crear el test
     public List<Concepto> getConceptosPorTema(Tema tema) {
-        if(tema!=null){
-        this.session = null;
-        this.transaction = null;
-        this.tema=tema;
-        try {
-            DaoConcepto daoConcepto = new DaoConcepto();
-            this.session = HibernateUtil.getSessionFactory().openSession();
-            this.transaction = session.beginTransaction();
-            
-            List<Concepto> temp = daoConcepto.verPorTema(session, this.tema.getIdTema());
-            Concepto c=daoConcepto.verConceptoGeneral(session, this.tema.getIdTema(), this.tema.getNombre());
-            List<Concepto> conceptos= new ArrayList<>();
-            conceptos.add(c);
-            for (int i = 0; i < temp.size(); i++) {
-                if(!temp.get(i).equals(c)){
-                    conceptos.add(temp.get(i));
+        if (tema != null) {
+            this.session = null;
+            this.transaction = null;
+            this.tema = tema;
+            try {
+                DaoConcepto daoConcepto = new DaoConcepto();
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                this.transaction = session.beginTransaction();
+
+                List<Concepto> temp = daoConcepto.verPorTema(session, this.tema.getIdTema());
+                Concepto c = daoConcepto.verConceptoGeneral(session, this.tema.getIdTema(), this.tema.getNombre());
+                List<Concepto> conceptos = new ArrayList<>();
+                conceptos.add(c);
+                for (int i = 0; i < temp.size(); i++) {
+                    if (!temp.get(i).equals(c)) {
+                        conceptos.add(temp.get(i));
+                    }
+
                 }
-                
-            }
-            
-            transaction.commit();
-            return conceptos;
-        } catch (Exception ex) {
-            if (this.transaction != null) {
-                this.transaction.rollback();
-            }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR LISTA DE CONCEPTO POR TEMA:", "Contacte con el administrador" + ex.getMessage()));
 
-            return null;
-        } finally {
-            if (this.session != null) {
-                this.session.close();
+                transaction.commit();
+                return conceptos;
+            } catch (Exception ex) {
+                if (this.transaction != null) {
+                    this.transaction.rollback();
+                }
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR LISTA DE CONCEPTO POR TEMA:", "Contacte con el administrador" + ex.getMessage()));
+
+                return null;
+            } finally {
+                if (this.session != null) {
+                    this.session.close();
+                }
             }
-        }
         }
         return null;
     }
-    
+
     public List<Concepto> getConceptosPorTemaTabla(Tema tema) {
-        if(tema!=null){
-        this.session = null;
-        this.transaction = null;
-        this.tema=tema;
-        try {
-            DaoConcepto daoConcepto = new DaoConcepto();
-            this.session = HibernateUtil.getSessionFactory().openSession();
-            this.transaction = session.beginTransaction();
-            
-            List<Concepto> t = daoConcepto.verPorTema(session, this.tema.getIdTema());
-            transaction.commit();
-            Concepto c=daoConcepto.verConceptoGeneral(session, this.tema.getIdTema(), this.tema.getNombre());
-            t.remove(c);
-            return t;
-        } catch (Exception ex) {
-            if (this.transaction != null) {
-                this.transaction.rollback();
-            }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR LISTA DE CONCEPTO POR TEMA:", "Contacte con el administrador" + ex.getMessage()));
+        if (tema != null) {
+            this.session = null;
+            this.transaction = null;
+            this.tema = tema;
+            try {
+                DaoConcepto daoConcepto = new DaoConcepto();
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                this.transaction = session.beginTransaction();
 
-            return null;
-        } finally {
-            if (this.session != null) {
-                this.session.close();
+                List<Concepto> t = daoConcepto.verPorTema(session, this.tema.getIdTema());
+                transaction.commit();
+                Concepto c = daoConcepto.verConceptoGeneral(session, this.tema.getIdTema(), this.tema.getNombre());
+                t.remove(c);
+                return t;
+            } catch (Exception ex) {
+                if (this.transaction != null) {
+                    this.transaction.rollback();
+                }
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR LISTA DE CONCEPTO POR TEMA:", "Contacte con el administrador" + ex.getMessage()));
+
+                return null;
+            } finally {
+                if (this.session != null) {
+                    this.session.close();
+                }
             }
-        }
         }
         return null;
     }
-    
-    public boolean deshabilitarBotonCrearTema(){
-        
-            return false;
-        
+
+    public boolean deshabilitarBotonCrearTema() {
+
+        return false;
+
     }
-
-
 
     public void limpiarFormulario() {
         this.concepto = new Concepto();
         RequestContext.getCurrentInstance().update("frmVerConceptos:panelVerConceptos");
-            RequestContext.getCurrentInstance().execute("PF('dialogVerConceptos').show()");
-            
+        RequestContext.getCurrentInstance().execute("PF('dialogVerConceptos').show()");
+
     }
 
 //    public boolean deshabilitarBotonCrearPregunta() {
@@ -297,7 +325,6 @@ public class BeanRConcepto {
 //        }
 //        return true;
 //    }
-
     public Concepto getConcepto() {
         return concepto;
     }
@@ -321,5 +348,5 @@ public class BeanRConcepto {
     public void setListaConceptoFiltrado(List<Concepto> listaConceptoFiltrado) {
         this.listaConceptoFiltrado = listaConceptoFiltrado;
     }
-    
+
 }

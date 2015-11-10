@@ -5,7 +5,7 @@
  */
 package BeanRequest;
 
-import Clases.BayesNetworkIngles;
+import Clases.RedBayesiana.BayesNetworkIngles;
 import Clases.Conocimiento;
 import java.io.FileNotFoundException;
 import javax.faces.bean.ManagedBean;

@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package Clases;
+package Clases.RedBayesiana;
 
+import Clases.Conocimiento;
 import Pojo.Pregunta;
 import java.io.File;
 import java.io.FileInputStream;
