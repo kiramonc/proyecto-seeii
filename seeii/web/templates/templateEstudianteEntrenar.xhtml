@@ -28,7 +28,7 @@
                     </div>
                     <p:megaMenu style="background: #ddd;">
                         <p:menuitem value="Test" outcome="/estudiante/estudianteK/listaTest" icon="ui-icon-home"/>
-                        <p:menuitem value="Entrenar" outcome="/admin/unidad/buscar_unidad" icon="ui-icon-circle-check"/>
+                        <p:menuitem value="Entrenar" outcome="/estudiante/estudianteS/inicioAprendizaje" icon="ui-icon-circle-check"/>
                     </p:megaMenu>
                 </h:form>
 
@@ -40,7 +40,7 @@
                 <ui:insert name="left">
                     <h:form id="dockEstudiante">
                         <p:dock position="left">
-                            <p:menuitem value="Temas" icon="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/iconos/STemas.ico" outcome="/estudiante/estudianteK/listaTest"/>
+                            <p:menuitem value="Temas" icon="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/iconos/STemas.ico" outcome="/estudiante/estudianteS/inicioAprendizaje"/>
                             <p:menuitem value="Resultados" icon="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/iconos/SResultado.ico"  />
                         </p:dock>
                     </h:form>

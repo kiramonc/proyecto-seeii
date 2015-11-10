@@ -52,9 +52,8 @@ public class BeansREntrenamiento {
     int h = fecha.getHours();
     int m = fecha.getMinutes();
     int tiempo = (h * 60) + m;
-    
-    
-    java.sql.Timestamp  sqlDate = new java.sql.Timestamp(new java.util.Date().getTime());
+
+    java.sql.Timestamp sqlDate = new java.sql.Timestamp(new java.util.Date().getTime());
 
     //llamar al bean de ssesion para establecer datos.
     @ManagedProperty("#{beanSEntrenar}")
@@ -78,7 +77,7 @@ public class BeansREntrenamiento {
         int tamñoListficha = SizeListafichaPorTema(idtema);
 
         //si existe lista de fichas mayor a 5 entonces crea el entrenamiento y las preguntas
-        if (tamñoListficha >= 5) {
+        if (tamñoListficha >= 6) {
             //creamos el entrenamiento devuelve true si se crea correctamente,o false si no se crea.
             estado = crearEntrenamiento(usernameLogin, idtema);
             // si el entrenamiento se ha realizado con exito(estado=true) entonces  consultamos su idEntrenar
@@ -87,9 +86,10 @@ public class BeansREntrenamiento {
             //si tiene un idEntrena diferente a 0 entonces crea una pregunta
             if (idEntrena != 0) {
                 crearPreguntaEntrena(idEntrena);
-                direcionar = "apredizajeFichas";
+                direcionar = "aprenderFichasPregunta1";
             }
         }
+//se debe mostraraun mensaje diciendo que no hay suficientes fichas del tema para realizar el entrenamiento.
         return direcionar;
     }
 
@@ -216,7 +216,7 @@ public class BeansREntrenamiento {
 
             DaoPreguntaEntrenar daoPregunta = new DaoPreguntaEntrenar();
             estado = daoPregunta.registrarPreguntaEnt(this.session, this.preguntaEnt);
-            System.out.println("ingreso de la pregunta............................."+estado);
+            System.out.println("ingreso de la pregunta............................." + estado);
             //si la pregunta se creo correctamente lo fijamos el atributo idPrenguntaEnt en -> beanSEntrena(beansSession )
             if (estado) {
                 obtenerIdPreguntaEnt(session, estado, idEntrenar, sqlDate);
