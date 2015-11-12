@@ -21,32 +21,32 @@
                             <p:dashboard id="board" model="#{beansTestPreguntaEntren1.model}">
                                 <p:ajax event="reorder" listener="#{beansTestPreguntaEntren1.handleReorder}"/>
 
-                                <p:panel id="imagen1" header="IMAGEN" >
+                                <p:panel id="imagen1" header="IMAGEN1" >
                                     <p:graphicImage  id="im1" value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren1.obtnerficha1()}.jpg" 
                                                      width="120px" height="100px" />
                                 </p:panel>
 
-                                <p:panel id="imagen2" header="IMAGEN" >
+                                <p:panel id="imagen2" header="IMAGEN2" >
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren1.obtnerficha2()}.jpg" 
                                                      width="120px" height="100px" />
                                 </p:panel>
 
-                                <p:panel id="imagen3" header="IMAGEN">
+                                <p:panel id="imagen3" header="IMAGEN3">
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren1.obtnerficha3()}.jpg" 
                                                      width="120px" height="100px"/>
                                 </p:panel>
 
-                                <p:panel id="sonido1" header="SONIDO">
+                                <p:panel id="sonido1" header="SONIDO1">
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
                                                      width="120px" height="100px" onclick="hablarF1()"/>
                                 </p:panel>
 
-                                <p:panel id="sonido2" header="SONIDO">
+                                <p:panel id="sonido2" header="SONIDO2">
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
                                                      width="120px" height="100px" onclick="hablarF2()"/>
                                 </p:panel>
 
-                                <p:panel id="sonido3" header="SONIDO">
+                                <p:panel id="sonido3" header="SONIDO3">
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
                                                      width="120px" height="100px" onclick="hablarF3()"/>
                                 </p:panel>

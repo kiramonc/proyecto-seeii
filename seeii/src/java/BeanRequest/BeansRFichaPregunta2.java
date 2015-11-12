@@ -28,27 +28,26 @@ import org.hibernate.Transaction;
 
 /**
  *
- * @author USUARIO
+ * @author silvy
  */
 @ManagedBean
-@ViewScoped
-public class BeansRFichaPregunta1 {
+@ViewScoped//creo que es de cambia el beans tipo view
+public class BeansRFichaPregunta2 {
 
+    private Fichaspregunta fichaPregunta;
+    private List<Fichaspregunta> listFichasPregunta;
+    private List<Ficha> listFichas;
+    private List<String> lsNombreF;
+    private List<String> lsIdenticadorF;
     private Session session;
     private Transaction transaction;
-    private Fichaspregunta fichaPregunta;
+
     //llamar al bean de ssesion para establecer datos.
     @ManagedProperty("#{beanSEntrenar}")
     private BeanSEntrenar beanSEntrena;
-    //Utilizado en el metodo (listaFichasPregunta)
-    private List<Fichaspregunta> listFichasPregunta; 
-    private List<Ficha> listFichas;
-//    private List<String> lsNombreF;
-//    private List<String> lsIdenticadorF;
 
-    public BeansRFichaPregunta1() {
+    public BeansRFichaPregunta2() {
         fichaPregunta = new Fichaspregunta();
-
     }
 
     @PostConstruct
@@ -57,7 +56,6 @@ public class BeansRFichaPregunta1 {
         crearFichasPreguntas(beanSEntrena.getIdEntrenamiento(), beanSEntrena.getIdPrenguntaEnt());
 
     }
-//
 
     public void crearFichasPreguntas(int idEntrenamiento, int idPrenguntaEnt) {
         System.out.println("..........................." + idEntrenamiento);
@@ -75,23 +73,21 @@ public class BeansRFichaPregunta1 {
                 registrarFichaPregunta((int) listaAleatorio.get(i), idPrenguntaEnt);
             }
 
-            //metodo para obtnere la lista de fichasPregunta Creadas anteriormente
+            //metodo para obtnere la lista de fichasPreguntaCreadas anteriormente
             listaFichasPregunta(idPrenguntaEnt); //se inicializa---listFichasPregunta---para retornar
 
             //...................MODELO DEL TEST EN BEANS SESSION....................................
             //aqui se debe obtner un numero aleatorio y guardar beanSEntrenar
-            int modelTest = numeroAleatorTEST(1, 6); //obtner el numero del modelo Test1
+            int modelTest = numeroAleatorTEST(1, 6);
             this.beanSEntrena.setModelTest(modelTest);
-            //metodo para crear un modelo del test1
-            elegirModelTEST(modelTest); 
+            elegirModelTEST(modelTest); //metodo para crear un modelo del test
 
         } else {
             System.out.println("(NO HAY SUFUCIENTE O NO EXITE )lista de fichas, para este tema");
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Error:", "NO HAY SUFUCIENTE O NO EXITE )lista de fichas, para este tema"));
-//            //se debe volver a la pagina inicioAprendizaje.xhtml
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Error:", "NO HAY SUFUCIENTE O NO EXITE )lista de fichas, para este tema"));
+            //se debe volver a la pagina inicioAprendizaje.xhtml
         }
     }
-//
 
     public int obtnerListaFichas(int idEntrenamiento) {
         int sizeListaFichaPregunta = 0;
@@ -124,7 +120,7 @@ public class BeansRFichaPregunta1 {
         }
         return sizeListaFichaPregunta;
     }
-//
+
     public ArrayList generarAleatoreo(int valorInicial, int valorFinal, int numAleatorio) {
         ArrayList listaNumero = new ArrayList();
 
@@ -147,6 +143,7 @@ public class BeansRFichaPregunta1 {
     }
 
     public void registrarFichaPregunta(int idFicha, int idPreguntaEntrena) {
+        ///.......................................PROBAR S CREA
         this.session = null;
         this.transaction = null;
         try {
@@ -168,12 +165,12 @@ public class BeansRFichaPregunta1 {
             daofichaPregunta.registrarFichaPregunta(session, this.fichaPregunta);//Devuelve TRUE al crear una fichaPregunta
             this.transaction.commit();
 
-            System.out.println("Correcto: El registro de las fichasPregunta (TEST1)se ha realizado con exito");
+            System.out.println("Correcto: El registro de las fichasPregunta se ha realizado con exito");
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
             }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL REGISTRA FICHA_PREGUNTA(test1):", "Contacte con el administrador" + ex.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL REGISTRA FICHA_PREGUNTA:", "Contacte con el administrador" + ex.getMessage()));
         } finally {
             if (this.session != null) {
                 this.session.close();
@@ -194,12 +191,12 @@ public class BeansRFichaPregunta1 {
             listFichasPregunta = daofichaPregunta.verPreguntaEntrenamiento(session, idPrenguntaEnt);
             this.transaction.commit();
 
-            System.out.println("Correcto: El obtner de las fichasPregunta (TEST1)se ha realizado con exito");
+            System.out.println("Correcto: El obtner de las fichasPregunta se ha realizado con exito");
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
             }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL obtner FICHA_PREGUNTA (TEST1):", "Contacte con el administrador" + ex.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL obtner FICHA_PREGUNTA:", "Contacte con el administrador" + ex.getMessage()));
         } finally {
             if (this.session != null) {
                 this.session.close();
@@ -247,7 +244,7 @@ public class BeansRFichaPregunta1 {
                 sonM = mt2;
                 break;
         }
-        //columnas del test: columna 0 y 1
+        //columnas del test columna 0 y 1
         ArrayList columna0 = new ArrayList();
         ArrayList columna1 = new ArrayList();
 
@@ -255,8 +252,10 @@ public class BeansRFichaPregunta1 {
             columna0.add("imagen" + imgM[i]);
             columna1.add("sonido" + sonM[i]);
         }
-
-        columna1.remove(2);
+//        columna0.add("4");
+//        columna0.add("5");
+//        columna1.add("4");
+//        columna1.add("5");
 
         //fijo las columna en el beans SESSION
         this.beanSEntrena.setColumna0(columna0);
@@ -272,21 +271,6 @@ public class BeansRFichaPregunta1 {
         this.fichaPregunta = fichaPregunta;
     }
 
-    public BeanSEntrenar getBeanSEntrena() {
-        return beanSEntrena;
-    }
-
-    public void setBeanSEntrena(BeanSEntrenar beanSEntrena) {
-        this.beanSEntrena = beanSEntrena;
-    }
-    
-    public List<Fichaspregunta> getListFichasPregunta() {
-        return listFichasPregunta;
-    }
-
-    public void setListFichasPregunta(List<Fichaspregunta> listFichasPregunta) {
-        this.listFichasPregunta = listFichasPregunta;
-    }
     public List<Ficha> getListFichas() {
         return listFichas;
     }
@@ -295,29 +279,45 @@ public class BeansRFichaPregunta1 {
         this.listFichas = listFichas;
     }
 
-//    public List<String> getLsIdenticadorF() {
-//        for (int i = 0; i < 3; i++) {
-//            this.lsIdenticadorF.add("/resources/imagen/school/" + listFichasPregunta.get(i).getFicha().getIdFicha() + ".jpg");
-//        }
-//        System.out.println("lista de identificador de fichas.................................................." + lsNombreF);
-//        return lsIdenticadorF;
-//    }
-//
-//    public void setLsIdenticadorF(List<String> lsIdentiF) {
-//        this.lsIdenticadorF = lsIdentiF;
-//    }
-//
-//    public List<String> getLsNombreF() {
-//        for (int i = 0; i < 3; i++) {
-//            this.lsNombreF.add(listFichasPregunta.get(i).getFicha().getNombreFicha());
-//        }
-//        System.out.println("lista de nombre de fichas.................................................." + lsNombreF);
-//
-//        return lsNombreF;
-//    }
-//
-//    public void setLsNombreF(List<String> lsNombreF) {
-//        this.lsNombreF = lsNombreF;
-//    }
+    public List<Fichaspregunta> getListFichasPregunta() {
+        return listFichasPregunta;
+    }
+
+    public void setListFichasPregunta(List<Fichaspregunta> listFichasPregunta) {
+        this.listFichasPregunta = listFichasPregunta;
+    }
+
+    public BeanSEntrenar getBeanSEntrena() {
+        return beanSEntrena;
+    }
+
+    public void setBeanSEntrena(BeanSEntrenar beanSEntrena) {
+        this.beanSEntrena = beanSEntrena;
+    }
+
+    public List<String> getLsIdenticadorF() {
+        for (int i = 0; i < 3; i++) {
+            this.lsIdenticadorF.add("/resources/imagen/school/" + listFichasPregunta.get(i).getFicha().getIdFicha() + ".jpg");
+        }
+        System.out.println("lista de identificador de fichas.................................................." + lsNombreF);
+        return lsIdenticadorF;
+    }
+
+    public void setLsIdenticadorF(List<String> lsIdentiF) {
+        this.lsIdenticadorF = lsIdentiF;
+    }
+
+    public List<String> getLsNombreF() {
+        for (int i = 0; i < 3; i++) {
+            this.lsNombreF.add(listFichasPregunta.get(i).getFicha().getNombreFicha());
+        }
+        System.out.println("lista de nombre de fichas.................................................." + lsNombreF);
+
+        return lsNombreF;
+    }
+
+    public void setLsNombreF(List<String> lsNombreF) {
+        this.lsNombreF = lsNombreF;
+    }
 
 }

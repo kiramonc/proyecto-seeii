@@ -88,6 +88,16 @@ frmMenuPrincipalEstudiante\3a j_idt14.ui-commandlink.ui-widget:link:hover, frmMe
     padding: 5px; 
     position: inherit;
 }
+#frmEnsenanzaFichaT1{
+    margin-left: 20%;
+    margin-right: 20%;
+    background: #eee;
+    margin-top: 1%;  /*margen superior*/
+    margin-bottom: 1%; /*margen inferior*/
+    border: 3px #036fab solid;
+    padding: 5px; 
+    position: inherit;
+}
 #btnSiguienteEntrenar{
     position: fixed;
     right: 30%;

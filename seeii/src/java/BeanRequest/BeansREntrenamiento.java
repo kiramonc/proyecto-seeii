@@ -85,7 +85,7 @@ public class BeansREntrenamiento {
 
             //si tiene un idEntrena diferente a 0 entonces crea una pregunta
             if (idEntrena != 0) {
-                crearPreguntaEntrena(idEntrena);
+                crearPreguntaEntrenaTEST1(idEntrena);
                 direcionar = "aprenderFichasPregunta1";
             }
         }
@@ -196,8 +196,8 @@ public class BeansREntrenamiento {
 
     }
 
-    //crea una pregunta de entrenamiento si existe un entrenamiento.
-    public void crearPreguntaEntrena(int idEntrenar) {
+    //crea una pregunta de entrenamiento (para test1)si existe un entrenamiento.
+    public void crearPreguntaEntrenaTEST1(int idEntrenar) {
         this.preguntaEnt = new Preguntaentrenar();
 
         boolean estado = false;
@@ -219,7 +219,7 @@ public class BeansREntrenamiento {
             System.out.println("ingreso de la pregunta............................." + estado);
             //si la pregunta se creo correctamente lo fijamos el atributo idPrenguntaEnt en -> beanSEntrena(beansSession )
             if (estado) {
-                obtenerIdPreguntaEnt(session, estado, idEntrenar, sqlDate);
+                obtenerIdPreguntaEntTEST1(session, estado, idEntrenar, sqlDate);
             }
 
             this.transaction.commit();
@@ -238,7 +238,7 @@ public class BeansREntrenamiento {
         }
     }
 
-    public int obtenerIdPreguntaEnt(Session session, boolean state, int idEntrenar, Timestamp Fecha) {
+    public int obtenerIdPreguntaEntTEST1(Session session, boolean state, int idEntrenar, Timestamp Fecha) {
         int idE = 0;
         if (state) {
             //obtner un pregunta(session,idestrenar, idtema,fecha) para obtner la idPregunta del respectivo entrenamiento

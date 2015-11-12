@@ -40,18 +40,19 @@ import org.primefaces.model.DefaultDashboardModel;
  */
 @ManagedBean
 @ViewScoped
-public class BeansTestPreguntaEntren1 {
+public class BeansTestPreguntaEntren2 {
 
     private Session session;
     private Transaction transaction;
 
     private DashboardModel model;
+    int imgM[]; //elegir el modelo del dashboard(test 1-6) (imagen)
+    int sonM[]; //elegir el modelo del dashboard(test 1-6) (sonido)
+
     //llamar al bean de sesion para obtner el modelodelTEST(1-6).
     @ManagedProperty("#{beanSEntrenar}")
     private BeanSEntrenar beanSEntrena;
 
-    int imgM[]; //elegir el modelo del dashboard(test 1-6) (imagen)
-    int sonM[]; //elegir el modelo del dashboard(test 1-6) (sonido)
     //atributo para obtner una listas de fichas para mostrar en test, se utliza en el metodo (listaFichas)
     ArrayList listaNumero = new ArrayList();
     //atributo para utilizar con el metodo (obtenerlistaFichasPregunta)
@@ -62,11 +63,11 @@ public class BeansTestPreguntaEntren1 {
     private String nameficha2; //usado en metodo (obtnerSonidoficha2)
     private String nameficha3; //usado en metodo (obtnerSonidoficha3)
 
-    //atributo utilizado en el metodo(crearPreguntaEntrena) [TEST2]
-    private Preguntaentrenar preguntaEnt1;
-    java.sql.Timestamp sqlDate;
+    //atributo utilizado en el metodo(crearPreguntaEntrena) [TEST3]
+    private Preguntaentrenar preguntaEnt2;
+    java.sql.Timestamp sqlDateT2;
 
-    public BeansTestPreguntaEntren1() {
+    public BeansTestPreguntaEntren2() {
     }
 
     @PostConstruct
@@ -120,8 +121,7 @@ public class BeansTestPreguntaEntren1 {
             column1.addWidget("imagen" + imgM[i]);
             column2.addWidget("sonido" + sonM[i]);
         }
-        String name = "sonido" + sonM[2];
-        column2.removeWidget(name);
+
         column1.addWidget("4");
         column1.addWidget("5");
         column2.addWidget("4");
@@ -178,7 +178,7 @@ public class BeansTestPreguntaEntren1 {
 
         System.out.println("Columna 0 " + columna0);
         System.out.println("Columna 1 " + columna1);
-//
+
     }
 
     //------------------------------------------------------------------------------------------------
@@ -291,19 +291,6 @@ public class BeansTestPreguntaEntren1 {
         nameficha3 = verfichaPorId(idficha3);
         return dirFicha;
     }
-    //.........................................................................................
-
-    public String obtnerSonidoficha1() {
-        return nameficha1;
-    }
-
-    public String obtnerSonidoficha2() {
-        return nameficha2;
-    }
-
-    public String obtnerSonidoficha3() {
-        return nameficha3;
-    }
 
     //.........................................................................................
     public String finalizarEntrenamiento1() {
@@ -323,45 +310,47 @@ public class BeansTestPreguntaEntren1 {
 
         //3. obtnemos los errores y puntacion.
         int valor = 0;
-        int incorrectas = errorElemento(columnaN0, columnaN1); //obtner error del elemnto que no tiene pareja en el TEST 
+        int incorrectas = 0;
         ArrayList datos = obtnerValorError(c, columnaN0, columnaN1); //obtnemos los valores, e incorrectas
         switch (c) {
             case 0:
                 valor = 0;
-                incorrectas = 4;
+                incorrectas = 6;
                 break;
             case 1:
                 valor = (int) datos.get(0);
-                incorrectas = incorrectas + (int) datos.get(1) + 2;
+                incorrectas = (int) datos.get(1) + 4;
                 break;
             case 2:
                 valor = (int) datos.get(0);
-                incorrectas = incorrectas + (int) datos.get(1);
+                incorrectas = (int) datos.get(1) + 2;
+                break;
+            case 3:
+                valor = (int) datos.get(0);
+                incorrectas = (int) datos.get(1);
                 break;
         }
 
+        //4. Actualizamos (preguntaEntrenar) con los [valor, incorrectas]
+        actulizarFichaPregunta(valor, incorrectas);
+        System.out.println("VALOR de la puntución es: " + valor);
+        System.out.println("respuestas INCORRECTAS : " + incorrectas);
         //mostramos los mensajes de los valores de punturación y respuestas incorrectas
         FacesMessage message = new FacesMessage();
         message.setSeverity(FacesMessage.SEVERITY_INFO);
         message.setSummary("RESULTADO: ");
         message.setDetail("VALOR de la puntución es: " + valor + ", respuestas INCORRECTAS : " + incorrectas);
         addMessage(message);
-        
-        //4. Actualizamos (preguntaEntrenar) con los (valor, incorrectas)
-        actulizarFichaPregunta(valor, incorrectas);
-        System.out.println("VALOR de la puntución es: " + valor);
-        System.out.println("respuestas INCORRECTAS : " + incorrectas);
 
         //5. crearmos Preguntaentrenar para TEST2.
         crearPreguntaEntrenaTEST3(this.beanSEntrena.getIdEntrenamiento());
-        
-        return "aprenderFichasPregunta2";
-//
+        return "";
+
     }
 
     //Método para cambiar las columnas de String a Numeros
     public ArrayList cambiarValor(ArrayList columna) {
-        ArrayList columnaN = new ArrayList();
+        ArrayList columnaN0 = new ArrayList();
         int num = 0;
         String valor = "";
         for (int i = 0; i < columna.size(); i++) {
@@ -377,45 +366,10 @@ public class BeansTestPreguntaEntren1 {
                     }
                 }
             }
-            columnaN.add(num); //llamamos metodo para cambiar el valor a numero
+            columnaN0.add(num); //llamamos metodo para cambiar el valor a numero
         }
 
-        return columnaN;
-    }
-
-    public int errorElemento(ArrayList columnaN0, ArrayList columnaN1) {
-        int error = 0;
-        String elemn1 = "" + sonM[2];
-        String elemn2 = "";
-        if (columnaN0.size() > columnaN1.size()) {
-            if (columnaN1.contains(sonM[2])) {
-                error = 1;
-            } else {
-                if (columnaN0.contains(sonM[2])) {
-                    for (int i = 0; i < columnaN1.size(); i++) {
-                        elemn2 = "" + columnaN0.get(i);
-                        if (elemn2.equals(elemn1)) {
-                            error = 1;
-                        }
-                    }
-                }
-            }
-        } else {
-            if (columnaN0.contains(sonM[2])) {
-                error = 1;
-            } else {
-                if (columnaN1.contains(sonM[2])) {
-                    for (int i = 0; i < columnaN0.size(); i++) {
-                        elemn2 = "" + columnaN1.get(i);
-                        if (elemn2.equals(elemn1)) {
-                            error = 1;
-                        }
-                    }
-                }
-            }
-        }
-        System.out.println(" para elemento que no tiene pareja , es incorrecto: " + error);
-        return error;
+        return columnaN0;
     }
 
     //Metodo para obtner los valores y respuestas Incprrectas
@@ -450,8 +404,8 @@ public class BeansTestPreguntaEntren1 {
 
             daoPreguntaEntrenar.actualizar(session, preguntaEntrenar);
             this.transaction.commit();
-            
-            System.out.println("Correcto: La Actualizacion de la preguntaEntrenar TEST1 se ha realizado con exito");
+
+            System.out.println("Correcto: La Actualizacion de la preguntaEntrenar TEST2 se ha realizado con exito");
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -464,12 +418,12 @@ public class BeansTestPreguntaEntren1 {
         }
 
     }
-//crea una pregunta de entrenamiento[TEST2] si existe un entrenamiento.
 
+    //crea una pregunta de entrenamiento[TEST2] si existe un entrenamiento.
     public void crearPreguntaEntrenaTEST3(int idEntrenar) {
-        this.preguntaEnt1 = new Preguntaentrenar();
+        this.preguntaEnt2 = new Preguntaentrenar();
         //OBTNER fecha-Hora del Sistema
-        sqlDate = new java.sql.Timestamp(new java.util.Date().getTime());
+        sqlDateT2 = new java.sql.Timestamp(new java.util.Date().getTime());
         boolean estado = false;
         this.session = null;
         this.transaction = null;
@@ -479,17 +433,17 @@ public class BeansTestPreguntaEntren1 {
             //obtener el entrenamiento mediante el id para fijar a las preguntas.
             DaoEntrenar daoEntrenar = new DaoEntrenar();
             Entrenamiento entrene = daoEntrenar.verPorCodigoEntrenamiento(session, idEntrenar);
-            this.preguntaEnt1.setEntrenamiento(entrene);
-            this.preguntaEnt1.setIncorrecto(0);
-            this.preguntaEnt1.setValor(0);
-            this.preguntaEnt1.setFecha(sqlDate);
+            this.preguntaEnt2.setEntrenamiento(entrene);
+            this.preguntaEnt2.setIncorrecto(0);
+            this.preguntaEnt2.setValor(0);
+            this.preguntaEnt2.setFecha(sqlDateT2);
 
             DaoPreguntaEntrenar daoPregunta = new DaoPreguntaEntrenar();
-            estado = daoPregunta.registrarPreguntaEnt(this.session, this.preguntaEnt1);
+            estado = daoPregunta.registrarPreguntaEnt(this.session, this.preguntaEnt2);
             //si la pregunta se creo correctamente lo fijamos el atributo idPrenguntaEnt en -> beanSEntrena(beansSession )
             if (estado) {
-                obtenerIdPreguntaEntTEST3(session, estado, idEntrenar, sqlDate);
-                System.out.println("Se ha registado correctamente la Preguntaentrenar para el TEST2");
+                obtenerIdPreguntaEntTEST3(session, estado, idEntrenar, sqlDateT2);
+                System.out.println("Se ha registado correctamente la Preguntaentrenar para el TEST3");
             }
             this.transaction.commit();
 
@@ -514,7 +468,7 @@ public class BeansTestPreguntaEntren1 {
             try {
                 e = daoPrengunt.verPreguntaEntrenamiento(session, idEntrenar, Fecha);
             } catch (Exception ex) {
-                System.out.println("problemas al consultar el Preguntaentrenar(TEST2)creada recientemente");
+                System.out.println("problemas al consultar el Preguntaentrenar(TEST3)creada recientemente");
                 Logger.getLogger(BeansREntrenamiento.class.getName()).log(Level.SEVERE, null, ex);
             }
 
@@ -530,6 +484,18 @@ public class BeansTestPreguntaEntren1 {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
+    public String obtnerSonidoficha1() {
+        return nameficha1;
+    }
+
+    public String obtnerSonidoficha2() {
+        return nameficha2;
+    }
+
+    public String obtnerSonidoficha3() {
+        return nameficha3;
+    }
+
     //.............................SETTER AND GETTER...........................................
     public DashboardModel getModel() {
         return model;
@@ -537,6 +503,14 @@ public class BeansTestPreguntaEntren1 {
 
     public void setModel(DashboardModel model) {
         this.model = model;
+    }
+
+    public List<Fichaspregunta> getListFichasPregunta() {
+        return listFichasPregunta;
+    }
+
+    public void setListFichasPregunta(List<Fichaspregunta> listFichasPregunta) {
+        this.listFichasPregunta = listFichasPregunta;
     }
 
     public BeanSEntrenar getBeanSEntrena() {
@@ -547,12 +521,12 @@ public class BeansTestPreguntaEntren1 {
         this.beanSEntrena = beanSEntrena;
     }
 
-    public List<Fichaspregunta> getListFichasPregunta() {
-        return listFichasPregunta;
+    public Preguntaentrenar getPreguntaEnt2() {
+        return preguntaEnt2;
     }
 
-    public void setListFichasPregunta(List<Fichaspregunta> listFichasPregunta) {
-        this.listFichasPregunta = listFichasPregunta;
+    public void setPreguntaEnt2(Preguntaentrenar preguntaEnt2) {
+        this.preguntaEnt2 = preguntaEnt2;
     }
 
 }

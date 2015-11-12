@@ -3,27 +3,28 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <body>
 
         <ui:composition template="./../../templates/templateEstudiante.xhtml">
             <ui:define name="content">
 
-                <h1>PASO 1: Aprendizaje mediante Fichas</h1> 
+                <h1>PASO 3: Aprendizaje mediante Fichas</h1> 
                 <!--inicializamos el metodo crearfichasPreguntas-->
-
+               
                 <p:panel>
-                    <p:carousel  id="frmEnsenanzaFichaT1" numVisible="1" itemStyle="width: 600px; height: 380px;" 
-                                 value="#{beansRFichaPregunta1.listFichasPregunta}"
+                    <p:carousel  id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;" 
+                                 value="#{beansRFichaPregunta2.listFichasPregunta}"
                                  var="var"  effect="easeInStrong"  >  
-                        <p:graphicImage   id="graficoT" value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{var.ficha.idFicha}.jpg" />
+                        <p:graphicImage   id="grafico" value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{var.ficha.idFicha}.jpg" />
                     </p:carousel>
                     <h:panelGroup></h:panelGroup>
                 </p:panel>
 
                 <h:form>
-                    <h:commandButton id="btnTsT1" value="INICIAR TEST #1" action="testPreguntaEntrenar1" 
+                    <h:commandButton id="btnTs" value="Iniciar Test1" action="testPreguntaEntrenar2" 
                                      style="padding: 15px; margin: 10px 55px 0px 0px; float: right;
                                      position: absolute;
                                      right: 100px;
