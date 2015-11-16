@@ -47,7 +47,8 @@ public class DaoEntrenar implements InterfaceEntrenamiento {
 
     @Override
     public boolean actualizar(Session session, Entrenamiento entrenar) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       session.update(entrenar);
+        return true;
     }
 
 }

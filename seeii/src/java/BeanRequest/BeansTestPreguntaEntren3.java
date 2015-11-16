@@ -16,7 +16,10 @@ import Pojo.Ficha;
 import Pojo.Fichaspregunta;
 import Pojo.Preguntaentrenar;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +44,7 @@ import org.primefaces.model.DefaultDashboardModel;
  */
 @ManagedBean
 @ViewScoped
-public class BeansTestPreguntaEntren1 {
+public class BeansTestPreguntaEntren3 {
 
     private Session session;
     private Transaction transaction;
@@ -50,9 +53,9 @@ public class BeansTestPreguntaEntren1 {
     //llamar al bean de sesion para obtner el modelodelTEST(1-6).
     @ManagedProperty("#{beanSEntrenar}")
     private BeanSEntrenar beanSEntrena;
-
     int imgM[]; //elegir el modelo del dashboard(test 1-6) (imagen)
     int sonM[]; //elegir el modelo del dashboard(test 1-6) (sonido)
+
     //atributo para obtner una listas de fichas para mostrar en test, se utliza en el metodo (listaFichas)
     ArrayList listaNumero = new ArrayList();
     //atributo para utilizar con el metodo (obtenerlistaFichasPregunta)
@@ -62,17 +65,19 @@ public class BeansTestPreguntaEntren1 {
     private String nameficha1; //usado en metodo (obtnerSonidoficha1)
     private String nameficha2; //usado en metodo (obtnerSonidoficha2)
     private String nameficha3; //usado en metodo (obtnerSonidoficha3)
+    private String nameficha4; //usado en metodo (obtnerSonidoficha4)
 
-    //atributo utilizado en el metodo(crearPreguntaEntrena) [TEST2]
-    private Preguntaentrenar preguntaEnt1;
-    java.sql.Timestamp sqlDate;
-    
     //mostara los resultados del test
     private String correcto;
     private int resultado1;
     private int resultado2;
 
-    public BeansTestPreguntaEntren1() {
+    //mostara los resultados del ENTRENAMIENTO
+    private int finalPuntaje;
+    private int finalTiempo;
+    private int finalError;
+
+    public BeansTestPreguntaEntren3() {
     }
 
     @PostConstruct
@@ -88,10 +93,11 @@ public class BeansTestPreguntaEntren1 {
     public void elegirModelT() {
         int num = this.beanSEntrena.getModelTest();
         System.out.println("model(Dashboard) numero ....................." + num);
-        int mt1[] = {1, 2, 3};
-        int mt2[] = {2, 3, 1};
-        int mt3[] = {3, 1, 2};
-
+        int mt1[] = {1, 2, 3, 4};
+        int mt2[] = {4, 3, 2, 1};
+        int mt3[] = {3, 4, 2, 1};
+        int mt4[] = {2, 4, 1, 3};
+        int mt5[] = {3, 1, 4, 2};
         switch (num) {
             case 1:
                 imgM = mt1;
@@ -99,39 +105,41 @@ public class BeansTestPreguntaEntren1 {
                 break;
             case 2:
                 imgM = mt1;
-                sonM = mt3;
+                sonM = mt4;
                 break;
             case 3:
                 imgM = mt2;
-                sonM = mt1;
+                sonM = mt5;
                 break;
             case 4:
                 imgM = mt2;
-                sonM = mt3;
+                sonM = mt1;
                 break;
             case 5:
                 imgM = mt3;
                 sonM = mt1;
                 break;
             default:
-                imgM = mt3;
-                sonM = mt2;
+                imgM = mt5;
+                sonM = mt4;
                 break;
         }
     }
 
     //Método patra crear un modelo de dashboard (existen 6 modelos)
     public void elegirModelDashboard(DashboardColumn column1, DashboardColumn column2) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             column1.addWidget("imagen" + imgM[i]);
             column2.addWidget("sonido" + sonM[i]);
         }
-        String name = "sonido" + sonM[2];
-        column2.removeWidget(name);
+        String name = "imagen" + imgM[3]; // elemina el utimo elemento de columna imagen
+        column1.removeWidget(name);
         column1.addWidget("4");
         column1.addWidget("5");
+        column1.addWidget("6");
         column2.addWidget("4");
         column2.addWidget("5");
+        column2.addWidget("6");
 
         model.addColumn(column1);
         model.addColumn(column2);
@@ -190,7 +198,7 @@ public class BeansTestPreguntaEntren1 {
     //------------------------------------------------------------------------------------------------
     public void inicializarListaFichaPrengunta(int idPrenguntaEnt) {
         //metodo para obtner la lista de fichas a presentar inicializa el atributo (listaNumero)
-        listaFichas(0, 3, 3);//obtner 3 numeros del 0 al 3 (para mostrar fichas.)
+        listaFichas(0, 4, 4);//obtner 4 numeros del 0 al 4 (para mostrar fichas en el test.)
 
         //hacer un  if si  idPrenguntaEnt!=0....................................
         //metodo para obtner la lista de fichasPreguntar inicializa el atributo (listFichasPregunta)
@@ -270,6 +278,7 @@ public class BeansTestPreguntaEntren1 {
         }
         return nombreFicha;
     }
+//
 
     public String obtnerficha1() {
         //método (inicializarListaFichaPrengunta) inicializa las variables (listFichasPregunta y listaNumero )
@@ -297,22 +306,18 @@ public class BeansTestPreguntaEntren1 {
         nameficha3 = verfichaPorId(idficha3);
         return dirFicha;
     }
-    //.........................................................................................
 
-    public String obtnerSonidoficha1() {
-        return nameficha1;
-    }
-
-    public String obtnerSonidoficha2() {
-        return nameficha2;
-    }
-
-    public String obtnerSonidoficha3() {
-        return nameficha3;
+    public String obtnerficha4() {
+        //método (inicializarListaFichaPrengunta) inicializa las variables (listFichasPregunta y listaNumero )
+        int idficha4 = this.listFichasPregunta.get((int) listaNumero.get(3)).getFicha().getIdFicha();
+        String dirFicha = idficha4 + "";
+        //metodo para sonido(nombre) de las fichas (verfichaPorId)
+        nameficha4 = verfichaPorId(idficha4);
+        return dirFicha;
     }
 
     //.........................................................................................
-       public void finalizarEntrenamiento() {
+    public void finalizarEntrenamiento() {
         //1. cambia letras("sonido1" ó "imagen1",etc)a numero (1 ,2, 3), En Método (cambiarValor)
         ArrayList columna0 = this.beanSEntrena.getColumna0();
         ArrayList columna1 = this.beanSEntrena.getColumna1();
@@ -334,32 +339,36 @@ public class BeansTestPreguntaEntren1 {
         switch (c) {
             case 0:
                 valor = 0;
-                incorrectas = 4;
+                incorrectas = 6;
                 break;
             case 1:
                 valor = (int) datos.get(0);
-                incorrectas = incorrectas + (int) datos.get(1) + 2;
+                incorrectas = (int) datos.get(1) + 4;
                 break;
             case 2:
                 valor = (int) datos.get(0);
-                incorrectas = incorrectas + (int) datos.get(1);
+                incorrectas = (int) datos.get(1) + 2;
+                break;
+            case 3:
+                valor = (int) datos.get(0);
+                incorrectas = (int) datos.get(1);
                 break;
         }
 
-//        //mostramos los mensajes de los valores de punturación y respuestas incorrectas
-//        FacesMessage message = new FacesMessage();
-//        message.setSeverity(FacesMessage.SEVERITY_INFO);
-//        message.setSummary("RESULTADO: ");
-//        message.setDetail("VALOR de la puntución es: " + valor + ", respuestas INCORRECTAS : " + incorrectas);
-//        addMessage(message);
-        //4. Actualizamos (preguntaEntrenar) con los (valor, incorrectas)
-        actulizarFichaPregunta(valor, incorrectas);
+        //  4. Actualizamos (preguntaEntrenar) con los [valor, incorrectas]
+        actulizarPreguntaEntrenar(valor, incorrectas);
+
         System.out.println("VALOR de la puntución es: " + valor);
         System.out.println("respuestas INCORRECTAS : " + incorrectas);
+        //mostramos los mensajes de los valores de punturación y respuestas incorrectas
+        FacesMessage message = new FacesMessage();
+        message.setSeverity(FacesMessage.SEVERITY_INFO);
+        message.setSummary("RESULTADO: ");
+        message.setDetail("VALOR de la puntución es: " + valor + ", respuestas INCORRECTAS : " + incorrectas);
+        addMessage(message);
 
-        //5. crearmos Preguntaentrenar para TEST2.
-        crearPreguntaEntrenaTEST3(this.beanSEntrena.getIdEntrenamiento());
-
+        //  5. Actualizamos (entrenamiento) con los [error, puntaje, tiempo]
+        actulizarENTRENAMIENTO();
         //mostramos los mensajes de los valores de punturación y respuestas incorrectas
         this.resultado1 = valor;
         this.resultado2 = incorrectas;
@@ -372,13 +381,15 @@ public class BeansTestPreguntaEntren1 {
 //
     }
 
+  
     public String actualizarPagina() {
-        return "aprenderFichasPregunta2";
+        return "inicioAprendizaje";
     }
 
     //Método para cambiar las columnas de String a Numeros
     public ArrayList cambiarValor(ArrayList columna) {
-        ArrayList columnaN = new ArrayList();
+        ArrayList columnaN0 = new ArrayList();
+        System.out.println("la columna es " + columna);
         int num = 0;
         String valor = "";
         for (int i = 0; i < columna.size(); i++) {
@@ -391,24 +402,28 @@ public class BeansTestPreguntaEntren1 {
                 } else {
                     if (valor.equals("sonido3") || valor.equals("imagen3")) {
                         num = 3;
+                    } else {
+                        if (valor.equals("sonido4") || valor.equals("imagen4")) {
+                            num = 4;
+                        }
                     }
                 }
             }
-            columnaN.add(num); //llamamos metodo para cambiar el valor a numero
+            columnaN0.add(num); //llamamos metodo para cambiar el valor a numero
         }
 
-        return columnaN;
+        return columnaN0;
     }
 
     public int errorElemento(ArrayList columnaN0, ArrayList columnaN1) {
         int error = 0;
-        String elemn1 = "" + sonM[2];
+        String elemn1 = "" + imgM[3];
         String elemn2 = "";
         if (columnaN0.size() > columnaN1.size()) {
-            if (columnaN1.contains(sonM[2])) {
+            if (columnaN1.contains(imgM[3])) {
                 error = 1;
             } else {
-                if (columnaN0.contains(sonM[2])) {
+                if (columnaN0.contains(imgM[3])) {
                     for (int i = 0; i < columnaN1.size(); i++) {
                         elemn2 = "" + columnaN0.get(i);
                         if (elemn2.equals(elemn1)) {
@@ -418,10 +433,10 @@ public class BeansTestPreguntaEntren1 {
                 }
             }
         } else {
-            if (columnaN0.contains(sonM[2])) {
+            if (columnaN0.contains(imgM[3])) {
                 error = 1;
             } else {
-                if (columnaN1.contains(sonM[2])) {
+                if (columnaN1.contains(imgM[3])) {
                     for (int i = 0; i < columnaN0.size(); i++) {
                         elemn2 = "" + columnaN1.get(i);
                         if (elemn2.equals(elemn1)) {
@@ -442,7 +457,7 @@ public class BeansTestPreguntaEntren1 {
         int incorrectas = 0;
         for (int i = 0; i < contador; i++) {
             if (columnaN0.get(i) == columnaN1.get(i)) {
-                valor = valor + 100;
+                valor = valor + 200;
             } else {
                 incorrectas = incorrectas + 1;
             }
@@ -452,7 +467,7 @@ public class BeansTestPreguntaEntren1 {
         return datos;
     }
 
-    public void actulizarFichaPregunta(int valor, int incorrectos) {
+    public void actulizarPreguntaEntrenar(int valor, int incorrectos) {
         this.session = null;
         this.transaction = null;
         try {
@@ -468,7 +483,7 @@ public class BeansTestPreguntaEntren1 {
             daoPreguntaEntrenar.actualizar(session, preguntaEntrenar);
             this.transaction.commit();
 
-            System.out.println("Correcto: La Actualizacion de la preguntaEntrenar TEST1 se ha realizado con exito");
+            System.out.println("Correcto: La Actualizacion de la preguntaEntrenar TEST3 se ha realizado con exito");
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -481,40 +496,86 @@ public class BeansTestPreguntaEntren1 {
         }
 
     }
-//crea una pregunta de entrenamiento[TEST2] si existe un entrenamiento.
+    List<Preguntaentrenar> preguntaEntrenar;
 
-    public void crearPreguntaEntrenaTEST3(int idEntrenar) {
-        this.preguntaEnt1 = new Preguntaentrenar();
-        //OBTNER fecha-Hora del Sistema
-        sqlDate = new java.sql.Timestamp(new java.util.Date().getTime());
-        boolean estado = false;
+    public void actulizarENTRENAMIENTO() {
+//        ArrayList datos = obtenrListaPreguntaEntrenar(); //obtner puntajes y errores de test 1-2-3
+        List<Preguntaentrenar> listPreguntaEntrenar = obtenrListaPreguntaEntrenar();
+        System.out.println(" size--.-- " + listPreguntaEntrenar.size());
+        int puntaje = 0;
+        int error = 0;
+        for (int i = 0; i < listPreguntaEntrenar.size(); i++) {
+            System.out.println("lista de prenguta" + listPreguntaEntrenar.get(i).getEntrenamiento());
+            puntaje = puntaje + listPreguntaEntrenar.get(i).getValor();
+            error = error + listPreguntaEntrenar.get(i).getIncorrecto();
+        }
+        fijarEntrenamientoPuntajeErrorTiempo(puntaje, error);//actualiza entrenamiento con  los valores (puntaje, tiempo, error)
+
+    }
+
+    public List<Preguntaentrenar> obtenrListaPreguntaEntrenar() {
         this.session = null;
         this.transaction = null;
+
         try {
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            //obtener el entrenamiento mediante el id para fijar a las preguntas.
-            DaoEntrenar daoEntrenar = new DaoEntrenar();
-            Entrenamiento entrene = daoEntrenar.verPorCodigoEntrenamiento(session, idEntrenar);
-            this.preguntaEnt1.setEntrenamiento(entrene);
-            this.preguntaEnt1.setIncorrecto(0);
-            this.preguntaEnt1.setValor(0);
-            this.preguntaEnt1.setFecha(sqlDate);
 
-            DaoPreguntaEntrenar daoPregunta = new DaoPreguntaEntrenar();
-            estado = daoPregunta.registrarPreguntaEnt(this.session, this.preguntaEnt1);
-            //si la pregunta se creo correctamente lo fijamos el atributo idPrenguntaEnt en -> beanSEntrena(beansSession )
-            if (estado) {
-                obtenerIdPreguntaEntTEST3(session, estado, idEntrenar, sqlDate);
-                System.out.println("Se ha registado correctamente la Preguntaentrenar para el TEST2");
-            }
+            //obtener una pregunta por su id y fijar en el Fichaspregunta.
+            DaoPreguntaEntrenar daoPreguntaEntrenar = new DaoPreguntaEntrenar();
+            preguntaEntrenar = daoPreguntaEntrenar.verListPreguntaEntrenarPorIdEntrena(session, this.beanSEntrena.getIdEntrenamiento());
             this.transaction.commit();
 
+            System.out.println("Correcto: Al Obtner la listas de preguntaEntrenar TODOS LOS TEST se ha realizado con exito");
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
             }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL REGISTRA  PREGUNTAS DE entrenamiento:", "Contacte con el administrador" + ex.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL Obtner lista de preguntaEntrenar:", "Contacte con el administrador" + ex.getMessage()));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+        return preguntaEntrenar;
+
+    }
+
+    public void fijarEntrenamientoPuntajeErrorTiempo(int puntaje, int error) {
+        this.session = null;
+        this.transaction = null;
+
+        java.util.Date fecha = new Date();
+        int h = fecha.getHours();
+        int m = fecha.getMinutes();
+        int s = fecha.getSeconds();
+
+        int tiempo = (h * 3600) + (m * 60) + s;
+        System.out.println("error " + error + " puntaje " + puntaje);
+        try {
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+
+            //para obtener un entrenamiento por su id
+            DaoEntrenar daoEntrenar = new DaoEntrenar();//verPorCodigoEntrenamiento
+            Entrenamiento entrenamiento = daoEntrenar.verPorCodigoEntrenamiento(session, this.beanSEntrena.getIdEntrenamiento());
+            tiempo = tiempo - entrenamiento.getTiempo();
+            System.out.println("el tiempo total es:" + tiempo);
+            entrenamiento.setPuntaje(puntaje);
+            entrenamiento.setError(error);
+            entrenamiento.setTiempo(tiempo);
+            finalPuntaje = puntaje;
+            finalTiempo = tiempo;
+            finalError = error;
+            daoEntrenar.actualizar(session, entrenamiento);
+            this.transaction.commit();
+
+            System.out.println("Correcto: Al actualizar el Entrenamiento con los valores (puntaje, tiempo, error) con exito");
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL Obtner actualizar el Entrenamiento:", "Contacte con el administrador" + ex.getMessage()));
         } finally {
             if (this.session != null) {
                 this.session.close();
@@ -522,29 +583,24 @@ public class BeansTestPreguntaEntren1 {
         }
     }
 
-    public int obtenerIdPreguntaEntTEST3(Session session, boolean state, int idEntrenar, Timestamp Fecha) {
-        int idE = 0;
-        if (state) {
-            //obtner un pregunta(session,idestrenar, idtema,fecha) para obtner la idPregunta del respectivo entrenamiento
-            DaoPreguntaEntrenar daoPrengunt = new DaoPreguntaEntrenar();
-            Preguntaentrenar e = new Preguntaentrenar();
-            try {
-                e = daoPrengunt.verPreguntaEntrenamiento(session, idEntrenar, Fecha);
-            } catch (Exception ex) {
-                System.out.println("problemas al consultar el Preguntaentrenar(TEST2)creada recientemente");
-                Logger.getLogger(BeansREntrenamiento.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            //fijamos en el beanSessin(beanSEntrena) el atributo del idPrenguntaEnt(id de la preguntaEntrena)
-            this.beanSEntrena.setIdPrenguntaEnt(e.getIdInt());
-            idE = e.getIdInt();
-        }
-        return idE;
-
-    }
-
     private void addMessage(FacesMessage message) {
         FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+    public String obtnerSonidoficha1() {
+        return nameficha1;
+    }
+
+    public String obtnerSonidoficha2() {
+        return nameficha2;
+    }
+
+    public String obtnerSonidoficha3() {
+        return nameficha3;
+    }
+
+    public String obtnerSonidoficha4() {
+        return nameficha3;
     }
 
     //.............................SETTER AND GETTER...........................................
@@ -572,7 +628,7 @@ public class BeansTestPreguntaEntren1 {
         this.listFichasPregunta = listFichasPregunta;
     }
 
-    public int getResultado1() {  //obtner el resultado del valores del test
+    public int getResultado1() {  //obtner el resultado del VALOR del test
         return resultado1;
     }
 
@@ -584,4 +640,17 @@ public class BeansTestPreguntaEntren1 {
         return correcto;
     }
 
+    public int getFinalPuntaje() { //obtner el resultado (PUNTAJE) del ENTRENAMIENTO
+        return finalPuntaje;
+    }
+
+    public int getFinalTiempo() { //obtner el resultado (TIEMPO) del ENTRENAMIENTO
+        return finalTiempo;
+    }
+
+    public int getFinalError() { //obtner el resultado (ERROR) del ENTRENAMIENTO
+        return finalError;
+    }
+    
+    
 }

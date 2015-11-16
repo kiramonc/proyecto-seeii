@@ -11,12 +11,12 @@
         <ui:composition template="./../../templates/templateEstudiante.xhtml">
             <ui:define name="content">
 
-                <h1>PASO 3: Aprendizaje mediante Fichas</h1> 
+                <h1>PASO 5: Aprendizaje mediante Fichas</h1> 
                 <!--inicializamos el metodo crearfichasPreguntas-->
                
                 <p:panel>
                     <p:carousel  id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;" 
-                                 value="#{beansRFichaPregunta2.listFichasPregunta}"
+                                 value="#{beansRFichaPregunta3.listFichasPregunta}"
                                  var="var"  effect="easeInStrong"  >  
                         <p:graphicImage   id="grafico" value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{var.ficha.idFicha}.jpg" />
                     </p:carousel>
@@ -24,7 +24,7 @@
                 </p:panel>
 
                 <h:form>
-                    <h:commandButton id="btnTs" value="INICIAR TEST #2" action="testPreguntaEntrenar2" 
+                    <h:commandButton id="btnTs" value="INICIAR TEST #3" action="testPreguntaEntrenar3" 
                                      style="padding: 15px; margin: 10px 55px 0px 0px; float: right;
                                      position: absolute;
                                      right: 100px;

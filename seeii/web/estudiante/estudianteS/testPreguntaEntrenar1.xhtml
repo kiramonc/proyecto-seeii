@@ -21,32 +21,32 @@
                             <p:dashboard id="board" model="#{beansTestPreguntaEntren1.model}">
                                 <p:ajax event="reorder" listener="#{beansTestPreguntaEntren1.handleReorder}"/>
 
-                                <p:panel id="imagen1" header="IMAGEN1" >
+                                <p:panel id="imagen1" header="IMAGEN" >
                                     <p:graphicImage  id="im1" value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren1.obtnerficha1()}.jpg" 
                                                      width="120px" height="100px" />
                                 </p:panel>
 
-                                <p:panel id="imagen2" header="IMAGEN2" >
+                                <p:panel id="imagen2" header="IMAGEN" >
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren1.obtnerficha2()}.jpg" 
                                                      width="120px" height="100px" />
                                 </p:panel>
 
-                                <p:panel id="imagen3" header="IMAGEN3">
+                                <p:panel id="imagen3" header="IMAGEN">
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren1.obtnerficha3()}.jpg" 
                                                      width="120px" height="100px"/>
                                 </p:panel>
 
-                                <p:panel id="sonido1" header="SONIDO1">
+                                <p:panel id="sonido1" header="SONIDO">
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
                                                      width="120px" height="100px" onclick="hablarF1()"/>
                                 </p:panel>
 
-                                <p:panel id="sonido2" header="SONIDO2">
+                                <p:panel id="sonido2" header="SONIDO">
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
                                                      width="120px" height="100px" onclick="hablarF2()"/>
                                 </p:panel>
 
-                                <p:panel id="sonido3" header="SONIDO3">
+                                <p:panel id="sonido3" header="SONIDO">
                                     <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
                                                      width="120px" height="100px" onclick="hablarF3()"/>
                                 </p:panel>
@@ -58,7 +58,7 @@
                                    style="position: absolute; right: 50px; top: 160px;"></input>
                             <input id="sonidoF3" value="#{beansTestPreguntaEntren1.obtnerSonidoficha3()}" disabled='true' type="hidden" 
                                    style="position: absolute; right: 50px; top: 170px;"></input>       
-                            <p:commandButton id="btnFinTest" value="Finalizar test" action="#{beansTestPreguntaEntren1.finalizarEntrenamiento1()}" 
+                            <p:commandButton id="btnFinTest" value="Finalizar test" action="#{beansTestPreguntaEntren1.finalizarEntrenamiento()}" 
                                              style="padding: 15px; margin: 10px 35px 0px 0px; float: right;
                                              position: absolute;
                                              right: 150px;
@@ -66,6 +66,22 @@
                         </h:form>
                     </div>
                 </h:panelGrid>
+
+                <!-- FORMULARIO RESULTADO-->
+                <h:form id="frmResultado">
+                    <p:dialog widgetVar="dialogResultado" modal="true" showEffect="fade" hideEffect="explode" closable="false" style="background: thistle;">
+                        <h:panelGrid id="panelResultado" columns="1">
+                            <center>
+                                <p:outputLabel value="puntuación : #{beansTestPreguntaEntren1.resultado1}" style="font-size: 16px; font-weight: bold; color: #fff; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>                               
+                                <p:outputLabel value="incorrectas: #{beansTestPreguntaEntren1.resultado2}" style="font-size: 16px; font-weight: bold; color: #fff; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>
+                                <p:graphicImage value="../../resources/imagen/imgDialog/#{beansTestPreguntaEntren1.isCorrecto()}" width="120" height="100" cache="false" style="object-position: center;"/>
+                            </center>
+                        </h:panelGrid>
+                        <center>
+                            <h:commandButton  value="Siguiente" action="#{beansTestPreguntaEntren1.actualizarPagina()}" styleClass="botonstyle" />
+                        </center>
+                    </p:dialog>
+                </h:form>
 
                 <script src='https://code.responsivevoice.org/responsivevoice.js'></script>
                 <script language="javascript">

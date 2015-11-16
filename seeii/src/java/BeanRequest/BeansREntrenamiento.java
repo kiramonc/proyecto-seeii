@@ -33,6 +33,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -51,7 +52,8 @@ public class BeansREntrenamiento {
     String fechaRegistro = formatoFecha.format(fecha) + " " + formatoHora.format(fecha);
     int h = fecha.getHours();
     int m = fecha.getMinutes();
-    int tiempo = (h * 60) + m;
+    int s = fecha.getSeconds();
+    int tiempo = (h * 3600) + (m * 60) + s;
 
     java.sql.Timestamp sqlDate = new java.sql.Timestamp(new java.util.Date().getTime());
 
@@ -86,8 +88,12 @@ public class BeansREntrenamiento {
             //si tiene un idEntrena diferente a 0 entonces crea una pregunta
             if (idEntrena != 0) {
                 crearPreguntaEntrenaTEST1(idEntrena);
-                direcionar = "aprenderFichasPregunta1";
+                 return direcionar = "aprenderFichasPregunta1";
             }
+        } else {
+            //mostrar mensaje para indicar que no existe fichas, para el entrenamiento
+            RequestContext.getCurrentInstance().update("frmPresentarMensaje:panelPresentarMensaje");
+            RequestContext.getCurrentInstance().execute("PF('dialogPresentarMensaje').show()");
         }
 //se debe mostraraun mensaje diciendo que no hay suficientes fichas del tema para realizar el entrenamiento.
         return direcionar;

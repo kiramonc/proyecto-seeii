@@ -28,6 +28,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.DashboardReorderEvent;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
@@ -66,6 +67,11 @@ public class BeansTestPreguntaEntren2 {
     //atributo utilizado en el metodo(crearPreguntaEntrena) [TEST3]
     private Preguntaentrenar preguntaEnt2;
     java.sql.Timestamp sqlDateT2;
+    
+    //mostara los resultados del test
+    private String correcto;
+    private int resultado1;
+    private int resultado2;
 
     public BeansTestPreguntaEntren2() {
     }
@@ -293,7 +299,7 @@ public class BeansTestPreguntaEntren2 {
     }
 
     //.........................................................................................
-    public String finalizarEntrenamiento1() {
+    public void finalizarEntrenamiento() {
         //1. cambia letras("sonido1" ó "imagen1",etc)a numero (1 ,2, 3), En Método (cambiarValor)
         ArrayList columna0 = this.beanSEntrena.getColumna0();
         ArrayList columna1 = this.beanSEntrena.getColumna1();
@@ -335,18 +341,25 @@ public class BeansTestPreguntaEntren2 {
         actulizarFichaPregunta(valor, incorrectas);
         System.out.println("VALOR de la puntución es: " + valor);
         System.out.println("respuestas INCORRECTAS : " + incorrectas);
-        //mostramos los mensajes de los valores de punturación y respuestas incorrectas
-        FacesMessage message = new FacesMessage();
-        message.setSeverity(FacesMessage.SEVERITY_INFO);
-        message.setSummary("RESULTADO: ");
-        message.setDetail("VALOR de la puntución es: " + valor + ", respuestas INCORRECTAS : " + incorrectas);
-        addMessage(message);
-
+        
         //5. crearmos Preguntaentrenar para TEST2.
         crearPreguntaEntrenaTEST3(this.beanSEntrena.getIdEntrenamiento());
-        return "";
-
+            //mostramos los mensajes de los valores de punturación y respuestas incorrectas
+        this.resultado1 = valor;
+        this.resultado2 = incorrectas;
+        this.correcto = "Mejora.gif";
+        if (incorrectas == 0) {
+            this.correcto = "Correcto.gif";
+        }
+        RequestContext.getCurrentInstance().update("frmResultado:panelResultado");
+        RequestContext.getCurrentInstance().execute("PF('dialogResultado').show()");
+//
     }
+
+    public String actualizarPagina() {
+        return "aprenderFichasPregunta3";
+    }
+
 
     //Método para cambiar las columnas de String a Numeros
     public ArrayList cambiarValor(ArrayList columna) {
@@ -379,7 +392,7 @@ public class BeansTestPreguntaEntren2 {
         int incorrectas = 0;
         for (int i = 0; i < contador; i++) {
             if (columnaN0.get(i) == columnaN1.get(i)) {
-                valor = valor + 100;
+                valor = valor + 150;
             } else {
                 incorrectas = incorrectas + 1;
             }
@@ -529,4 +542,15 @@ public class BeansTestPreguntaEntren2 {
         this.preguntaEnt2 = preguntaEnt2;
     }
 
+     public int getResultado1() {  //obtner el resultado del valores del test
+        return resultado1;
+    }
+
+    public int getResultado2() { //obtner el resultado de prespuesta-incorrectas del test
+        return resultado2;
+    }
+
+    public String isCorrecto() {
+        return correcto;
+    }
 }

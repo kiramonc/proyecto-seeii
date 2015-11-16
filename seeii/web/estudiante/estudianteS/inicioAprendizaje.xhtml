@@ -12,24 +12,29 @@
             <ui:define name="content">
                 <center><h2>LISTA DE TEMAS DISPONIBLES</h2></center><hr/>
                 <h:form id="dockEntrenar">
-                    
-
                     <p:dataGrid var="menuItem" value="#{beanRTema.getTemasPorUnidad(1)}" columns="5" rows="8"  >
                         <p:column style="text-align: center;">
-
                             <p:panel footer="#{menuItem.nombre}" styleClass="panelStyle" style="font-size: 12px; text-shadow: 0px 0px 1.5px; font-family: cursive,sans-serif; text-transform: uppercase;">
-                               
+
                                 <h:commandLink action="#{beansREntrenamiento.iniciarEntrenamiento(beanSLogin.usernameLogin, menuItem.idTema)}">
                                     <p:graphicImage styleClass="imgItem" value="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/iconos/SEnseniar.ico" width="80" height="70" cache="false"/>
                                 </h:commandLink>
                             </p:panel>
-
-
                         </p:column>
                     </p:dataGrid>
+                </h:form>
 
 
+                <!-- Mostrar mensaje si no se encuentran fichassufiente-->
+                <h:form id="frmPresentarMensaje">
+                    <p:dialog widgetVar="dialogPresentarMensaje" modal="true" showEffect="fade" hideEffect="explode" closable="true" style="background: thistle;">
+                        <h:panelGrid id="panelPresentarMensaje" columns="1">
+                            <center>
+                                <p:graphicImage value="../../resources/imagen/imgDialog/pieza.jpg" width="380" height="200" cache="false" style="object-position: center;"/>
+                            </center>
+                        </h:panelGrid>
 
+                    </p:dialog>
                 </h:form>
 
             </ui:define>
