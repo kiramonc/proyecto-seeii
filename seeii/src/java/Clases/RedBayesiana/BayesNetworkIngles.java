@@ -26,7 +26,6 @@ import org.openmarkov.core.model.network.EvidenceCase;
 import org.openmarkov.core.model.network.Finding;
 import org.openmarkov.core.model.network.ProbNet;
 import org.openmarkov.core.model.network.ProbNode;
-import org.openmarkov.core.model.network.State;
 import org.openmarkov.core.model.network.Util;
 import org.openmarkov.core.model.network.Variable;
 import org.openmarkov.core.model.network.potential.TablePotential;
@@ -76,7 +75,7 @@ public class BayesNetworkIngles {
         
         //EvidenceCase
         EvidenceCase evidence = new EvidenceCase();
-        evidence.addFinding(probNet, "Hermana", a.getHermana());        
+        evidence.addFinding(probNet, "Hermana", a.getHermana());
         evidence.addFinding(probNet, "Hermano", a.getHermano());        
         evidence.addFinding(probNet, "Padre", a.getPadre());        
         evidence.addFinding(probNet, "Amarillo", a.getAmarillo());        
@@ -180,20 +179,15 @@ public class BayesNetworkIngles {
                                  System.err.println("State \"sí\" not found for variable \""
                         + variable.getName() + "\".");
                 e.printStackTrace();
-                }
-                
+                }       
             }    
         }
         
         for (int i = 0; i < probabilidadFinal.size(); i++) {
             nodosRed=nodosRed+" "+probabilidadFinal.get(i);
-        }
-        
-        
+        }        
         return nodosRed;
-    }
-    
-    
+    }   
 
     public String getNodosRed() {
         return nodosRed;

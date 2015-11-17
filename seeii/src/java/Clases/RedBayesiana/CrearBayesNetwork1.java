@@ -5,33 +5,46 @@
  */
 package Clases.RedBayesiana;
 
+import Pojo.Concepto;
+import Pojo.Estudiante;
+import Pojo.Tema;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import org.openmarkov.core.exception.ConstraintViolationException;
+import org.openmarkov.core.exception.IncompatibleEvidenceException;
 import org.openmarkov.core.exception.InvalidStateException;
+import org.openmarkov.core.exception.NotEvaluableNetworkException;
 import org.openmarkov.core.exception.ParserException;
 import org.openmarkov.core.exception.ProbNodeNotFoundException;
+import org.openmarkov.core.exception.UnexpectedInferenceException;
 import org.openmarkov.core.exception.WriterException;
+import org.openmarkov.core.inference.InferenceAlgorithm;
+import org.openmarkov.core.inference.InferenceOptions;
+import org.openmarkov.core.inference.annotation.InferenceManager;
+import org.openmarkov.core.model.network.EvidenceCase;
+import org.openmarkov.core.model.network.Finding;
 import org.openmarkov.core.model.network.NodeType;
 import org.openmarkov.core.model.network.ProbNet;
 import org.openmarkov.core.model.network.ProbNode;
 import org.openmarkov.core.model.network.State;
+import org.openmarkov.core.model.network.Util;
 import org.openmarkov.core.model.network.Variable;
 import org.openmarkov.core.model.network.VariableType;
 import org.openmarkov.core.model.network.potential.PotentialRole;
 import org.openmarkov.core.model.network.potential.TablePotential;
-import org.openmarkov.core.model.network.type.BayesianNetworkType;
-import org.openmarkov.core.model.network.type.NetworkType;
 import org.openmarkov.core.model.network.type.plugin.NetworkTypeManager;
-import org.openmarkov.core.model.network.type.plugin.ProbNetType;
+import org.openmarkov.inference.variableElimination.VariableElimination;
 import org.openmarkov.io.probmodel.PGMXReader;
 import org.openmarkov.io.probmodel.PGMXWriter;
 
@@ -42,7 +55,7 @@ import org.openmarkov.io.probmodel.PGMXWriter;
 public class CrearBayesNetwork1 {
 
 //    final private String bayesNetworkName = "BayesNetworkIngles1.pgmx";
-    final private double valorNo = 0.02;
+    final private double valorNo = 0.05;
     private State[] estados = new State[2];
     private String ruta;
 
@@ -52,10 +65,9 @@ public class CrearBayesNetwork1 {
          */
         estados[0] = new State("sí");
         estados[1] = new State("no");
-        ServletContext servletContex= (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-        this.ruta= (String) servletContex.getRealPath("/RedBayesiana");
-//        this.ruta= "C:\\Users\\KathyR\\Dropbox\\Décimo\\Trabajo de titulación\\Red bayesiana";
-            
+//        ServletContext servletContex= (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+//        this.ruta= (String) servletContex.getRealPath("/RedBayesiana");
+        this.ruta= "C:\\Users\\KathyR\\Dropbox\\Décimo\\Trabajo de titulación\\Red bayesiana";
     }
 
     /**
@@ -108,6 +120,13 @@ public class CrearBayesNetwork1 {
         valores[1] = 1 - valorNo; // valor 0 
         return valores;
     }
+    
+    private double[] setvalueInferConcepto(double valorSi) {
+        double[] valores = new double[2]; // dos estados sí y no
+        valores[0] = valorSi; // valor 1 
+        valores[1] = 1 - valorSi; // valor 0 
+        return valores;
+    }
 
     /**
      *
@@ -151,11 +170,7 @@ public class CrearBayesNetwork1 {
              */
             PGMXWriter pgmxWriter = new PGMXWriter();
             pgmxWriter.writeProbNet(file, probNet1);
-            System.out.println("ESTO ES LO Q DEVUELVE EL RETURN NULL: ");
-            System.out.println(probNet1.getNetworkType().getClass().getAnnotation(ProbNetType.class).name());
-        } catch (WriterException ex) {
-            Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ConstraintViolationException ex) {
+        } catch (WriterException | ConstraintViolationException ex) {
             Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -168,14 +183,11 @@ public class CrearBayesNetwork1 {
      */
     public void crearTema(String nombreUnidad, String nombreTema) throws InvalidStateException, ConstraintViolationException {
         try {
-//            String file = new File(".").getCanonicalPath() + "/" + bayesNetworkName;
             String file = ruta +"\\" +nombreUnidad + ".pgmx";
             File archivoPgmx = new File(file);
-            ProbNet probNet1;
             InputStream inputStream = new FileInputStream(archivoPgmx);
             PGMXReader pgmxReader = new PGMXReader();
-            probNet1 = pgmxReader.loadProbNet(inputStream, nombreUnidad).getProbNet();
-//            System.out.println("Network type: " + probNet1.getNetworkType().toString());
+            ProbNet probNet1 = pgmxReader.loadProbNet(inputStream, nombreUnidad).getProbNet();
 
             /**
              * CREACIÓN DE VARIABLES
@@ -217,11 +229,6 @@ public class CrearBayesNetwork1 {
              * Escritura de la red
              */
             PGMXWriter pgmxWriter = new PGMXWriter();
-            System.out.println("*************************************");
-            System.out.println("La ruta q se está guardando es: "+file);
-            System.out.println("La red es: "+probNet1.getName());
-            System.out.println("La red es: "+probNet1.getNetworkType().toString());
-            
             pgmxWriter.writeProbNet(file, probNet1);
         } catch (WriterException | FileNotFoundException | ParserException | ProbNodeNotFoundException ex) {
             Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
@@ -479,13 +486,10 @@ public class CrearBayesNetwork1 {
 
             // Eliminación de conceptos
             List<Variable> variablesTema = probNet1.getPotentials(tema).get(0).getVariables();
-            System.out.println("Número: " + variablesTema.size());
             Variable concepto = null;
             ProbNode nodo1 = null;
             if (variablesTema.size() > 1) {
-                System.out.println("SE VA A ELIMINAR");
                 for (int i = 1; i < variablesTema.size(); i++) {
-                    System.out.println("CONCEPTO: " + variablesTema.get(i).getName());
                     concepto = variablesTema.get(i);
                     probNet1.removeLink(concepto, tema, true); //eliminar el link entre el unidad y el tema
 
@@ -524,33 +528,166 @@ public class CrearBayesNetwork1 {
             System.out.println("El fichero no puede ser borrado");
         }
     }
+    
+    private String crearCopia(String nombreUnidad, String idSesion) {
+        FileInputStream in = null;
+        String rutaFinal="";
+        try {
+            rutaFinal=ruta + "/" + nombreUnidad + idSesion+ ".pgmx";
+            File inFile = new File(ruta + "/" + nombreUnidad +".pgmx");
+            File outFile = new File(rutaFinal);
+            in = new FileInputStream(inFile);
+            FileOutputStream out = new FileOutputStream(outFile);
+            int c;
+            while ((c = in.read()) != -1) {
+                out.write(c);
+            }
+            in.close();
+            out.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                in.close();
+                return rutaFinal;
+            } catch (IOException ex) {
+                Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
+    
+    private String refrescarRed(String idSesion, String nombreUnidad, List<Resultado1> resultados) {
+        try {
+            String file = ruta + "/" + nombreUnidad + idSesion+ ".pgmx";
+            File archivoPgmx = new File(file);
+            if(!archivoPgmx.exists()){
+                crearCopia(nombreUnidad, idSesion);
+            }
+            InputStream inputStream = new FileInputStream(archivoPgmx);
+            PGMXReader pgmxReader = new PGMXReader();
+            ProbNet probNet1 = pgmxReader.loadProbNet(inputStream, nombreUnidad).getProbNet();
+            String nombreVariable;
+            double valorPositivo;
+            Variable concepto;
+            TablePotential tablaPConcepto;
+            for (int i = 0; i < resultados.size(); i++) {
+                nombreVariable = resultados.get(i).getConcepto().getNombreConcepto();
+                concepto = probNet1.getVariable(nombreVariable);
+
+                tablaPConcepto = concepto.createDeltaTablePotential(0);
+                tablaPConcepto.setPotentialRole(PotentialRole.CONDITIONAL_PROBABILITY); // Rol
+                List<Variable> variablesConcepto = probNet1.getPotentials(concepto).get(0).getVariables();
+                tablaPConcepto.setVariables(variablesConcepto); // Establecer Variables
+                valorPositivo = resultados.get(i).getValor();
+                tablaPConcepto.setValues(setvalueInferConcepto(valorPositivo)); // Establecer valores después de la inferencia
+
+                ProbNode nodo = new ProbNode(probNet1, concepto, NodeType.CHANCE);
+                nodo.setPotential(tablaPConcepto);
+                probNet1.addProbNode(nodo);
+            }
+
+            PGMXWriter pgmxWriter = new PGMXWriter();
+            pgmxWriter.writeProbNet(file, probNet1);
+            inputStream.close();
+            return file;
+        } catch (FileNotFoundException | ParserException | ProbNodeNotFoundException ex) {
+            Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidStateException | IOException | WriterException ex) {
+            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    
+    public HashMap<String, String> inferencia(String idSesion, String nombreUnidad, List<Resultado1> resultados) {
+        try {
+            // REFRESCAR LA RED!!!
+            // UTILIZAR ESTA RED PARA REALIZAR LA INFERENCIA POSTERIOR
+            String file = refrescarRed(idSesion, nombreUnidad, resultados);
+            File archivoPgmx = new File(file);
+            InputStream inputStream = new FileInputStream(archivoPgmx);
+            PGMXReader pgmxReader = new PGMXReader();
+            ProbNet probNet = pgmxReader.loadProbNet(inputStream, nombreUnidad + idSesion).getProbNet();
+
+            List<Variable> lstVariableConcepto = probNet.getVariables();
+            for (int i = 0; i < resultados.size(); i++) {
+                lstVariableConcepto.remove(probNet.getVariable(resultados.get(i).getConcepto().getNombreConcepto()));
+            }
+            
+            InferenceAlgorithm variableElimination = new VariableElimination(probNet);
+            HashMap<Variable, TablePotential> posteriorProbabilities = variableElimination.getProbsAndUtilities();
+            HashMap<String, String> inferenciaConceptos = doInference(lstVariableConcepto, posteriorProbabilities, probNet);
+            // ELIMINAR LA RED TEMPORAL CORRESPONDIENTE A LA SESIÓN CONSULTADA
+            eliminarUnidad(nombreUnidad+idSesion);
+            return inferenciaConceptos;
+        } catch (ProbNodeNotFoundException | IncompatibleEvidenceException | NotEvaluableNetworkException | UnexpectedInferenceException | FileNotFoundException | ParserException ex) {
+            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    private HashMap<String, String> doInference(List<Variable> variablesOfInterest, HashMap<Variable, TablePotential> posteriorProbabilities, ProbNet probNet) throws ProbNodeNotFoundException {
+        // Imprimir la probabilidad posterior del estado "pasa" de cada variable de interés
+        HashMap<String, String> valoresInferencia = new HashMap<>();
+        String key = "";
+        double value;
+        TablePotential posteriorProbabilitiesPotential;
+        for (Variable variable : variablesOfInterest) {
+            Variable variable1 = probNet.getVariable(variable.getName());
+            posteriorProbabilitiesPotential = posteriorProbabilities.get(variable1);
+            key = variable.getName();
+
+            int stateIndex = -1;
+            try {
+                stateIndex = variable.getStateIndex("sí");
+                value = posteriorProbabilitiesPotential.values[stateIndex];
+
+                // Agregar el valor calculado para el concepto al HashMap
+                valoresInferencia.put(key, Util.roundedString(value, "0.0001"));
+            } catch (InvalidStateException e) {
+                System.err.println("State \"sí\" not found for variable \"" + variable.getName() + "\".");
+                e.printStackTrace();
+            }
+        }
+
+        return valoresInferencia;
+    }
+
 
     public static void main(String[] args) {
-        try {
             CrearBayesNetwork1 c = new CrearBayesNetwork1();
-            c.crearUnidad("UnidadPrueba1");
-            c.crearTema("UnidadPrueba1", "Family1");
-//            c.crearTema("UnidadPrueba", "School");
-//            c.crearConcepto("UnidadPrueba", "Family","sister");
-//            c.crearConcepto("UnidadPrueba", "Family","father");
-//            c.crearTema("UnidadPrueba", "Numbers");
-//            c.crearConcepto("UnidadPrueba", "Numbers","One");
-//            c.crearConcepto("UnidadPrueba", "Numbers","Two");
-//            c.crearConcepto("UnidadPrueba", "Numbers", "Three");
-//            c.crearConcepto("UnidadPrueba", "Numbers", "Five");
-//            c.editarUnidad("UnidadPrueba", "UnitExample");
-//            c.crearConcepto("UnitExample", "School","book");
-//            c.crearConcepto("UnitExample", "School","pencil");
-//            c.editarTema("UnitExample", "Family", "Familia");
-//            c.editarConcepto("UnitExample", "pencil", "pen");
-//            c.eliminarConcepto("UnitExample", "School", "pen");
-//            c.eliminarTema("UnitExample", "School");
-//            c.eliminarUnidad("UnitExample");
-        } catch (InvalidStateException ex) {
-            Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ConstraintViolationException ex) {
-            Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            String nombreUnidad="UnidadPrueba4";
+//            c.crearUnidad(nombreUnidad);
+//            c.crearTema(nombreUnidad, "Tema1");
+//            c.crearTema(nombreUnidad, "Tema2");
+//            c.crearConcepto(nombreUnidad, "Tema1", "Concepto");
+//            c.crearConcepto(nombreUnidad, "Tema1", "Concepto2");
+//            c.crearConcepto(nombreUnidad, "Tema1", "Concepto3");
+//            c.crearConcepto(nombreUnidad, "Tema1", "Concepto4");
+//            
+//            c.crearConcepto(nombreUnidad, "Tema2", "Concepto5");
+//            c.crearConcepto(nombreUnidad, "Tema2", "Concepto6");
+            
+            Estudiante est= new Estudiante();
+            Resultado1 r= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto3", "traducción", "descripción", true), 0.317);
+            Resultado1 r1= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto4", "traducción", "descripción", true), 0.317);
+            Resultado1 r2= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto2", "traducción", "descripción", true), 0.695);
+            Resultado1 r3= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto", "traducción", "descripción", true), 0.831);
+            Resultado1 r4= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto5", "traducción", "descripción", true), 0.05);
+            Resultado1 r5= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto6", "traducción", "descripción", true), 0.05);
+            List<Resultado1> resultados= new ArrayList<>();
+            resultados.add(r);
+            resultados.add(r1);
+            resultados.add(r2);
+            resultados.add(r3);
+            resultados.add(r4);
+            resultados.add(r5);
+            
+            HashMap<String, String> valorPosteriori=c.inferencia("Est001", nombreUnidad, resultados);
+            System.out.println(valorPosteriori);        
     }
 
 }
