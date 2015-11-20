@@ -5,13 +5,6 @@
  */
 package BeanSession;
 
-import Clases.Encrypt;
-import Dao.DaoTest;
-import Dao.DaoUsuario;
-import HibernateUtil.HibernateUtil;
-import Pojo.Test;
-import Pojo.Usuario;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -26,10 +19,6 @@ import org.hibernate.Transaction;
 @ManagedBean
 @SessionScoped
 public class BeanSTest {
-
-    private Session session;
-    private Transaction transaction;
-
     private int codigoTest;
 
     /**
@@ -41,8 +30,6 @@ public class BeanSTest {
 
     public String iniciarTest(String codigo) {
         this.codigoTest = Integer.parseInt(codigo);
-        this.session = null;
-        this.transaction = null;
 
         try {
             HttpSession httpSession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);

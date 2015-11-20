@@ -17,7 +17,7 @@
                         <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
                         <h:panelGroup>
                             <center><h3>Lista de unidades de usuarios</h3></center>
-                            <p:dataTable id="tablaListaUsuarios" var="item" value="#{beanRUsuario.allUsuario}" selection="#{beanRUsuario.usuario}" selectionMode="single" rowKey="#{item.idUsuario}" paginator="true" rows="20" filteredValue="#{beanRUsuario.listaUsuarioFiltrado}" styleClass="estiloTabla">
+                            <p:dataTable id="tablaListaUsuarios" var="item" value="#{beanRUsuario.allUsuario}" selection="#{beanRUsuario.usuario}" selectionMode="single" rowKey="#{item.idUsuario}" paginator="true" rows="10" filteredValue="#{beanRUsuario.listaUsuarioFiltrado}" styleClass="estiloTabla">
                                 <p:ajax event="rowSelect" update=":frmDatosUsuario:panelDatosUsuario"/>
                                 <p:column headerText="USERNAME" filterBy="username">
                                     <p:outputLabel value="#{item.username}"/>
@@ -28,7 +28,7 @@
                                 <p:column headerText="APELLIDO" filterBy="apellido">
                                     <p:outputLabel value="#{item.apellido}"/>
                                 </p:column>
-                                <p:column headerText="ESTADO CUENTA" filterBy="estado">
+                                <p:column headerText="CUENTA" filterBy="estado">
                                     <p:outputLabel value="#{item.estado ? 'Activo':'Inactivo'}"/>
                                 </p:column>
                                 <p:column headerText="ROL" filterBy="rol.tipo">
@@ -66,7 +66,7 @@
                                 <h:panelGroup></h:panelGroup>
 
                                 <p:outputLabel value="Nombre de usuario: " for="txtUsername"/>
-                                <p:inputText id="txtUsername" label="Nombre de usuario" value="#{beanRUsuario.usuario.username}">
+                                <p:inputText id="txtUsername" label="Nombre de usuario" value="#{beanRUsuario.usuario.username}" disabled="#{beanRUsuario.deshabilitarBotonCrear()}">
                                     <f:validator validatorId="validatorVacio"/>
                                 </p:inputText>
                                 <p:message for="txtUsername"/>

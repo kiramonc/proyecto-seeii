@@ -27,7 +27,7 @@ import org.primefaces.context.RequestContext;
 
 /**
  *
- * @author silvy
+ * @author KathyR
  */
 @ManagedBean
 @ViewScoped
@@ -54,7 +54,6 @@ public class BeanRUnidadE {
             this.transaction = session.beginTransaction();
             Unidadensenianza u = daoUnidadE.verPorNombreUnidad(session, unidadE.getNombreUnidad());
             if (u != null) {
-                System.out.println(u.toString());
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "La unidad ya se encuentra registrada"));
                 return;
             }
@@ -254,10 +253,8 @@ public class BeanRUnidadE {
             DaoUnidadE daoUnidadE = new DaoUnidadE();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            System.out.println("CONSULTA UNIDAD CON ID: " + idUnidad);
             this.unidadE = daoUnidadE.verPorCodigoUnidad(session, idUnidad);
-            System.out.println("UNIDAD RECUPERADA " + unidadE.getNombreUnidad() + " CON ID: " + unidadE.getId());
-
+            
             //Para cargar los datos en el panelEditarUnidad del formulario frmEditarUnidad
             RequestContext.getCurrentInstance().update("frmModificarUnidad:panelEditarUnidad");
 

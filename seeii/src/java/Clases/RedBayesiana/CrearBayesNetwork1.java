@@ -65,9 +65,9 @@ public class CrearBayesNetwork1 {
          */
         estados[0] = new State("sí");
         estados[1] = new State("no");
-//        ServletContext servletContex= (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-//        this.ruta= (String) servletContex.getRealPath("/RedBayesiana");
-        this.ruta= "C:\\Users\\KathyR\\Dropbox\\Décimo\\Trabajo de titulación\\Red bayesiana";
+        ServletContext servletContex= (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        this.ruta= (String) servletContex.getRealPath("/resources/RedesBayesianas/BNEvaluate");
+//        this.ruta= "C:\\Users\\KathyR\\Dropbox\\Décimo\\Trabajo de titulación\\Red bayesiana";
     }
 
     /**
@@ -672,22 +672,24 @@ public class CrearBayesNetwork1 {
 //            c.crearConcepto(nombreUnidad, "Tema2", "Concepto6");
             
             Estudiante est= new Estudiante();
-            Resultado1 r= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto3", "traducción", "descripción", true), 0.317);
-            Resultado1 r1= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto4", "traducción", "descripción", true), 0.317);
-            Resultado1 r2= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto2", "traducción", "descripción", true), 0.695);
-            Resultado1 r3= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto", "traducción", "descripción", true), 0.831);
-            Resultado1 r4= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto5", "traducción", "descripción", true), 0.05);
-            Resultado1 r5= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto6", "traducción", "descripción", true), 0.05);
-            List<Resultado1> resultados= new ArrayList<>();
-            resultados.add(r);
-            resultados.add(r1);
-            resultados.add(r2);
-            resultados.add(r3);
-            resultados.add(r4);
-            resultados.add(r5);
             
-            HashMap<String, String> valorPosteriori=c.inferencia("Est001", nombreUnidad, resultados);
-            System.out.println(valorPosteriori);        
+            
+//            Resultado1 r= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto3", "traducción", "descripción", true), 0.317);
+//            Resultado1 r1= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto4", "traducción", "descripción", true), 0.317);
+//            Resultado1 r2= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto2", "traducción", "descripción", true), 0.695);
+//            Resultado1 r3= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto", "traducción", "descripción", true), 0.831);
+//            Resultado1 r4= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto5", "traducción", "descripción", true), 0.05);
+//            Resultado1 r5= new Resultado1(1, est, new Concepto(1, new Tema(), "Concepto6", "traducción", "descripción", true), 0.05);
+//            List<Resultado1> resultados= new ArrayList<>();
+//            resultados.add(r);
+//            resultados.add(r1);
+//            resultados.add(r2);
+//            resultados.add(r3);
+//            resultados.add(r4);
+//            resultados.add(r5);
+//            
+//            HashMap<String, String> valorPosteriori=c.inferencia("Est001", nombreUnidad, resultados);
+//            System.out.println(valorPosteriori);        
     }
 
 }

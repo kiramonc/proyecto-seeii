@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 24/07/2015 12:27:41 PM by Hibernate Tools 3.6.0
+// Generated 19/11/2015 09:00:12 PM by Hibernate Tools 3.6.0
 
 
 import java.util.HashSet;
@@ -12,32 +12,37 @@ public class Pregunta  implements java.io.Serializable {
 
 
      private int idPregunta;
-     private Test test;
-     private Concepto concepto;
-     private String descripcion;
-     private double peso;
+     private String enunciado;
+     private double dificultad;
+     private double fdescuido;
+     private double indiceDis;
+     private String nombrePreg;
      private boolean estado;
+     private Set pregConcs = new HashSet(0);
      private Set items = new HashSet(0);
 
     public Pregunta() {
     }
 
 	
-    public Pregunta(int idPregunta, Test test, Concepto concepto, String descripcion, double peso, boolean estado) {
+    public Pregunta(int idPregunta, String enunciado, double dificultad, double fdescuido, double indiceDis, String nombrePreg, boolean estado) {
         this.idPregunta = idPregunta;
-        this.test = test;
-        this.concepto = concepto;
-        this.descripcion = descripcion;
-        this.peso = peso;
+        this.enunciado = enunciado;
+        this.dificultad = dificultad;
+        this.fdescuido = fdescuido;
+        this.indiceDis = indiceDis;
+        this.nombrePreg = nombrePreg;
         this.estado = estado;
     }
-    public Pregunta(int idPregunta, Test test, Concepto concepto, String descripcion, double peso, boolean estado, Set items) {
+    public Pregunta(int idPregunta, String enunciado, double dificultad, double fdescuido, double indiceDis, String nombrePreg, boolean estado, Set pregConcs, Set items) {
        this.idPregunta = idPregunta;
-       this.test = test;
-       this.concepto = concepto;
-       this.descripcion = descripcion;
-       this.peso = peso;
+       this.enunciado = enunciado;
+       this.dificultad = dificultad;
+       this.fdescuido = fdescuido;
+       this.indiceDis = indiceDis;
+       this.nombrePreg = nombrePreg;
        this.estado = estado;
+       this.pregConcs = pregConcs;
        this.items = items;
     }
    
@@ -48,33 +53,40 @@ public class Pregunta  implements java.io.Serializable {
     public void setIdPregunta(int idPregunta) {
         this.idPregunta = idPregunta;
     }
-    public Test getTest() {
-        return this.test;
+    public String getEnunciado() {
+        return this.enunciado;
     }
     
-    public void setTest(Test test) {
-        this.test = test;
+    public void setEnunciado(String enunciado) {
+        this.enunciado = enunciado;
     }
-    public Concepto getConcepto() {
-        return this.concepto;
-    }
-    
-    public void setConcepto(Concepto concepto) {
-        this.concepto = concepto;
-    }
-    public String getDescripcion() {
-        return this.descripcion;
+    public double getDificultad() {
+        return this.dificultad;
     }
     
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDificultad(double dificultad) {
+        this.dificultad = dificultad;
     }
-    public double getPeso() {
-        return this.peso;
+    public double getFdescuido() {
+        return this.fdescuido;
     }
     
-    public void setPeso(double peso) {
-        this.peso = peso;
+    public void setFdescuido(double fdescuido) {
+        this.fdescuido = fdescuido;
+    }
+    public double getIndiceDis() {
+        return this.indiceDis;
+    }
+    
+    public void setIndiceDis(double indiceDis) {
+        this.indiceDis = indiceDis;
+    }
+    public String getNombrePreg() {
+        return this.nombrePreg;
+    }
+    
+    public void setNombrePreg(String nombrePreg) {
+        this.nombrePreg = nombrePreg;
     }
     public boolean isEstado() {
         return this.estado;
@@ -82,6 +94,13 @@ public class Pregunta  implements java.io.Serializable {
     
     public void setEstado(boolean estado) {
         this.estado = estado;
+    }
+    public Set getPregConcs() {
+        return this.pregConcs;
+    }
+    
+    public void setPregConcs(Set pregConcs) {
+        this.pregConcs = pregConcs;
     }
     public Set getItems() {
         return this.items;

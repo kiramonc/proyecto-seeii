@@ -10,16 +10,12 @@ import Dao.DaoPregunta;
 import HibernateUtil.HibernateUtil;
 import Pojo.Item;
 import Pojo.Pregunta;
-import Pojo.Test;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -118,7 +114,6 @@ public class BeanRItem {
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
             this.pregunta=daoItem.verPorCodigoPregunta(session, codigo);
-            System.out.println("LA PREGUNTA QUE SE ESTÁ CARGANDO ES: "+this.pregunta.getDescripcion());
             RequestContext.getCurrentInstance().update("frmCrearItems:panelCrearItems");
             RequestContext.getCurrentInstance().execute("PF('dialogCrearItems').show()");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
@@ -163,7 +158,6 @@ public class BeanRItem {
             RequestContext.getCurrentInstance().update("frmVerItems:panelVerItems");
             RequestContext.getCurrentInstance().execute("PF('dialogVerItems').show()");
             this.transaction.commit();
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -279,7 +273,6 @@ public class BeanRItem {
         UploadedFile file = event.getFile();
         this.contenidoImg= file.getContents();
         this.nombreImagen=file.getFileName();
-//        item.setImgItem(byte[]);
     }
     
     public void actualizarImg() throws IOException{
@@ -290,24 +283,43 @@ public class BeanRItem {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR:", "Debe seleccionar una imagen"));
                 return;
             }
-//            else{
-//                if(imagen.getSize()<=65535){
-//                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR:", "El archivo no puede ser mayor a 64kb"));
-//                return;
-//            }
-//            }
             
-            ServletContext servletContex= (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-            String imgItems= (String) servletContex.getRealPath("/imgItems");
-            outputS= new FileOutputStream(new File(imgItems+"/"+imagen.getFileName()));
             inputS= this.imagen.getInputstream();
-            
-            int read=0;
-            byte[] bytes= new byte[1024];
-            while((read=inputS.read(bytes))!=-1){
-                outputS.write(bytes,0,read);
+            ServletContext servletContex = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+            String imgItems = (String) servletContex.getRealPath("/resources/imagen/imgItems") + "/" + imagen.getFileName();
+
+            int contador = 1;
+            File f = new File(imgItems);
+            String nombre;
+            String extension = ".png"; // en caso de no seleccionar una extensión
+            int pos = imgItems.lastIndexOf(".");
+            if (pos == -1) {
+                nombre = imgItems;
+            } else {
+                nombre = imgItems.substring(0, pos);
+                extension = imgItems.substring(pos);
             }
-            this.nombreImagen=imagen.getFileName();
+
+            boolean bandera = true;
+            do {
+                if (f.exists()) {
+                    bandera = false;
+                    imgItems = nombre +"_"+contador+extension;
+                    contador++;
+                    f = new File(imgItems);
+                } else {
+                    bandera = true;
+                }
+            } while (bandera == false);
+
+            outputS = new FileOutputStream(f);
+
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = inputS.read(bytes)) != -1) {
+                outputS.write(bytes, 0, read);
+            }
+            this.nombreImagen = f.getName();            
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Imagen de Item actualizado correctamente."));
         }catch(Exception ex){
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL GUARDAR IMAGEN:", "Contacte con el administrador, " + ex));
@@ -320,34 +332,4 @@ public class BeanRItem {
             }
         }
     }
-
-//    public boolean guardarImagen(String ruta, String nombre) {
-//        String insert = "insert into Imagenes(imagen,nombre) values(?,?)";
-//        FileInputStream fis = null;
-//        this.session = null;
-//        this.transaction = null;
-//        try {
-//            DaoItem daoItem = new DaoItem();
-//            this.session = HibernateUtil.getSessionFactory().openSession();
-//            this.transaction = session.beginTransaction();
-//        
-//            File file = new File(ruta);
-//            fis = new FileInputStream(file);
-//            daoItem.saveImg(this.session, fis, file);
-//            transaction.commit();
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "La imagen se guardó con éxito."));
-//            return true;
-//        } catch (Exception ex) {
-//            if (this.transaction != null) {
-//                this.transaction.rollback();
-//            }
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL ELIMINAR:", "Contacte con el administrador, " + ex));
-//        } finally {
-//            if (this.session != null) {
-//                this.session.close();
-//            }
-//        }
-//        return false;
-//    }
-
 }

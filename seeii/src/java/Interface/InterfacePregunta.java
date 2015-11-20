@@ -5,6 +5,7 @@
  */
 package Interface;
 
+import Pojo.PregConc;
 import Pojo.Pregunta;
 import java.util.List;
 import org.hibernate.Session;
@@ -17,7 +18,7 @@ public interface InterfacePregunta {
     
     public boolean registrar(Session session, Pregunta pregunta) throws Exception;
     public List<Pregunta> verTodo(Session session) throws Exception;
-    public List<Pregunta> verPorTest(Session session,int test) throws Exception;
+    public List<PregConc> verPorTest(Session session,int test) throws Exception;
     public List<Pregunta> verPorConcepto(Session session,int concepto) throws Exception;
     public Pregunta verPorCodigoPregunta(Session session, int idPregunta) throws Exception;
     public boolean actualizar(Session session, Pregunta pregunta) throws Exception;

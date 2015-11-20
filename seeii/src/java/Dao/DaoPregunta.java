@@ -5,6 +5,7 @@
  */
 package Dao;
 
+import Pojo.PregConc;
 import Pojo.Pregunta;
 import java.util.List;
 import org.hibernate.Hibernate;
@@ -20,6 +21,7 @@ public class DaoPregunta implements Interface.InterfacePregunta {
     @Override
     public boolean registrar(Session session, Pregunta pregunta) throws Exception {
         session.save(pregunta);
+        
         return true;
     }
 
@@ -28,23 +30,22 @@ public class DaoPregunta implements Interface.InterfacePregunta {
         String hql = "from Pregunta";
         Query query = session.createQuery(hql);
         List<Pregunta> listaPreguntas = (List<Pregunta>) query.list();
-        for (Pregunta lista : listaPreguntas) {
-            Hibernate.initialize(lista.getConcepto());
-//            Hibernate.initialize(lista.getTest().getTema());
-        }
+
         return listaPreguntas;
     }
 
     @Override
-    public List<Pregunta> verPorTest(Session session, int test) throws Exception {
-        String hql = "from Pregunta where test=:test";
-        Query query = session.createQuery(hql);
-        query.setInteger("test", test);
-        List<Pregunta> listaPreguntas = (List<Pregunta>) query.list();
-        for (Pregunta lista : listaPreguntas) {
+    public List<PregConc> verPorTest(Session session, int tema) throws Exception {
+        
+        String hql1 = "select preg from PregConc as preg join preg.concepto as conceptos where conceptos.tema =:tema";
+        Query query = session.createQuery(hql1);
+        query.setInteger("tema", tema);
+        List<PregConc> listaPreguntas = (List<PregConc>) query.list();
+        for(PregConc lista: listaPreguntas){
+            Hibernate.initialize(lista.getPregunta());
             Hibernate.initialize(lista.getConcepto());
-//            Hibernate.initialize(lista.getTest().getTema());
         }
+        
         return listaPreguntas;
     }
 
@@ -54,10 +55,7 @@ public class DaoPregunta implements Interface.InterfacePregunta {
         Query query = session.createQuery(hql);
         query.setInteger("concepto", concepto);
         List<Pregunta> listaPreguntas = (List<Pregunta>) query.list();
-        for (Pregunta lista : listaPreguntas) {
-            Hibernate.initialize(lista.getConcepto());
-//            Hibernate.initialize(lista.getTest().getTema());
-        }
+        
         return listaPreguntas;
     }
 
@@ -67,9 +65,16 @@ public class DaoPregunta implements Interface.InterfacePregunta {
         Query query = session.createQuery(hql);
         query.setParameter("idPregunta", idPregunta);
         Pregunta pregunta = (Pregunta) query.uniqueResult();
-        Hibernate.initialize(pregunta.getConcepto());
-//        Hibernate.initialize(pregunta.getTest().getTema());
+        
         return pregunta;
+    }
+    
+    public int verUltimoRegistro(Session session) throws Exception {
+//        String hql = "SELECT pregunta From Pregunta as pregunta LAST_INSERT_ID(idPregunta) from Pregunta order by idPregunta desc";
+        String hql = "SELECT max(idPregunta) from Pregunta";
+        Query query = session.createQuery(hql);
+        int preg= (int) query.uniqueResult();
+        return preg;
     }
 
     @Override

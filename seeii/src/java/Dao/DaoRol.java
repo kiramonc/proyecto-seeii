@@ -8,12 +8,10 @@ package Dao;
 
 import HibernateUtil.HibernateUtil;
 import Pojo.Rol;
-import Pojo.Usuario;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  *

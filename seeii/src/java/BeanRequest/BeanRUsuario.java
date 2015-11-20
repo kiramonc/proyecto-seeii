@@ -7,16 +7,21 @@ package BeanRequest;
 
 import Clases.Encrypt;
 import Dao.DaoAdministrador;
+import Dao.DaoConcepto;
 import Dao.DaoEstudiante;
+import Dao.DaoResultado;
 import Dao.DaoRol;
 import Dao.DaoUnidadE;
 import Dao.DaoUsuario;
 import HibernateUtil.HibernateUtil;
 import Pojo.Administrador;
+import Pojo.Concepto;
 import Pojo.Estudiante;
+import Pojo.Resultado;
 import Pojo.Rol;
 import Pojo.Unidadensenianza;
 import Pojo.Usuario;
+import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -62,7 +67,6 @@ public class BeanRUsuario {
     public void registrar() {
         this.session = null;
         this.transaction = null;
-
         try {
             if (!this.txtPassword.equals(this.txtPasswordRepita)) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Las contraseñas no coinciden"));
@@ -73,14 +77,11 @@ public class BeanRUsuario {
             this.transaction = session.beginTransaction();
             Usuario u = daoUsuario.verPorUsername(session, usuario.getUsername());
             if (u != null) {
-                System.out.println(u.toString());
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "El nombre de usuario ya se encuentra registrado"));
                 return;
             }
-
             this.usuario.setPassword(Encrypt.sha512(this.txtPassword));
             daoUsuario.registrar(this.session, this.usuario);
-
             if (this.usuario.getRol().getTipo().equals("Administrador")) {
                 Administrador admin = new Administrador();
                 admin.setUsuario(daoUsuario.verPorUsername(session, usuario.getUsername()));
@@ -91,10 +92,25 @@ public class BeanRUsuario {
                     Estudiante est = new Estudiante();
                     est.setUsuario(daoUsuario.verPorUsername(session, usuario.getUsername()));
                     DaoUnidadE daoUnidad = new DaoUnidadE();
-                    Unidadensenianza unidadE = daoUnidad.verPorNombreUnidad(session, "UnidadBasica");
+                    Unidadensenianza unidadE = daoUnidad.verPorNombreUnidad(session, "Unidad Básica"); // Nombre de la unidad estándar
                     est.setUnidadensenianza(unidadE);
                     DaoEstudiante daoEst = new DaoEstudiante();
                     daoEst.registrar(session, est);
+                    // Agregar registro resultados
+                    Estudiante estRegistrado= daoEst.verPorCodigoUsuario(session, daoUsuario.verPorUsername(session, usuario.getUsername()).getIdUsuario());
+                    DaoConcepto daoConcepto= new DaoConcepto();
+                    List<Concepto> lstConceptos=daoConcepto.verPorUnidadEnsenianza(session, unidadE.getId());
+                    List<Resultado> lstResultados = new ArrayList<>();
+                    Resultado r= new Resultado();
+                    for (int i = 0; i < lstConceptos.size(); i++) {
+                        r.setEstudiante(estRegistrado);
+                        r.setConcepto(lstConceptos.get(i));
+                        r.setValor(0.05);
+                        lstResultados.add(r);
+                        r= new Resultado();
+                    }
+                    DaoResultado daoResultado = new DaoResultado();
+                    daoResultado.registrarVarios(session, lstResultados);
                 }
             }
 
@@ -128,10 +144,6 @@ public class BeanRUsuario {
             Dao.DaoUsuario daoUsuario = new DaoUsuario();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-//            if(daoUsuario.verPorUsername(session, usuario.getUsername())!=null){
-//                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error:", "El nombre de usuario ya se encuentra registrado"));
-//                return;
-//            }
             if (this.establecerPass) {
                 if (!this.txtPassword.equals(this.txtPasswordRepita)) {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Las contraseñas no coinciden"));
@@ -158,8 +170,6 @@ public class BeanRUsuario {
     public List<Usuario> getAllUsuario() {
         this.session = null;
         this.transaction = null;
-//        this.establecerPass=false;
-
         try {
             DaoUsuario daoUsuario = new DaoUsuario();
             this.session = HibernateUtil.getSessionFactory().openSession();
@@ -338,12 +348,6 @@ public class BeanRUsuario {
         this.txtPassword="";
         this.txtPasswordRepita="";    
         this.establecerPass=false;
-//        RequestContext.getCurrentInstance().update("panelDatosUsuario:radioPass");
-//
-//            //Para mostrar el diálogo que contiene los datos del usuario con el widgetVar: dialogEditarUsuario
-////            RequestContext.getCurrentInstance().execute("PF('dialogEditarUsuario').show()");
-//            
-//        this.establecerPass = true;
     }
 
     public boolean deshabilitarBotonCrear() {
@@ -356,8 +360,6 @@ public class BeanRUsuario {
     public boolean deshabilitarBotonEstado() {
         if (this.usuario.getIdUsuario() != 0) {
             HttpSession sesionUsuario = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-            System.out.println("EL NOMBRE DEL USUARIO LOGEADO ES:"+sesionUsuario.getAttribute("usernameLogin").toString());
-            System.out.println("EL NOMBRE DEL USUARIO CARGADO ES:"+this.usuario.getUsername());
             if (this.usuario.getUsername().equals(sesionUsuario.getAttribute("usernameLogin").toString())) {
                 return true;
             }
@@ -367,13 +369,6 @@ public class BeanRUsuario {
     }
 
     public void cambiarDatosPass() {
-//        if (establecerPass) {
-//            this.txtPasswordRepita = "";
-//            this.txtPassword = "";
-//        } else {
-//            this.txtPasswordRepita = "password";
-//            this.txtPassword = "password";
-//        }
         this.establecerPass=false;
     }
 

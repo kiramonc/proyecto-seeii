@@ -247,3 +247,14 @@
     color: #ffffff;
     text-shadow: 0.5px 0.5px 0px #000000
 }
+
+#datosPreguntaVerItems{
+    width: 50%;
+    float: left;
+    opacity: 0.7;
+}
+
+#datosItemsVerItems{
+    width: 50%;
+    margin-left: 50%;
+}

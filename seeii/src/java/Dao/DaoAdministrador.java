@@ -7,7 +7,6 @@
 package Dao;
 
 import Pojo.Administrador;
-import Pojo.Unidadensenianza;
 import java.util.List;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;

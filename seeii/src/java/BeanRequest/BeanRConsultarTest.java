@@ -6,21 +6,17 @@
 package BeanRequest;
 
 import Dao.DaoTema;
-import Dao.DaoTest;
 import HibernateUtil.HibernateUtil;
 import Pojo.Pregunta;
 import Pojo.Tema;
-import Pojo.Test;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.MenuModel;
 
@@ -32,9 +28,9 @@ import org.primefaces.model.menu.MenuModel;
 @ViewScoped
 public class BeanRConsultarTest {
 
-    private Test test = new Test();
-    private List<Test> listaTest;
-    private List<Test> listaTestFiltrada;
+    private Tema tema = new Tema();
+    private List<Tema> listaTemas;
+    private List<Tema> listaTemaFiltrada;
     private List<Pregunta> listaPreguntas;
     private Session session;
     private Transaction transaction;
@@ -45,15 +41,15 @@ public class BeanRConsultarTest {
 
     }
 
-    public Test consultarTestPorCodigo(int idTest) {
+    public Tema consultarTestPorCodigo(int idTema) {
         this.session = null;
         this.transaction = null;
         try {
-            DaoTest daoUnidad = new DaoTest();
+            DaoTema daoTema = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            Test t = daoUnidad.verPorCodigoTest(session, idTest);
-            this.test=t;
+            Tema t = daoTema.verPorCodigoTema(session, idTema);
+            this.tema=t;
             transaction.commit();
             return t;
         } catch (Exception ex) {
@@ -68,16 +64,16 @@ public class BeanRConsultarTest {
         }
     }
 
-    public List<Test> getAllTest() {
+    public List<Tema> getAllTest() {
         this.session = null;
         this.transaction = null;
         try {
-            DaoTest daoTest = new DaoTest();
+            DaoTema daoTema = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            this.listaTest = daoTest.verTodo(session);
+            this.listaTemas = daoTema.verTodo(session);
             this.transaction.commit();
-            return this.listaTest;
+            return this.listaTemas;
 
         } catch (Exception ex) {
             if (this.transaction != null) {
@@ -92,28 +88,28 @@ public class BeanRConsultarTest {
         }
     }
 
-    public Test getTest() {
-        return test;
+    public Tema getTema() {
+        return tema;
     }
 
-    public void setTest(Test test) {
-        this.test = test;
+    public void setTema(Tema tema) {
+        this.tema = tema;
     }
 
-    public List<Test> getListaTest() {
-        return listaTest;
+    public List<Tema> getListaTemas() {
+        return listaTemas;
     }
 
-    public void setListaTest(List<Test> listaTest) {
-        this.listaTest = listaTest;
+    public void setListaTemas(List<Tema> listaTemas) {
+        this.listaTemas = listaTemas;
     }
 
-    public List<Test> getListaTestFiltrada() {
-        return listaTestFiltrada;
+    public List<Tema> getListaTemaFiltrada() {
+        return listaTemaFiltrada;
     }
 
-    public void setListaTestFiltrada(List<Test> listaTestFiltrada) {
-        this.listaTestFiltrada = listaTestFiltrada;
+    public void setListaTemaFiltrada(List<Tema> listaTemaFiltrada) {
+        this.listaTemaFiltrada = listaTemaFiltrada;
     }
 
     public List<Pregunta> getListaPreguntas() {
@@ -124,25 +120,17 @@ public class BeanRConsultarTest {
         this.listaPreguntas = listaPreguntas;
     }
 
-    public List<Test> getItemsMenu() {
+    public List<Tema> getItemsMenu() {
         this.session = null;
         this.transaction = null;
         try {
-            DaoTest daoTest = new DaoTest();
             DaoTema daoTema = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
             List<Tema> temas = daoTema.verPorUnidad(session, 1);
-
-            Test t = null;
-            List<Test> listaTests = new ArrayList<>();
-            for (int i = 0; i < temas.size(); i++) {
-                t = daoTest.verPorTema(session, temas.get(i).getIdTema());
-                listaTests.add(t);
-            }
-            this.listaTest = listaTests;
+            this.listaTemas = temas;
             this.transaction.commit();
-            return this.listaTest;
+            return this.listaTemas;
         } catch (Exception ex) {
             if (this.transaction != null) {
                 this.transaction.rollback();
@@ -155,63 +143,5 @@ public class BeanRConsultarTest {
             }
         }
     }
-        
-//    public MenuModel getModel() {
-//        this.session = null;
-//        this.transaction = null;
-//        try {
-//            DaoTest daoTest = new DaoTest();
-//            DaoTema daoTema = new DaoTema();
-//            this.session = HibernateUtil.getSessionFactory().openSession();
-//            this.transaction = session.beginTransaction();
-//            List<Tema> temas = daoTema.verPorUnidad(session, 1);
-//
-//            Test t = null;
-//            List<Test> listaTests = new ArrayList<>();
-//            for (int i = 0; i < temas.size(); i++) {
-//                t = daoTest.verPorTema(session, temas.get(i).getIdTema());
-//                listaTests.add(t);
-//            }
-//            this.listaTest = listaTests;
-//
-//            this.transaction.commit();
-//            System.out.println("Lista Test tiene un total de: " + listaTest.size() + " elementos");
-//            MenuModel model = new DefaultMenuModel();
-//            DefaultMenuItem item = null;
-//            
-//            for (int i = 0; i < listaTest.size(); i++) {
-//                item = new DefaultMenuItem(listaTest.get(i).getTema().getNombre());
-//                item.setIcon("/resources/iconos/Tutorial.ico");
-////                item.setCommand("#{beanSTest.iniciarTest('"+Integer.toString(listaTests.get(i).getIdTest())+"')}");
-//                if(i==0){
-////                item.setOutcome("/estudiante/estudianteK/test");
-//                item.setCommand("#{beanSTest.iniciarTest(\"1\")}");
-//                }else{
-//                    if(i==1){
-////                    item.setOutcome("/estudiante/estudianteK/testListening1");
-//                    }else{
-////                        item.setOutcome("/estudiante/estudianteK/testSpeaking3");
-//                    }
-//                }
-//                model.addElement(item);
-//            }
-//            this.model = model;
-//            System.out.println("El modelo tiene " + this.model.getElements().size() + " elementos");
-//
-//            
-//            return this.model;
-//
-//        } catch (Exception ex) {
-//            if (this.transaction != null) {
-//                this.transaction.rollback();
-//            }
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CREAR MENU DINÁMICO:", "Contacte con el administrador" + ex.getMessage()));
-//            return null;
-//        } finally {
-//            if (this.session != null) {
-//                this.session.close();
-//            }
-//        }
-//    }
 
 }

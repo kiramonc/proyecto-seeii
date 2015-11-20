@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 24/07/2015 12:27:41 PM by Hibernate Tools 3.6.0
+// Generated 19/11/2015 09:00:12 PM by Hibernate Tools 3.6.0
 
 
 import java.util.HashSet;
@@ -17,28 +17,29 @@ public class Concepto  implements java.io.Serializable {
      private String traduccion;
      private String descripcion;
      private boolean estado;
-     private Set preguntas = new HashSet(0);
+     private Set pregConcs = new HashSet(0);
+     private Set resultados = new HashSet(0);
 
     public Concepto() {
     }
 
 	
-    public Concepto(int idConcepto, Tema tema, String nombreConcepto, String traduccion, String descripcion, boolean estado) {
+    public Concepto(int idConcepto, Tema tema, String nombreConcepto, String traduccion, boolean estado) {
         this.idConcepto = idConcepto;
         this.tema = tema;
         this.nombreConcepto = nombreConcepto;
         this.traduccion = traduccion;
-        this.descripcion = descripcion;
         this.estado = estado;
     }
-    public Concepto(int idConcepto, Tema tema, String nombreConcepto, String traduccion, String descripcion, boolean estado, Set preguntas) {
+    public Concepto(int idConcepto, Tema tema, String nombreConcepto, String traduccion, String descripcion, boolean estado, Set pregConcs, Set resultados) {
        this.idConcepto = idConcepto;
        this.tema = tema;
        this.nombreConcepto = nombreConcepto;
        this.traduccion = traduccion;
        this.descripcion = descripcion;
        this.estado = estado;
-       this.preguntas = preguntas;
+       this.pregConcs = pregConcs;
+       this.resultados = resultados;
     }
    
     public int getIdConcepto() {
@@ -83,12 +84,19 @@ public class Concepto  implements java.io.Serializable {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
-    public Set getPreguntas() {
-        return this.preguntas;
+    public Set getPregConcs() {
+        return this.pregConcs;
     }
     
-    public void setPreguntas(Set preguntas) {
-        this.preguntas = preguntas;
+    public void setPregConcs(Set pregConcs) {
+        this.pregConcs = pregConcs;
+    }
+    public Set getResultados() {
+        return this.resultados;
+    }
+    
+    public void setResultados(Set resultados) {
+        this.resultados = resultados;
     }
 
     @Override

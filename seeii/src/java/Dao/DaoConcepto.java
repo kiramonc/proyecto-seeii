@@ -8,9 +8,6 @@ package Dao;
 
 import HibernateUtil.HibernateUtil;
 import Pojo.Concepto;
-import Pojo.Item;
-import Pojo.Test;
-import Pojo.Unidadensenianza;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -99,25 +96,24 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
             String hql = "from Concepto where tema=:tema";
         Query query = session.createQuery(hql);
         query.setInteger("tema", tema);
-        List<Concepto> listaItems = (List<Concepto>) query.list();
-        if(listaItems!=null){
-        for (Concepto lista : listaItems) {
+        List<Concepto> listaConceptos = (List<Concepto>) query.list();
+        if(listaConceptos!=null){
+        for (Concepto lista : listaConceptos) {
             Hibernate.initialize(lista.getTema());
 //            Hibernate.initialize(lista.getTest().getTema());
         }
         }
-        return listaItems;
-    }
+        return listaConceptos;
+    }    
     
-    public Concepto verConceptoGeneral(Session session, int idTema, String nombreTema){
-        String hql="from Concepto where nombreConcepto=:nombreConcepto and traduccion=:traduccion and descripcion=:descripcion and tema=:tema";
-        Query query=session.createQuery(hql);
-        query.setParameter("nombreConcepto", nombreTema+" Vocabulary");
-        query.setParameter("traduccion", "TODO");
-        query.setParameter("descripcion", "VOCABULARY");
-        query.setInteger("tema", idTema);
-        Concepto concepto=(Concepto) query.uniqueResult();
-        return concepto;     
+    public List<Concepto> verPorUnidadEnsenianza(Session session, int unidadE) throws Exception {
+        String hql1 = "select conc from Concepto as conc join conc.tema as temas where temas.unidadensenianza=:unidadE";
+        Query query = session.createQuery(hql1);
+        query.setInteger("unidadE", unidadE);
+        List<Concepto> listaConceptos = (List<Concepto>) query.list();
+        for(Concepto lista: listaConceptos){
+            Hibernate.initialize(lista.getTema());
+        }
+        return listaConceptos;
     }
-        
 }

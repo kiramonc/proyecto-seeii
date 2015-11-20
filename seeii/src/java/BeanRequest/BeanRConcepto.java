@@ -5,11 +5,16 @@
  */
 package BeanRequest;
 
+import Clases.RedBayesiana.CrearBayesDynamic;
 import Clases.RedBayesiana.CrearBayesNetwork1;
 import Dao.DaoConcepto;
+import Dao.DaoEstudiante;
+import Dao.DaoResultado;
 import Dao.DaoTema;
 import HibernateUtil.HibernateUtil;
 import Pojo.Concepto;
+import Pojo.Estudiante;
+import Pojo.Resultado;
 import Pojo.Tema;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,16 +56,32 @@ public class BeanRConcepto {
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
 //            this.tema=daoTema.verPorCodigoTema(session, codigo);
-            System.out.println("EL TEMA QUE SE ESTÁ CARGANDO ES: " + this.tema.getNombre());
             this.concepto.setEstado(true);
             this.concepto.setTema(tema);
             daoConcepto.registrar(this.session, this.concepto);
 
-            System.out.println("VA A GUARDAR LA RED BAYESIANA*********");
             // Crear nodo Concepto en la red bayesiana
             CrearBayesNetwork1 redBayesiana = new CrearBayesNetwork1();
             Tema temaC = daoTema.verPorTemaname(session, tema.getNombre());
             redBayesiana.crearConcepto(temaC.getUnidadensenianza().getNombreUnidad(), temaC.getNombre(), concepto.getNombreConcepto());
+            CrearBayesDynamic rbDynamic = new CrearBayesDynamic();
+            rbDynamic.crearConcepto(temaC.getNombre(), concepto.getNombreConcepto());
+
+            // Agregar registro resultados
+            Concepto concRegistrado = daoConcepto.verPorNombreConcepto(session, this.concepto.getNombreConcepto());
+            DaoEstudiante daoEstudiante = new DaoEstudiante();
+            List<Estudiante> lstEstudiantes = daoEstudiante.verPorUnidadEnsenianza(session, "Unidad Básica");
+            List<Resultado> lstResultados = new ArrayList<>();
+            Resultado r = new Resultado();
+            for (int i = 0; i < lstEstudiantes.size(); i++) {
+                r.setEstudiante(lstEstudiantes.get(i));
+                r.setConcepto(concRegistrado);
+                r.setValor(0.05);
+                lstResultados.add(r);
+                r= new Resultado();
+            }
+            DaoResultado daoResultado = new DaoResultado();
+            daoResultado.registrarVarios(session, lstResultados);
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
         } catch (Exception ex) {
@@ -96,7 +117,13 @@ public class BeanRConcepto {
                 daoConcepto.actualizar(this.session, this.concepto);
                 CrearBayesNetwork1 redBayesiana = new CrearBayesNetwork1();
                 redBayesiana.editarConcepto(nombreUnidad, nombreConcepto, concepto.getNombreConcepto());
+                CrearBayesDynamic rbDynamic = new CrearBayesDynamic();
+                rbDynamic.editarConcepto(tema.getNombre(), nombreConcepto, concepto.getNombreConcepto());
                 this.transaction.commit();
+            } else {
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                this.transaction = session.beginTransaction();
+                daoConcepto.actualizar(this.session, this.concepto);
             }
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
@@ -107,7 +134,9 @@ public class BeanRConcepto {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR ACTUALIZAR:", "Contacte con el administrador" + ex.getMessage()));
         } finally {
             if (this.session != null) {
-                this.session.close();
+                if (this.session.isOpen()) {
+                    this.session.close();
+                }
             }
             this.concepto = new Concepto();
         }
@@ -126,13 +155,15 @@ public class BeanRConcepto {
             this.transaction.commit();
             this.session.close();
             conceptoAnterior = null;
-            
+
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
             daoConcepto.eliminar(this.session, this.concepto);
             //Eliminar nodo Concepto de la red bayesiana
             CrearBayesNetwork1 redBayesiana = new CrearBayesNetwork1();
             redBayesiana.eliminarConcepto(nombreUnidad, nombreTema, concepto.getNombreConcepto());
+//            CrearBayesDynamic rbDynamic = new CrearBayesDynamic();
+//            rbDynamic.eliminarConcepto(nombreTema, concepto, null);
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Concepto eliminado correctamente."));
         } catch (Exception ex) {
@@ -247,49 +278,8 @@ public class BeanRConcepto {
                 this.transaction = session.beginTransaction();
 
                 List<Concepto> temp = daoConcepto.verPorTema(session, this.tema.getIdTema());
-                Concepto c = daoConcepto.verConceptoGeneral(session, this.tema.getIdTema(), this.tema.getNombre());
-                List<Concepto> conceptos = new ArrayList<>();
-                conceptos.add(c);
-                for (int i = 0; i < temp.size(); i++) {
-                    if (!temp.get(i).equals(c)) {
-                        conceptos.add(temp.get(i));
-                    }
-
-                }
-
                 transaction.commit();
-                return conceptos;
-            } catch (Exception ex) {
-                if (this.transaction != null) {
-                    this.transaction.rollback();
-                }
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR LISTA DE CONCEPTO POR TEMA:", "Contacte con el administrador" + ex.getMessage()));
-
-                return null;
-            } finally {
-                if (this.session != null) {
-                    this.session.close();
-                }
-            }
-        }
-        return null;
-    }
-
-    public List<Concepto> getConceptosPorTemaTabla(Tema tema) {
-        if (tema != null) {
-            this.session = null;
-            this.transaction = null;
-            this.tema = tema;
-            try {
-                DaoConcepto daoConcepto = new DaoConcepto();
-                this.session = HibernateUtil.getSessionFactory().openSession();
-                this.transaction = session.beginTransaction();
-
-                List<Concepto> t = daoConcepto.verPorTema(session, this.tema.getIdTema());
-                transaction.commit();
-                Concepto c = daoConcepto.verConceptoGeneral(session, this.tema.getIdTema(), this.tema.getNombre());
-                t.remove(c);
-                return t;
+                return temp;
             } catch (Exception ex) {
                 if (this.transaction != null) {
                     this.transaction.rollback();

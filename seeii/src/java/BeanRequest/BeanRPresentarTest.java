@@ -10,13 +10,12 @@ import Dao.DaoConcepto;
 import Dao.DaoItem;
 import Dao.DaoPregunta;
 import Dao.DaoTema;
-import Dao.DaoTest;
 import HibernateUtil.HibernateUtil;
 import Pojo.Concepto;
 import Pojo.Item;
 import Pojo.Pregunta;
 import Pojo.Tema;
-import Pojo.Test;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,8 +35,8 @@ import org.primefaces.context.RequestContext;
 @ViewScoped
 public class BeanRPresentarTest {
 
-    private Test test = new Test();
-    private List<Test> listaTest;
+    private Tema test = new Tema();
+    private List<Tema> listaTest;
     private List<Pregunta> listaPreguntas;
     private Session session;
     private Transaction transaction;
@@ -60,13 +59,14 @@ public class BeanRPresentarTest {
             DaoPregunta daoPregunta = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            List<Pregunta> listaPregunta = daoPregunta.verPorTest(session, codigo);
+            List<Pregunta> listaPregunta= new ArrayList<>();
+            daoPregunta.verPorTest(session, codigo);
 
             // Crear objeto del análisis de la red bayesiana
             BayesNetworkIngles bn = new BayesNetworkIngles();
             //obtención de una pregunta según el análisis
             preguntaSeleccionada = listaPregunta.get(bn.generarCodigoPregunta(listaPregunta));
-            System.out.println("La pregunta mostrada en el enunciado es:" + preguntaSeleccionada.getDescripcion());
+            System.out.println("La pregunta mostrada en el enunciado es:" + preguntaSeleccionada.getEnunciado());
 //            preguntaSeleccionada = daoPregunta.verPorCodigoPregunta(session, codigo);
             transaction.commit();
             return preguntaSeleccionada;
@@ -85,8 +85,8 @@ public class BeanRPresentarTest {
 
     public void guardarRespuestaTemp(String respuesta) {
         this.respuestTemp = respuesta;
-        if (preguntaSeleccionada.getPeso() == 2.0 || preguntaSeleccionada.getPeso() == 4.0) {
-            if (this.preguntaSeleccionada.getConcepto().getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
+        if (preguntaSeleccionada.getDificultad() == 2.0 || preguntaSeleccionada.getDificultad() == 4.0) {
+            /*if (this.preguntaSeleccionada.getDificultad().getNombreConcepto().equalsIgnoreCase(respuestTemp)) {
                 this.correcto = true;
 //                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Respuesta correcta:\n\n", respuestTemp));
             } else {
@@ -182,6 +182,7 @@ public class BeanRPresentarTest {
         }else{
         RequestContext.getCurrentInstance().update("frmResultado:panelResultado");
         RequestContext.getCurrentInstance().execute("PF('dialogResultado').show()");
+            */
         }
 
     }
@@ -198,11 +199,9 @@ public class BeanRPresentarTest {
         try {
             DaoConcepto daoConcepto = new DaoConcepto();
             DaoTema daoTema = new DaoTema();
-            DaoTest daoTest = new DaoTest();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            Test test = daoTest.verPorCodigoTest(session, preguntaSeleccionada.getTest().getIdTest());
-            Tema tema = daoTema.verPorCodigoTema(session, test.getTema().getIdTema());
+            Tema tema = daoTema.verPorCodigoTema(session, test.getIdTema());
             List<Concepto> listaConceptos = daoConcepto.verPorTema(session, tema.getIdTema());
             transaction.commit();
             this.correcto = false;
@@ -239,7 +238,7 @@ public class BeanRPresentarTest {
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
             List<Item> t = daoItem.verPorPregunta(session, preguntaSeleccionada.getIdPregunta());
-            System.out.println("LOS ITEMS MOSTRADOS SON PARA LA PREGUNTA:" + preguntaSeleccionada.getDescripcion());
+            System.out.println("LOS ITEMS MOSTRADOS SON PARA LA PREGUNTA:" + preguntaSeleccionada.getDificultad());
             transaction.commit();
             return t;
         } catch (Exception ex) {
@@ -263,7 +262,7 @@ public class BeanRPresentarTest {
             DaoPregunta daoPregunta = new DaoPregunta();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            listaPreguntas = daoPregunta.verPorTest(session, 1);
+            daoPregunta.verPorTest(session, 1);
             transaction.commit();
             return listaPreguntas;
         } catch (Exception ex) {
@@ -279,14 +278,14 @@ public class BeanRPresentarTest {
         }
     }
 
-    public Test consultarTestPorCodigo(int idTest) {
+    public Tema consultarTestPorCodigo(int idTest) {
         this.session = null;
         this.transaction = null;
         try {
-            DaoTest daoUnidad = new DaoTest();
+            DaoTema daoUnidad = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            Test t = daoUnidad.verPorCodigoTest(session, idTest);
+            Tema t = daoUnidad.verPorCodigoTema(session, idTest);
             transaction.commit();
             this.test = t;
             return t;
@@ -302,11 +301,11 @@ public class BeanRPresentarTest {
         }
     }
 
-    public List<Test> getAllTest() {
+    public List<Tema> getAllTest() {
         this.session = null;
         this.transaction = null;
         try {
-            DaoTest daoTest = new DaoTest();
+            DaoTema daoTest = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
             this.listaTest = daoTest.verTodo(session);
@@ -327,25 +326,25 @@ public class BeanRPresentarTest {
     }
 
     public boolean deshabilitarBotonCrearPregunta() {
-        if (this.test.getTema() != null) {
+        if (this.test != null) {
             return false;
         }
         return true;
     }
 
-    public Test getTest() {
+    public Tema getTest() {
         return test;
     }
 
-    public void setTest(Test test) {
+    public void setTest(Tema test) {
         this.test = test;
     }
 
-    public List<Test> getListaTest() {
+    public List<Tema> getListaTest() {
         return listaTest;
     }
 
-    public void setListaTest(List<Test> listaTest) {
+    public void setListaTest(List<Tema> listaTest) {
         this.listaTest = listaTest;
     }
 
@@ -381,14 +380,6 @@ public class BeanRPresentarTest {
         this.respuestTemp = respuestTemp;
     }
 
-    public boolean isCorrecto() {
-        return correcto;
-    }
-
-    public void setCorrecto(boolean correcto) {
-        this.correcto = correcto;
-    }
-
     public String getResultado() {
         return resultado;
     }
@@ -403,6 +394,14 @@ public class BeanRPresentarTest {
 
     public void setImgItemSeleccionado(String imgItemSeleccionado) {
         this.imgItemSeleccionado = imgItemSeleccionado;
+    }
+
+    public boolean isCorrecto() {
+        return correcto;
+    }
+
+    public void setCorrecto(boolean correcto) {
+        this.correcto = correcto;
     }
     
 }

@@ -6,15 +6,10 @@
 
 package Dao;
 
-import HibernateUtil.HibernateUtil;
-import Pojo.Administrador;
 import Pojo.Estudiante;
-import Pojo.Tema;
 import java.util.List;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  *
@@ -60,4 +55,13 @@ public class DaoEstudiante implements Interface.InterfaceEstudiante{
         return true;
     }
     
+    public List<Estudiante> verPorUnidadEnsenianza(Session session, String nombreUnidad) throws Exception {
+        String hql="select est from Estudiante as est join est.unidadensenianza as unidades where unidades.nombreUnidad=:nombreUnidad";
+        Query query=session.createQuery(hql);
+        query.setParameter("nombreUnidad", nombreUnidad);
+        List<Estudiante> listaEst = (List<Estudiante>) query.list();
+//        Hibernate.initialize(tema.getUnidadensenianza());
+        return listaEst;
+    }
+
 }

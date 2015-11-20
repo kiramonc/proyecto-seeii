@@ -6,10 +6,7 @@
 package Clases.RedBayesiana;
 
 import Pojo.Concepto;
-import Pojo.Item;
 import Pojo.Pregunta;
-import Pojo.Tema;
-import Pojo.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,11 +15,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import org.openmarkov.core.exception.ConstraintViolationException;
 import org.openmarkov.core.exception.IncompatibleEvidenceException;
 import org.openmarkov.core.exception.InvalidStateException;
@@ -55,7 +52,7 @@ import org.openmarkov.io.probmodel.PGMXWriter;
 public class CrearBayesDynamic {
 
     final private double valorSi = 0.05;
-    private State[] estados = new State[2];
+    private final State[] estados = new State[2];
     private String ruta;
 
     public CrearBayesDynamic() {
@@ -64,9 +61,9 @@ public class CrearBayesDynamic {
          */
         estados[0] = new State("sí");
         estados[1] = new State("no");
-//        ServletContext servletContex= (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-//        this.ruta= (String) servletContex.getRealPath("/RedBayesiana/Diagnostic");
-        this.ruta = "C:\\Users\\KathyR\\Dropbox\\Décimo\\Trabajo de titulación\\Red bayesiana";
+        ServletContext servletContex= (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        this.ruta= (String) servletContex.getRealPath("/resources/RedesBayesianas/BNDiagnostic");
+//        this.ruta = "C:\\Users\\KathyR\\Dropbox\\Décimo\\Trabajo de titulación\\Red bayesiana";
     }
 
     /**
@@ -99,8 +96,7 @@ public class CrearBayesDynamic {
      * @param posiblesRespuestas = int del número de items que contiene la
      * pregunta
      * @param dificultad = double del nivel de dificultad de la pregunta
-     * @return valores de los estados donde la nueva variable es la
-     * condicionante
+     * @return valores de los estados donde la nueva variable es la condicionante
      */
     private double[] setValoresCondicionante(List<Variable> listaVariables, int posiblesRespuestas, double dificultad, double descuido, double iDiscrimina, int numConceptos) {
         //Asignación de valores
@@ -137,7 +133,6 @@ public class CrearBayesDynamic {
                     if (contador == (longitud - 1)) { // todos si
                         valores[i] = 1 - s;
                     } else {
-                        System.out.println(contador + "*" + numConceptos + "/ " + (listaVariables.size() - 2));
                         double x = contador * numConceptos / (listaVariables.size() - 2);
                         if (x == 0 && dificultad == 2.0) { // Caso de pregunta fácil y si no se conoce ningún concepto
                             valores[i] = c - 0.02;
@@ -162,32 +157,27 @@ public class CrearBayesDynamic {
             } else {
                 valores[i] = 1 - valores[i - 1]; // Valor 0
             }
-            System.out.println("Posición " + i + ": " + valores[i]);
         }
         return valores;
     }
 
     private int getNumPreguntas(String nombreTema) {
         //Type CHANCE
-        InputStream inputStream = null;
         try {
             String file = ruta + "/" + nombreTema + ".pgmx";
             File archivoPgmx = new File(file);
             ProbNet probNet1;
-            inputStream = new FileInputStream(archivoPgmx);
+            InputStream inputStream = new FileInputStream(archivoPgmx);
             PGMXReader pgmxReader = new PGMXReader();
             probNet1 = pgmxReader.loadProbNet(inputStream, nombreTema).getProbNet();
             List<Variable> listPreguntas = probNet1.getVariables(NodeType.CHANCE);
+            inputStream.close();
             return listPreguntas.size();
         } catch (FileNotFoundException | ParserException ex) {
             Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException ex) {
-                Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        } catch (IOException ex) {
+            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+        } 
         return -1;
     }
 
@@ -234,7 +224,11 @@ public class CrearBayesDynamic {
         return null;
     }
 
-    public void crearRedTema(String nombreTema) throws InvalidStateException {
+    /**
+     * 
+     * @param nombreTema nombre del archivo que contendrá los conceptos y preguntas 
+     */
+    public void crearRedTema(String nombreTema){
         try {
             String file = ruta + "/" + nombreTema + ".pgmx";
             ProbNet probNet1 = new ProbNet(org.openmarkov.core.model.network.type.BayesianNetworkType.getUniqueInstance());
@@ -249,10 +243,10 @@ public class CrearBayesDynamic {
 
     /**
      *
+     * @param nombreTema String tema al que pertenece
      * @param nombreConcepto String nombre del Concepto a crear
-     * @throws InvalidStateException
      */
-    public void crearConcepto(String nombreTema, String nombreConcepto) throws InvalidStateException {
+    public void crearConcepto(String nombreTema, String nombreConcepto){
         try {
             String file = ruta + "/" + nombreTema + ".pgmx";
             File archivoPgmx = new File(file);
@@ -290,7 +284,7 @@ public class CrearBayesDynamic {
             Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FileNotFoundException | ParserException ex) {
             Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (IOException | InvalidStateException ex) {
             Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -298,9 +292,10 @@ public class CrearBayesDynamic {
     /**
      *
      * @param nombreTema Nombre del Tema a crear
-     * @throws InvalidStateException
+     * @param preguntaT
+     * @param nombreConceptos
      */
-    public void crearPregunta(String nombreTema, Pregunta preguntaT, List<String> nombreConceptos, double descuido, double iDiscrimina) throws InvalidStateException, ConstraintViolationException {
+    public void crearPregunta(String nombreTema, Pregunta preguntaT, List<String> nombreConceptos){
         int numConceptos = getNumConceptos(nombreTema);
         try {
             String file = ruta + "\\" + nombreTema + ".pgmx";
@@ -310,7 +305,7 @@ public class CrearBayesDynamic {
             PGMXReader pgmxReader = new PGMXReader();
             probNet1 = pgmxReader.loadProbNet(inputStream, nombreTema).getProbNet();
 
-            String nombrePregunta = "" + preguntaT.getIdPregunta();
+            String nombrePregunta = preguntaT.getNombrePreg();
 
             /**
              * CREACIÓN DE VARIABLES
@@ -330,7 +325,7 @@ public class CrearBayesDynamic {
                 listaV.add(concepto);
             }
             tablaPPregunta.setVariables(listaV); // Establecer Variables
-            tablaPPregunta.setValues(setValoresCondicionante(listaV, preguntaT.getItems().size(), preguntaT.getPeso(), descuido, iDiscrimina, numConceptos)); // Establecer valores
+            tablaPPregunta.setValues(setValoresCondicionante(listaV, preguntaT.getItems().size(), preguntaT.getDificultad(), preguntaT.getFdescuido(), preguntaT.getIndiceDis(), numConceptos)); // Establecer valores
 
             /**
              * Crear nodos
@@ -347,12 +342,18 @@ public class CrearBayesDynamic {
             inputStream.close();
         } catch (WriterException | FileNotFoundException | ParserException | ProbNodeNotFoundException ex) {
             Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (IOException | InvalidStateException ex) {
             Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void editarConcepto(String nombreTema, String nombreConcepto, String nuevoNombre) throws InvalidStateException {
+    /**
+     * 
+     * @param nombreTema Tema al que pertenece
+     * @param nombreConcepto nombre del concepto que se va a editar
+     * @param nuevoNombre nuevo nombre para el concepto
+     */
+    public void editarConcepto(String nombreTema, String nombreConcepto, String nuevoNombre){
         try {
             String file = ruta + "/" + nombreTema + ".pgmx";
             File archivoPgmx = new File(file);
@@ -383,10 +384,18 @@ public class CrearBayesDynamic {
             Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidStateException ex) {
+            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void editarPregunta(String nombreTema, Pregunta preguntaT, List<String> nombreConceptos) throws InvalidStateException {
+    /**
+     * 
+     * @param nombreTema Tema al que pertenece
+     * @param preguntaT pregunta que se va a editar
+     * @param nombreConceptos Lista de conceptos de la pregunta
+     */
+    public void editarPregunta(String nombreTema, Pregunta preguntaT, List<String> nombreConceptos){
         int numConceptos = getNumConceptos(nombreTema);
         try {
             String file = ruta + "/" + nombreTema + ".pgmx";
@@ -394,7 +403,7 @@ public class CrearBayesDynamic {
             InputStream inputStream = new FileInputStream(archivoPgmx);
             PGMXReader pgmxReader = new PGMXReader();
             ProbNet probNet1 = pgmxReader.loadProbNet(inputStream, nombreTema).getProbNet();
-            String nombrePregunta = "" + preguntaT.getIdPregunta();
+            String nombrePregunta = preguntaT.getNombrePreg();
             Variable pregunta = probNet1.getVariable(nombrePregunta);
 
             /**
@@ -410,7 +419,7 @@ public class CrearBayesDynamic {
                 listaV.add(concepto);
             }
             tablaPPregunta.setVariables(listaV); // Establecer Variables
-//            tablaPPregunta.setValues(setValoresCondicionante(listaV, preguntaT.getItems().size(), preguntaT.getPeso(), numConceptos)); // Establecer valores
+            tablaPPregunta.setValues(setValoresCondicionante(listaV, preguntaT.getItems().size(), preguntaT.getDificultad(), preguntaT.getFdescuido(), preguntaT.getIndiceDis(), numConceptos)); // Establecer valores
 
             ProbNode nodo = new ProbNode(probNet1, pregunta, NodeType.CHANCE);
             nodo.setPotential(tablaPPregunta);
@@ -423,10 +432,18 @@ public class CrearBayesDynamic {
             Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidStateException ex) {
+            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void eliminarConcepto(String nombreTema, Concepto conceptoEliminar, List<Pregunta> preguntasConcepto) throws InvalidStateException {
+    /**
+     * 
+     * @param nombreTema Tema al que pertenece
+     * @param conceptoEliminar Concepto que se va a eliminar
+     * @param preguntasConcepto Lista de preguntas relacionadas con el concepto
+     */
+    public void eliminarConcepto(String nombreTema, Concepto conceptoEliminar, List<Pregunta> preguntasConcepto){
         int numConceptos = getNumConceptos(nombreTema);
         try {
             String file = ruta + "/" + nombreTema + ".pgmx";
@@ -441,7 +458,7 @@ public class CrearBayesDynamic {
             ProbNode nodo;
             for (int i = 0; i < preguntasConcepto.size(); i++) {
                 p = (Pregunta) preguntasConcepto.get(i);
-                pregunta = probNet1.getVariable(p.getIdPregunta() + "");
+                pregunta = probNet1.getVariable(p.getNombrePreg());
                 probNet1.removeLink(concepto, pregunta, true); //eliminar el link entre el concepto y el pregunta
                 /**
                  * Potencial Pregunta
@@ -455,7 +472,7 @@ public class CrearBayesDynamic {
 //                    tablaPPregunta.setValues(setValoresPriori()); // Establecer valores
                     probNet1.removeProbNode(probNet1.getProbNode(pregunta)); // eliminamos el nodo de la pregunta
                 } else {
-//                    tablaPPregunta.setValues(setValoresCondicionante(variablesPregunta, p.getItems().size(), p.getPeso(), numConceptos - 1)); // Establecer valores
+                    tablaPPregunta.setValues(setValoresCondicionante(variablesPregunta, p.getItems().size(), p.getDificultad(), p.getFdescuido(), p.getIndiceDis(), numConceptos)); // Establecer valores
                     nodo = new ProbNode(probNet1, pregunta, NodeType.CHANCE);
                     nodo.setPotential(tablaPPregunta);
                     probNet1.addProbNode(nodo); // Cambios en el nodo concepto
@@ -470,19 +487,19 @@ public class CrearBayesDynamic {
             inputStream.close();
         } catch (FileNotFoundException | ParserException | ProbNodeNotFoundException | WriterException ex) {
             Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (IOException | InvalidStateException ex) {
             Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void eliminarPregunta(String nombreTema, Pregunta p) throws InvalidStateException {
+    public void eliminarPregunta(String nombreTema, Pregunta p){
         try {
             String file = ruta + "/" + nombreTema + ".pgmx";
             File archivoPgmx = new File(file);
             InputStream inputStream = new FileInputStream(archivoPgmx);
             PGMXReader pgmxReader = new PGMXReader();
             ProbNet probNet1 = pgmxReader.loadProbNet(inputStream, nombreTema).getProbNet();
-            Variable pregunta = probNet1.getVariable(p.getIdPregunta() + "");
+            Variable pregunta = probNet1.getVariable(p.getNombrePreg());
 
             probNet1.removeProbNode(probNet1.getProbNode(pregunta)); // eliminamos el nodo del pregunta
 
@@ -558,7 +575,6 @@ public class CrearBayesDynamic {
             InputStream inputStream = new FileInputStream(archivoPgmx);
             PGMXReader pgmxReader = new PGMXReader();
             ProbNet probNet1 = pgmxReader.loadProbNet(inputStream, nombreTema).getProbNet();
-//            HashMap<String, String> valoresCalculados = new HashMap<>();
 
             String nombreVariable;
             String valorPositivo;
@@ -577,7 +593,6 @@ public class CrearBayesDynamic {
                 tablaPConcepto.setVariables(variablesConcepto); // Establecer Variables
                 valorPositivo = nuevosValores.get(nombreVariable);
                 tablaPConcepto.setValues(setValoresConceptos(Double.parseDouble(valorPositivo))); // Establecer valores después de la inferencia
-//                valoresCalculados.put(nombreVariable, tablaPConcepto.values[0] + "");
 
                 ProbNode nodo = new ProbNode(probNet1, concepto, NodeType.DECISION);
                 nodo.setPotential(tablaPConcepto);
@@ -625,7 +640,7 @@ public class CrearBayesDynamic {
             }
             //EvidenceCase
             EvidenceCase evidence = new EvidenceCase();
-            evidence.addFinding(probNet, "" + pregunta.getIdPregunta(), estadoResp);
+            evidence.addFinding(probNet, pregunta.getNombrePreg(), estadoResp);
             InferenceAlgorithm variableElimination = new VariableElimination(probNet);
 
             variableElimination.setPreResolutionEvidence(evidence);
@@ -743,8 +758,8 @@ public class CrearBayesDynamic {
                 inputStream = new FileInputStream(archivoPgmx);
                 ProbNet probNet1 = pgmxReader.loadProbNet(inputStream, nombreTema).getProbNet();
                 try {
-                    estadoMayor = verValuePreg(nombreTema, idSesion, lstPreguntas.get(i).getIdPregunta() + "","sí");
-                    pregunta = probNet1.getVariable(lstPreguntas.get(i).getIdPregunta() + "");
+                    estadoMayor = verValuePreg(nombreTema, idSesion, lstPreguntas.get(i).getNombrePreg(),"sí");
+                    pregunta = probNet1.getVariable(lstPreguntas.get(i).getNombrePreg());
                     lstPadres = probNet1.getPotentials(pregunta).get(0).getVariables();
                     lstPadres.remove(0); // eliminamos la variable pregunta para tener solo los padres
 
@@ -808,165 +823,151 @@ public class CrearBayesDynamic {
     }
 
     public static void main(String[] args) {
-//        try {
-        Test test = new Test(1, new Tema());
-        Concepto conc = new Concepto(1, new Tema(), "Concepto", "traducción", "descripción", true);
-        Concepto conc2 = new Concepto(2, new Tema(), "Concepto2", "traducción", "descripción", true);
-        Concepto conc3 = new Concepto(3, new Tema(), "Concepto3", "traducción", "descripción", true);
-
-        Pregunta pregunta = new Pregunta(1, test, conc, "Descripcion", 4, true); // Speaking D
-        Pregunta pregunta2 = new Pregunta(2, test, conc, "Descripcion", 3, true); // Listening M
-        Pregunta pregunta3 = new Pregunta(3, test, conc, "Descripcion", 3, true); // Speak M
-        Pregunta pregunta4 = new Pregunta(4, test, conc, "Descripcion", 2, true); // Listen F
-        Pregunta pregunta5 = new Pregunta(5, test, conc, "Descripcion", 2, true); // Speak F
-        Pregunta pregunta6 = new Pregunta(6, test, conc2, "Descripcion", 4, true); // Speaking D
-        Pregunta pregunta7 = new Pregunta(7, test, conc2, "Descripcion", 3, true); // Listening M
-        Pregunta pregunta8 = new Pregunta(8, test, conc2, "Descripcion", 3, true); // Speak M
-        Pregunta pregunta9 = new Pregunta(9, test, conc3, "Descripcion", 4, true); // Speak D
-        Pregunta pregunta10 = new Pregunta(10, test, conc3, "Descripcion", 3, true); // Speak M
-        Pregunta pregunta11 = new Pregunta(11, test, conc3, "Descripcion", 2, true); // Speak F
-        Pregunta pregunta12 = new Pregunta(12, test, conc3, "Descripcion", 2, true); // Listen F
-
-        Item i = new Item(1, pregunta, "nombre", "img", "traducción", true);
-        Item i1 = new Item(2, pregunta, "nombre", "img", "traducción", true);
-        Item i2 = new Item(3, pregunta, "nombre", "img", "traducción", true);
-        Item i3 = new Item(4, pregunta, "nombre", "img", "traducción", true);
-        Item i4 = new Item(5, pregunta, "nombre", "img", "traducción", true);
-        Set<Item> setItem = new HashSet<>(); // Listen(F, M), Speak(F)
-        setItem.add(i);
-        setItem.add(i1);
-        setItem.add(i2);
-        setItem.add(i3);
-        setItem.add(i4);
-
-        Set<Item> setItem1 = new HashSet<>(); // Speak(M, D)
-        setItem1.add(i);
-
-        pregunta.setItems(setItem1); // Speak D
-        pregunta2.setItems(setItem); // List M
-        pregunta3.setItems(setItem1); // Speak M
-        pregunta4.setItems(setItem); // listen F
-        pregunta5.setItems(setItem); // Speak F
-        pregunta6.setItems(setItem1); // Speak D
-        pregunta7.setItems(setItem); // Listen M
-        pregunta8.setItems(setItem1); // Speak M
-        pregunta9.setItems(setItem1); // Speak D
-        pregunta10.setItems(setItem); // Listen M
-        pregunta11.setItems(setItem); // Speak F
-        pregunta12.setItems(setItem); // Listen F
-
-        ArrayList<String> lstConceptos = new ArrayList<>(); // List Concepto
-        lstConceptos.add(conc.getNombreConcepto());
-
-        ArrayList<String> lstConceptos1 = new ArrayList<>(); // List Concepto 2
-        lstConceptos1.add(conc2.getNombreConcepto());
-
-        ArrayList<String> lstConceptos2 = new ArrayList<>(); // List Concepto 3
-        lstConceptos2.add(conc3.getNombreConcepto());
-
-        ArrayList<String> lstConceptos3 = new ArrayList<>(); // TODOS
-        lstConceptos3.add(conc.getNombreConcepto());
-        lstConceptos3.add(conc2.getNombreConcepto());
-        lstConceptos3.add(conc3.getNombreConcepto());
-
-        ArrayList<String> lstConceptos4 = new ArrayList<>(); // CONCEPTO-CONCEPTO2
-        lstConceptos4.add(conc.getNombreConcepto());
-        lstConceptos4.add(conc2.getNombreConcepto());
-
-        ArrayList<String> lstConceptos5 = new ArrayList<>(); // CONCEPTO3-CONCEPTO2
-        lstConceptos5.add(conc3.getNombreConcepto());
-        lstConceptos5.add(conc2.getNombreConcepto());
-
-        CrearBayesDynamic c = new CrearBayesDynamic();
-        String nombreTema = "TemaPrueba";
-
-        ArrayList<Pregunta> lstPreguntas = new ArrayList<>(); // preguntas Concepto3
-        lstPreguntas.add(pregunta);
-        lstPreguntas.add(pregunta2);
-        lstPreguntas.add(pregunta3);
-        lstPreguntas.add(pregunta4);
-        lstPreguntas.add(pregunta5);
-        lstPreguntas.add(pregunta11);
-        
-        ArrayList<Pregunta> lstPreguntas2 = new ArrayList<>(); // preguntas Concepto3
-        lstPreguntas2.add(pregunta4);
-        lstPreguntas2.add(pregunta5);
-        lstPreguntas2.add(pregunta6);
-        lstPreguntas2.add(pregunta7);
-        lstPreguntas2.add(pregunta8);
-        lstPreguntas2.add(pregunta11);
-        lstPreguntas2.add(pregunta12);
-        
-        ArrayList<Pregunta> lstPreguntas3 = new ArrayList<>(); // preguntas Concepto3
-        lstPreguntas3.add(pregunta4);
-        lstPreguntas3.add(pregunta9);
-        lstPreguntas3.add(pregunta10);
-        lstPreguntas3.add(pregunta11);
-        lstPreguntas3.add(pregunta12);
-
-//            c.eliminarConcepto(nombreTema, conc2, lstPreguntas);
-//            c.eliminarPregunta(nombreTema, pregunta7);
-        HashMap<String, String> valoresIniciales = new HashMap<>();
-        valoresIniciales.put("Concepto", "0.08");
-        valoresIniciales.put("Concepto2", "0.08");
-        valoresIniciales.put("Concepto3", "0.08");
-
-////        HashMap<String, String> nuevosValores = new HashMap<>();
-////        nuevosValores.put("Concepto", "0.5000");
-////        nuevosValores.put("Concepto2", "0.31703");
-////        nuevosValores.put("Concepto3", "0.31703");
-////        nuevosValores.put("Concepto4", "0.31703");
-//        HashMap<String, String> valorPosteriori = c.inferencia("id001", nombreTema, pregunta7, false, valoresIniciales);
+////        try {
+//        Test test = new Test(1, new Tema());
+//        Concepto conc = new Concepto(1, new Tema(), "Concepto", "traducción", "descripción", true);
+//        Concepto conc2 = new Concepto(2, new Tema(), "Concepto2", "traducción", "descripción", true);
+//        Concepto conc3 = new Concepto(3, new Tema(), "Concepto3", "traducción", "descripción", true);
+//        
+//        Pregunta pregunta = new Pregunta(1, test, conc, "Descripcion", 4, true); // Speaking D
+//        Pregunta pregunta2 = new Pregunta(2, test, conc, "Descripcion", 3, true); // Listening M
+//        Pregunta pregunta3 = new Pregunta(3, test, conc, "Descripcion", 3, true); // Speak M
+//        Pregunta pregunta4 = new Pregunta(4, test, conc, "Descripcion", 2, true); // Listen F
+//        Pregunta pregunta5 = new Pregunta(5, test, conc, "Descripcion", 2, true); // Speak F
+//        Pregunta pregunta6 = new Pregunta(6, test, conc2, "Descripcion", 4, true); // Speaking D
+//        Pregunta pregunta7 = new Pregunta(7, test, conc2, "Descripcion", 3, true); // Listening M
+//        Pregunta pregunta8 = new Pregunta(8, test, conc2, "Descripcion", 3, true); // Speak M
+//        Pregunta pregunta9 = new Pregunta(9, test, conc3, "Descripcion", 4, true); // Speak D
+//        Pregunta pregunta10 = new Pregunta(10, test, conc3, "Descripcion", 3, true); // Speak M
+//        Pregunta pregunta11 = new Pregunta(11, test, conc3, "Descripcion", 2, true); // Speak F
+//        Pregunta pregunta12 = new Pregunta(12, test, conc3, "Descripcion", 2, true); // Listen F
+//
+//        Item i = new Item(1, pregunta, "nombre", "img", "traducción", true);
+//        Item i1 = new Item(2, pregunta, "nombre", "img", "traducción", true);
+//        Item i2 = new Item(3, pregunta, "nombre", "img", "traducción", true);
+//        Item i3 = new Item(4, pregunta, "nombre", "img", "traducción", true);
+//        Item i4 = new Item(5, pregunta, "nombre", "img", "traducción", true);
+//        Set<Item> setItem = new HashSet<>(); // Listen(F, M), Speak(F)
+//        setItem.add(i);
+//        setItem.add(i1);
+//        setItem.add(i2);
+//        setItem.add(i3);
+//        setItem.add(i4);
+//
+//        Set<Item> setItem1 = new HashSet<>(); // Speak(M, D)
+//        setItem1.add(i);
+//
+//        pregunta.setItems(setItem1); // Speak D
+//        pregunta2.setItems(setItem); // List M
+//        pregunta3.setItems(setItem1); // Speak M
+//        pregunta4.setItems(setItem); // listen F
+//        pregunta5.setItems(setItem); // Speak F
+//        pregunta6.setItems(setItem1); // Speak D
+//        pregunta7.setItems(setItem); // Listen M
+//        pregunta8.setItems(setItem1); // Speak M
+//        pregunta9.setItems(setItem1); // Speak D
+//        pregunta10.setItems(setItem); // Listen M
+//        pregunta11.setItems(setItem); // Speak F
+//        pregunta12.setItems(setItem); // Listen F
+//
+//        ArrayList<String> lstConceptos = new ArrayList<>(); // List Concepto
+//        lstConceptos.add(conc.getNombreConcepto());
+//
+//        ArrayList<String> lstConceptos1 = new ArrayList<>(); // List Concepto 2
+//        lstConceptos1.add(conc2.getNombreConcepto());
+//
+//        ArrayList<String> lstConceptos2 = new ArrayList<>(); // List Concepto 3
+//        lstConceptos2.add(conc3.getNombreConcepto());
+//
+//        ArrayList<String> lstConceptos3 = new ArrayList<>(); // TODOS
+//        lstConceptos3.add(conc.getNombreConcepto());
+//        lstConceptos3.add(conc2.getNombreConcepto());
+//        lstConceptos3.add(conc3.getNombreConcepto());
+//
+//        ArrayList<String> lstConceptos4 = new ArrayList<>(); // CONCEPTO-CONCEPTO2
+//        lstConceptos4.add(conc.getNombreConcepto());
+//        lstConceptos4.add(conc2.getNombreConcepto());
+//
+//        ArrayList<String> lstConceptos5 = new ArrayList<>(); // CONCEPTO3-CONCEPTO2
+//        lstConceptos5.add(conc3.getNombreConcepto());
+//        lstConceptos5.add(conc2.getNombreConcepto());
+//
+//        CrearBayesDynamic c = new CrearBayesDynamic();
+//        String nombreTema = "TemaPrueba";
+//
+//        ArrayList<Pregunta> lstPreguntas = new ArrayList<>(); // preguntas Concepto3
+//        lstPreguntas.add(pregunta);
+//        lstPreguntas.add(pregunta2);
+//        lstPreguntas.add(pregunta3);
+//        lstPreguntas.add(pregunta4);
+//        lstPreguntas.add(pregunta5);
+//        lstPreguntas.add(pregunta11);
+//        
+//        ArrayList<Pregunta> lstPreguntas2 = new ArrayList<>(); // preguntas Concepto3
+//        lstPreguntas2.add(pregunta4);
+//        lstPreguntas2.add(pregunta5);
+//        lstPreguntas2.add(pregunta6);
+//        lstPreguntas2.add(pregunta7);
+//        lstPreguntas2.add(pregunta8);
+//        lstPreguntas2.add(pregunta11);
+//        lstPreguntas2.add(pregunta12);
+//        
+//        ArrayList<Pregunta> lstPreguntas3 = new ArrayList<>(); // preguntas Concepto3
+//        lstPreguntas3.add(pregunta4);
+//        lstPreguntas3.add(pregunta9);
+//        lstPreguntas3.add(pregunta10);
+//        lstPreguntas3.add(pregunta11);
+//        lstPreguntas3.add(pregunta12);
+//
+////            c.eliminarConcepto(nombreTema, conc2, lstPreguntas);
+////            c.eliminarPregunta(nombreTema, pregunta7);
+//        HashMap<String, String> valoresIniciales = new HashMap<>();
+//        valoresIniciales.put("Concepto", "0.08");
+//        valoresIniciales.put("Concepto2", "0.08");
+//        valoresIniciales.put("Concepto3", "0.08");
+//
+////            c.crearRedTema(nombreTema);
+////            c.crearConcepto(nombreTema, conc.getNombreConcepto());
+////            c.crearConcepto(nombreTema, conc1.getNombreConcepto());
+////            c.crearConcepto(nombreTema, conc2.getNombreConcepto());
+////
+////            c.crearPregunta(nombreTema, pregunta, lstConceptos, 0.001, 2.0); // Speaking Difícil, descuido bajo, id alto
+////            c.crearPregunta(nombreTema, pregunta2, lstConceptos, 0.01, 1.2); // LISTENING INTERMEDIO Descuido medio, iD medio
+////            c.crearPregunta(nombreTema, pregunta3, lstConceptos, 0.001, 1.2); // Speaking medio Descuido bajo, id medio
+////            c.crearPregunta(nombreTema, pregunta4, lstConceptos3, 0.2, 0.2); // Listening FÁCIL Descuido alto, indice de discriminación bajo
+////            c.crearPregunta(nombreTema, pregunta5, lstConceptos4, 0.001, 0.2);  // Speaking Fácil descuido bajo, id bajo
+////            c.crearPregunta(nombreTema, pregunta6, lstConceptos1, 0.001, 2.0); // Speaking Difícil, descuido bajo, id alto
+////            c.crearPregunta(nombreTema, pregunta7, lstConceptos1, 0.01, 1.2); // LISTENING INTERMEDIO Descuido medio, iD medio
+////            c.crearPregunta(nombreTema, pregunta8, lstConceptos1, 0.001, 1.2); // Speaking medio Descuido bajo, id medio
+////            c.crearPregunta(nombreTema, pregunta9, lstConceptos2, 0.001, 2.0); // Speaking Difícil
+////            c.crearPregunta(nombreTema, pregunta10, lstConceptos2, 0.01, 1.2); // LISTENING INTERMEDIO Descuido medio, iD medio
+////            c.crearPregunta(nombreTema, pregunta11, lstConceptos3, 0.001, 0.2);  // Speaking Fácil descuido bajo, id bajo
+////            c.crearPregunta(nombreTema, pregunta12, lstConceptos5, 0.2, 0.2); // Listening Fácil
+//        String sesion= "Est001";
+//        Pregunta pOptima = c.getPreguntaOptima(nombreTema, sesion, conc3, lstPreguntas3);
+//        System.out.println("Pregunta óptima " + pOptima.getIdPregunta());
+//        HashMap<String, String> valorPosteriori = c.inferencia(sesion, nombreTema, pOptima, true, valoresIniciales);
+//        System.out.println(valorPosteriori);
+//        
+//        pOptima = c.getPreguntaOptima(nombreTema, sesion, conc2, lstPreguntas2);
+//        System.out.println("Pregunta óptima " + pOptima.getIdPregunta());
+//        valorPosteriori = c.inferencia(sesion, nombreTema, pOptima, true, valorPosteriori);
+//        System.out.println(valorPosteriori);
+//        
+//        pOptima = c.getPreguntaOptima(nombreTema, sesion, conc2, lstPreguntas2);
+//        System.out.println("Pregunta óptima " + pOptima.getIdPregunta());
+//        valorPosteriori = c.inferencia(sesion, nombreTema, pOptima, true, valorPosteriori);
 //        System.out.println(valorPosteriori);
 //
-//        //Consultar siguiente pregunta
-//        // del alumno obtener respuesta a la pregunta
-//        HashMap<String, String> valorPosteriori1 = c.inferencia("id001", nombreTema, pregunta2, true, valorPosteriori);
-//        System.out.println(valorPosteriori1);
-//        HashMap<String, String> valorPosteriori2 = c.inferencia("id001", nombreTema, pregunta4, true, valorPosteriori1);
-//        System.out.println(valorPosteriori2);
-//            c.crearRedTema(nombreTema);
-//            c.crearConcepto(nombreTema, conc.getNombreConcepto());
-//            c.crearConcepto(nombreTema, conc1.getNombreConcepto());
-//            c.crearConcepto(nombreTema, conc2.getNombreConcepto());
+//        pOptima = c.getPreguntaOptima(nombreTema, sesion, conc, lstPreguntas);
+//        System.out.println("Pregunta óptima " + pOptima.getIdPregunta());
+//        valorPosteriori = c.inferencia(sesion, nombreTema, pOptima, true, valorPosteriori);
+//        System.out.println(valorPosteriori);
 //
-//            c.crearPregunta(nombreTema, pregunta, lstConceptos, 0.001, 2.0); // Speaking Difícil, descuido bajo, id alto
-//            c.crearPregunta(nombreTema, pregunta2, lstConceptos, 0.01, 1.2); // LISTENING INTERMEDIO Descuido medio, iD medio
-//            c.crearPregunta(nombreTema, pregunta3, lstConceptos, 0.001, 1.2); // Speaking medio Descuido bajo, id medio
-//            c.crearPregunta(nombreTema, pregunta4, lstConceptos3, 0.2, 0.2); // Listening FÁCIL Descuido alto, indice de discriminación bajo
-//            c.crearPregunta(nombreTema, pregunta5, lstConceptos4, 0.001, 0.2);  // Speaking Fácil descuido bajo, id bajo
-//            c.crearPregunta(nombreTema, pregunta6, lstConceptos1, 0.001, 2.0); // Speaking Difícil, descuido bajo, id alto
-//            c.crearPregunta(nombreTema, pregunta7, lstConceptos1, 0.01, 1.2); // LISTENING INTERMEDIO Descuido medio, iD medio
-//            c.crearPregunta(nombreTema, pregunta8, lstConceptos1, 0.001, 1.2); // Speaking medio Descuido bajo, id medio
-//            c.crearPregunta(nombreTema, pregunta9, lstConceptos2, 0.001, 2.0); // Speaking Difícil
-//            c.crearPregunta(nombreTema, pregunta10, lstConceptos2, 0.01, 1.2); // LISTENING INTERMEDIO Descuido medio, iD medio
-//            c.crearPregunta(nombreTema, pregunta11, lstConceptos3, 0.001, 0.2);  // Speaking Fácil descuido bajo, id bajo
-//            c.crearPregunta(nombreTema, pregunta12, lstConceptos5, 0.2, 0.2); // Listening Fácil
-        String sesion= "Est001";
-        Pregunta pOptima = c.getPreguntaOptima(nombreTema, sesion, conc3, lstPreguntas3);
-        System.out.println("Pregunta óptima " + pOptima.getIdPregunta());
-        HashMap<String, String> valorPosteriori = c.inferencia(sesion, nombreTema, pOptima, true, valoresIniciales);
-        System.out.println(valorPosteriori);
-        
-        pOptima = c.getPreguntaOptima(nombreTema, sesion, conc2, lstPreguntas2);
-        System.out.println("Pregunta óptima " + pOptima.getIdPregunta());
-        valorPosteriori = c.inferencia(sesion, nombreTema, pOptima, true, valorPosteriori);
-        System.out.println(valorPosteriori);
-        
-        pOptima = c.getPreguntaOptima(nombreTema, sesion, conc2, lstPreguntas2);
-        System.out.println("Pregunta óptima " + pOptima.getIdPregunta());
-        valorPosteriori = c.inferencia(sesion, nombreTema, pOptima, true, valorPosteriori);
-        System.out.println(valorPosteriori);
-
-        pOptima = c.getPreguntaOptima(nombreTema, sesion, conc, lstPreguntas);
-        System.out.println("Pregunta óptima " + pOptima.getIdPregunta());
-        valorPosteriori = c.inferencia(sesion, nombreTema, pOptima, true, valorPosteriori);
-        System.out.println(valorPosteriori);
-
-//        } catch (InvalidStateException ex) {
-//            Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (ConstraintViolationException ex) {
-//            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+////        } catch (InvalidStateException ex) {
+////            Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
+////        } catch (ConstraintViolationException ex) {
+////            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+////        }
     }
 }

@@ -8,7 +8,6 @@ package Dao;
 import HibernateUtil.HibernateUtil;
 import Interface.InterfaceUnidadE;
 import Pojo.Unidadensenianza;
-import Pojo.Usuario;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
