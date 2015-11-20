@@ -15,14 +15,9 @@ import Pojo.Entrenamiento;
 import Pojo.Ficha;
 import Pojo.Fichaspregunta;
 import Pojo.Preguntaentrenar;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -60,13 +55,7 @@ public class BeansTestPreguntaEntren3 {
     ArrayList listaNumero = new ArrayList();
     //atributo para utilizar con el metodo (obtenerlistaFichasPregunta)
     private List<Fichaspregunta> listFichasPregunta;
-
-    //atributo para obtner el nombre de las fichas --> para la Pronunciacion.
-    private String nameficha1; //usado en metodo (obtnerSonidoficha1)
-    private String nameficha2; //usado en metodo (obtnerSonidoficha2)
-    private String nameficha3; //usado en metodo (obtnerSonidoficha3)
-    private String nameficha4; //usado en metodo (obtnerSonidoficha4)
-
+ 
     //mostara los resultados del test
     private String correcto;
     private int resultado1;
@@ -234,6 +223,9 @@ public class BeansTestPreguntaEntren3 {
             //para crear Fichaspregunta (lista de fichas en base a un preguntadeENTRENAMIENTO)
             DaoFichaPregunta daofichaPregunta = new DaoFichaPregunta();
             listFichasPregunta = daofichaPregunta.verPreguntaEntrenamiento(session, idPrenguntaEnt);
+            for (int i = 0; i < listFichasPregunta.size(); i++) {
+                System.out.println("listFichasPregunta   "+listFichasPregunta.get(i).getFicha().getIdFicha());
+            }
             this.transaction.commit();
 
             System.out.println("Correcto: al obtner la lista de fichasPregunta se ha realizado con exito");
@@ -280,40 +272,28 @@ public class BeansTestPreguntaEntren3 {
     }
 //
 
-    public String obtnerficha1() {
+    public int obtnerficha1() {
         //método (inicializarListaFichaPrengunta) inicializa las variables (listFichasPregunta y listaNumero )
         int idficha1 = this.listFichasPregunta.get((int) listaNumero.get(0)).getFicha().getIdFicha();
-        String dirFicha = idficha1 + "";
-        //metodo para sonido(nombre) de las fichas (verfichaPorId)
-        nameficha1 = verfichaPorId(idficha1);
-        return dirFicha;
+        return idficha1;
     }
 
-    public String obtnerficha2() {
+    public int obtnerficha2() {
         //método (inicializarListaFichaPrengunta) inicializa las variables (listFichasPregunta y listaNumero )
         int idficha2 = this.listFichasPregunta.get((int) listaNumero.get(1)).getFicha().getIdFicha();
-        String dirFicha = idficha2 + "";
-        //metodo para sonido(nombre) de las fichas (verfichaPorId)
-        nameficha2 = verfichaPorId(idficha2);
-        return dirFicha;
+        return idficha2;
     }
 
-    public String obtnerficha3() {
+    public int obtnerficha3() {
         //método (inicializarListaFichaPrengunta) inicializa las variables (listFichasPregunta y listaNumero )
         int idficha3 = this.listFichasPregunta.get((int) listaNumero.get(2)).getFicha().getIdFicha();
-        String dirFicha = idficha3 + "";
-        //metodo para sonido(nombre) de las fichas (verfichaPorId)
-        nameficha3 = verfichaPorId(idficha3);
-        return dirFicha;
+        return idficha3;
     }
 
-    public String obtnerficha4() {
+    public int obtnerficha4() {
         //método (inicializarListaFichaPrengunta) inicializa las variables (listFichasPregunta y listaNumero )
         int idficha4 = this.listFichasPregunta.get((int) listaNumero.get(3)).getFicha().getIdFicha();
-        String dirFicha = idficha4 + "";
-        //metodo para sonido(nombre) de las fichas (verfichaPorId)
-        nameficha4 = verfichaPorId(idficha4);
-        return dirFicha;
+        return idficha4;
     }
 
     //.........................................................................................
@@ -381,9 +361,9 @@ public class BeansTestPreguntaEntren3 {
 //
     }
 
-  
     public String actualizarPagina() {
-        return "inicioAprendizaje";
+//        this.beanSEntrena.finalizar();
+        return "resultadosEntrenamiento";
     }
 
     //Método para cambiar las columnas de String a Numeros
@@ -588,19 +568,35 @@ public class BeansTestPreguntaEntren3 {
     }
 
     public String obtnerSonidoficha1() {
+         //método para obtner el id de la ficha 1
+        int idficha = obtnerficha1();
+        //metodo para sonido(nombre) de las fichas (verfichaPorId)
+        String nameficha1 = verfichaPorId(idficha);
         return nameficha1;
     }
 
     public String obtnerSonidoficha2() {
+       //método para obtner el id de la ficha 1
+        int idficha = obtnerficha2();
+        //metodo para sonido(nombre) de las fichas (verfichaPorId)
+        String nameficha2 = verfichaPorId(idficha);
         return nameficha2;
     }
 
     public String obtnerSonidoficha3() {
+        //método para obtner el id de la ficha 1
+        int idficha = obtnerficha3();
+        //metodo para sonido(nombre) de las fichas (verfichaPorId)
+        String nameficha3 = verfichaPorId(idficha);
         return nameficha3;
     }
 
     public String obtnerSonidoficha4() {
-        return nameficha3;
+        //método para obtner el id de la ficha 1
+        int idficha = obtnerficha4();
+        //metodo para sonido(nombre) de las fichas (verfichaPorId)
+        String nameficha4 = verfichaPorId(idficha);
+        return nameficha4;
     }
 
     //.............................SETTER AND GETTER...........................................
@@ -651,6 +647,5 @@ public class BeansTestPreguntaEntren3 {
     public int getFinalError() { //obtner el resultado (ERROR) del ENTRENAMIENTO
         return finalError;
     }
-    
-    
+
 }

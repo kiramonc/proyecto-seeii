@@ -52,6 +52,7 @@ public class BeanSEntrenar implements Serializable {
     public void finalizar() {
         this.idEntrenamiento = -1;
         this.idPrenguntaEnt = -1;
+         this.modelTest = -1;
         HttpSession httpSession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
         httpSession.invalidate();
     }

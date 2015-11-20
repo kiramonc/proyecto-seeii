@@ -16,7 +16,7 @@ public class MainRedNeuronal {
      */
     public static void main(String[] args) throws Exception {
         RedNeuronal redN= new RedNeuronal();
-        redN.redNeuronal();
+        redN.redNeuronal(600, 150, 3);
     }
     
 }

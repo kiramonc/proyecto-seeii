@@ -203,6 +203,73 @@ public class BeansRFichaPregunta2 {
             }
         }
     }
+    
+        //OBtner los id de las fichas..........
+    public int idFicha1() {
+        return listFichasPregunta.get(0).getFicha().getIdFicha();
+    }
+
+    public int idFicha2() {
+        return listFichasPregunta.get(1).getFicha().getIdFicha();
+    }
+
+    public int idFicha3() {
+        return listFichasPregunta.get(2).getFicha().getIdFicha();
+    }
+
+    public int idFicha4() {
+        return listFichasPregunta.get(3).getFicha().getIdFicha();
+    }
+    
+     //OBtner los nombres de las fichas..........
+    public String nameFicha1() {
+        int id=listFichasPregunta.get(0).getFicha().getIdFicha();
+        return obtnerNameficha(id);
+    }
+
+    public String nameFicha2() {
+       int id=listFichasPregunta.get(1).getFicha().getIdFicha();
+        return obtnerNameficha(id);
+    }
+
+    public String nameFicha3() {
+        int id=listFichasPregunta.get(2).getFicha().getIdFicha();
+        return obtnerNameficha(id);
+    }
+
+    public String nameFicha4() {
+       int id=listFichasPregunta.get(3).getFicha().getIdFicha();
+        return obtnerNameficha(id);
+    }
+  
+    //metodo para obtner NOMBRE de la ficha por su id
+    public String obtnerNameficha(int idFich) {
+        String nombreFicha = "empty";
+        this.session = null;
+        this.transaction = null;
+        try {
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+
+            //para crear Fichaspregunta (lista de fichas en base columna1 un preguntadeENTRENAMIENTO)
+            DaoFicha daofichaPregunta = new DaoFicha();
+            Ficha ficha = daofichaPregunta.verPorCodigoFicha(session, idFich);
+            this.transaction.commit();
+            nombreFicha = ficha.getNombreFicha();
+
+            System.out.println("Correcto: al obtner el nombre (fichaPregunta)se ha realizado con exito");
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL obtner FICHA en el Test Emparejamiento:", "Contacte con el administrador" + ex.getMessage()));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
+            }
+        }
+        return nombreFicha;
+    }
 
     public int numeroAleatorTEST(int valorInicial, int valorFinal) {
         ArrayList listaNumero = new ArrayList();
@@ -252,10 +319,6 @@ public class BeansRFichaPregunta2 {
             columna0.add("imagen" + imgM[i]);
             columna1.add("sonido" + sonM[i]);
         }
-//        columna0.add("4");
-//        columna0.add("5");
-//        columna1.add("4");
-//        columna1.add("5");
 
         //fijo las columna en el beans SESSION
         this.beanSEntrena.setColumna0(columna0);
