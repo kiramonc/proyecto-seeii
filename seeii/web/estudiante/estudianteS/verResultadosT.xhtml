@@ -9,9 +9,9 @@
 
         <ui:composition template="./../../templates/templateEstudianteEntrenar.xhtml">
             <ui:define name="content">
-            
+
                 <h:form id="resultadoEnt">
-                    <p:chart type="line" model="#{beansVerResultadoT.lineModel1}" style="height:300px;"/>
+                    <p:lineChart value="#{beansVerResultadoT.modelGraphTemas}"  datatipFormat="%2$d" legendPosition="e" seriesColors="ff8e1c,e6c20a,d9674f" style="height:300px;" />
 
                 </h:form>
             </ui:define>

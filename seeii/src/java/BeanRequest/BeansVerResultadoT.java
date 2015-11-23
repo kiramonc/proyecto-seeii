@@ -21,11 +21,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.primefaces.model.chart.Axis;
-import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.CategoryAxis;
+import org.primefaces.model.chart.CartesianChartModel;
 import org.primefaces.model.chart.ChartSeries;
-import org.primefaces.model.chart.LineChartModel;
 
 /**
  *
@@ -38,9 +35,8 @@ public class BeansVerResultadoT {
     private Session session;
     private Transaction transaction;
 
-    private LineChartModel lineModel1;
-
     private List<Entrenamiento> listaEntrenamiento;
+    private CartesianChartModel modelGraphTemas;
 
     public BeansVerResultadoT() {
 
@@ -48,34 +44,24 @@ public class BeansVerResultadoT {
 
     @PostConstruct
     public void init() {
-        ObtnerDatosEst();
         createLineModels();
     }
 
     private void createLineModels() {
-        lineModel1 = initCategoryModel();
-        lineModel1.setTitle("Resultado Estudiante");
-        lineModel1.setLegendPosition("e");
-        lineModel1.setShowPointLabels(true);
-        lineModel1.getAxes().put(AxisType.X, new CategoryAxis(""));
-        Axis yAxis = lineModel1.getAxis(AxisType.Y);
-        yAxis.setMin(0);
-        yAxis.setMax(1250);
-    }
+        ObtnerDatosEst();
+        modelGraphTemas = new CartesianChartModel();
 
-    private LineChartModel initCategoryModel() {
-        LineChartModel model = new LineChartModel();
-        ChartSeries valores = new ChartSeries();
-        valores.setLabel("Puntajes Entrenamiento ");
-
+        ChartSeries temaSeries = new ChartSeries();
+        temaSeries.setLabel("Puntajes del Entrenamiento");
         int tamaño = 0;
         int anio;
         int mes;
         String fecha;
         int posicion;
+        System.out.println(" el tamano de la lista es_"+listaEntrenamiento.size());
         if (listaEntrenamiento.isEmpty()) {
-            valores.set("Sin Fecha de Entrenamiento", 0);
-            model.addSeries(valores);
+            temaSeries.set("Sin Fecha de Entrenamiento", 0);
+            modelGraphTemas.addSeries(temaSeries);
         } else {
             tamaño = listaEntrenamiento.size();
             if (tamaño <= 7) {
@@ -83,24 +69,23 @@ public class BeansVerResultadoT {
                     anio = listaEntrenamiento.get(i).getFecha().getYear() + 1900;
                     mes = listaEntrenamiento.get(i).getFecha().getMonth() + 1;
                     fecha = "[" + i + "] " + anio + "/" + mes + "/" + listaEntrenamiento.get(i).getFecha().getDate();
-                    valores.set(fecha, listaEntrenamiento.get(i).getPuntaje());
+                    temaSeries.set(fecha, listaEntrenamiento.get(i).getPuntaje());
                 }
-                model.addSeries(valores);
+                modelGraphTemas.addSeries(temaSeries);
             } else {
                 for (int i = 0; i < 7; i++) {
                     posicion = tamaño - i;
                     anio = listaEntrenamiento.get(tamaño).getFecha().getYear() + 1900;
                     mes = listaEntrenamiento.get(tamaño).getFecha().getMonth() + 1;
                     fecha = "[" + i + "] " + anio + "/" + mes + "/" + listaEntrenamiento.get(tamaño).getFecha().getDate();
-                    valores.set(fecha, listaEntrenamiento.get(tamaño).getPuntaje());
+                    temaSeries.set(fecha, listaEntrenamiento.get(tamaño).getPuntaje());
                 }
-                model.addSeries(valores);
+                modelGraphTemas.addSeries(temaSeries);
             }
         }
-        return model;
     }
 
-       //metodo para obtner las de todos los entrenamiento de un estudiante
+    //metodo para obtner las de todos los entrenamiento de un estudiante
     public void ObtnerDatosEst() {
         //obtnego el beansSession LOGIN para obtener el nombre del ususario.
         FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
@@ -113,8 +98,6 @@ public class BeansVerResultadoT {
         System.out.println("el nombre de usuario es :" + nameUser);
         System.out.println("el id del Estudiante " + nameUser + " es :" + idUsuario);
         System.out.println("la tamaño de lista de entrenamientos es: " + listaEntrenamiento.size());
-        //metodo para mostrar la linea de entrenamiento
-        createLineModels();
     }
 
     //metodo para obtner un Usuario segun el USERNAME.
@@ -178,8 +161,12 @@ public class BeansVerResultadoT {
     }
 
     //.................setter y getter.....................
-    public LineChartModel getLineModel1() {
-        return lineModel1;
+    public CartesianChartModel getModelGraphTemas() {
+        return modelGraphTemas;
+    }
+
+    public void setModelGraphTemas(CartesianChartModel modelGraphTemas) {
+        this.modelGraphTemas = modelGraphTemas;
     }
 
     public List<Entrenamiento> getListaEntrenamiento() {

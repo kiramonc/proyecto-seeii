@@ -8,12 +8,8 @@ package BeanRequest;
 import BeanSession.BeanSEntrenar;
 import Clases.RedNeuronal.RedNeuronal;
 import Dao.DaoEntrenar;
-import Dao.DaoPreguntaEntrenar;
 import HibernateUtil.HibernateUtil;
 import Pojo.Entrenamiento;
-import Pojo.Preguntaentrenar;
-import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -22,11 +18,6 @@ import javax.faces.context.FacesContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.primefaces.context.RequestContext;
-import org.primefaces.model.chart.Axis;
-import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.CategoryAxis;
-import org.primefaces.model.chart.ChartSeries;
-import org.primefaces.model.chart.LineChartModel;
 
 /**
  *
@@ -90,7 +81,7 @@ public class BeansVerResultadoEntrenar {
     }
 
     public void mostrarMsj() {
-        RequestContext.getCurrentInstance().update("frmResultado:panelResultado");
+       RequestContext.getCurrentInstance().update("frmResultado:panelResultado");
         RequestContext.getCurrentInstance().execute("PF('dialogResultado').show()");
     }
 
