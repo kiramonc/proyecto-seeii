@@ -7,8 +7,11 @@ package Dao;
 
 import Interface.InterfaceEntrenamiento;
 import Pojo.Entrenamiento;
+import Pojo.Fichaspregunta;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -36,6 +39,7 @@ public class DaoEntrenar implements InterfaceEntrenamiento {
         Entrenamiento entrenamiento = (Entrenamiento) query.uniqueResult();
         return entrenamiento;
     }
+
     @Override
     public Entrenamiento verPorCodigoEntrenamiento(Session session, int idEntrenar) throws Exception {
         String hql = "from Entrenamiento where idEntrena=:idEntrena";
@@ -46,8 +50,20 @@ public class DaoEntrenar implements InterfaceEntrenamiento {
     }
 
     @Override
+    public List<Entrenamiento> listEntrenamientoPorIdEstudiante(Session session, int idestudiante) throws Exception {
+        String hql = "from Entrenamiento where idestudiante=:idestudiante";
+        Query query = session.createQuery(hql);
+        query.setInteger("idestudiante", idestudiante);
+        List<Entrenamiento> listaEntrenamiento = (List<Entrenamiento>) query.list();
+        for (Entrenamiento lista : listaEntrenamiento) {
+            Hibernate.initialize(lista.getEstudiante());
+        }
+        return listaEntrenamiento;
+    }
+
+    @Override
     public boolean actualizar(Session session, Entrenamiento entrenar) throws Exception {
-       session.update(entrenar);
+        session.update(entrenar);
         return true;
     }
 

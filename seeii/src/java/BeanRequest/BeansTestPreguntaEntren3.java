@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.hibernate.Session;
@@ -38,7 +39,7 @@ import org.primefaces.model.DefaultDashboardModel;
  * @author USUARIO
  */
 @ManagedBean
-@ViewScoped
+@RequestScoped
 public class BeansTestPreguntaEntren3 {
 
     private Session session;
@@ -55,16 +56,11 @@ public class BeansTestPreguntaEntren3 {
     ArrayList listaNumero = new ArrayList();
     //atributo para utilizar con el metodo (obtenerlistaFichasPregunta)
     private List<Fichaspregunta> listFichasPregunta;
- 
+
     //mostara los resultados del test
     private String correcto;
     private int resultado1;
     private int resultado2;
-
-    //mostara los resultados del ENTRENAMIENTO
-    private int finalPuntaje;
-    private int finalTiempo;
-    private int finalError;
 
     public BeansTestPreguntaEntren3() {
     }
@@ -224,7 +220,7 @@ public class BeansTestPreguntaEntren3 {
             DaoFichaPregunta daofichaPregunta = new DaoFichaPregunta();
             listFichasPregunta = daofichaPregunta.verPreguntaEntrenamiento(session, idPrenguntaEnt);
             for (int i = 0; i < listFichasPregunta.size(); i++) {
-                System.out.println("listFichasPregunta   "+listFichasPregunta.get(i).getFicha().getIdFicha());
+                System.out.println("listFichasPregunta   " + listFichasPregunta.get(i).getFicha().getIdFicha());
             }
             this.transaction.commit();
 
@@ -337,15 +333,14 @@ public class BeansTestPreguntaEntren3 {
 
         //  4. Actualizamos (preguntaEntrenar) con los [valor, incorrectas]
         actulizarPreguntaEntrenar(valor, incorrectas);
-
         System.out.println("VALOR de la puntución es: " + valor);
         System.out.println("respuestas INCORRECTAS : " + incorrectas);
-        //mostramos los mensajes de los valores de punturación y respuestas incorrectas
-        FacesMessage message = new FacesMessage();
-        message.setSeverity(FacesMessage.SEVERITY_INFO);
-        message.setSummary("RESULTADO: ");
-        message.setDetail("VALOR de la puntución es: " + valor + ", respuestas INCORRECTAS : " + incorrectas);
-        addMessage(message);
+//        //mostramos los mensajes de los valores de punturación y respuestas incorrectas
+//        FacesMessage message = new FacesMessage();
+//        message.setSeverity(FacesMessage.SEVERITY_INFO);
+//        message.setSummary("RESULTADO: ");
+//        message.setDetail("VALOR de la puntución es: " + valor + ", respuestas INCORRECTAS : " + incorrectas);
+//        addMessage(message);
 
         //  5. Actualizamos (entrenamiento) con los [error, puntaje, tiempo]
         actulizarENTRENAMIENTO();
@@ -362,8 +357,7 @@ public class BeansTestPreguntaEntren3 {
     }
 
     public String actualizarPagina() {
-//        this.beanSEntrena.finalizar();
-        return "resultadosEntrenamiento";
+        return "verResultadosEntrenar";
     }
 
     //Método para cambiar las columnas de String a Numeros
@@ -544,9 +538,6 @@ public class BeansTestPreguntaEntren3 {
             entrenamiento.setPuntaje(puntaje);
             entrenamiento.setError(error);
             entrenamiento.setTiempo(tiempo);
-            finalPuntaje = puntaje;
-            finalTiempo = tiempo;
-            finalError = error;
             daoEntrenar.actualizar(session, entrenamiento);
             this.transaction.commit();
 
@@ -563,12 +554,12 @@ public class BeansTestPreguntaEntren3 {
         }
     }
 
-    private void addMessage(FacesMessage message) {
-        FacesContext.getCurrentInstance().addMessage(null, message);
-    }
+//    private void addMessage(FacesMessage message) {
+//        FacesContext.getCurrentInstance().addMessage(null, message);
+//    }
 
     public String obtnerSonidoficha1() {
-         //método para obtner el id de la ficha 1
+        //método para obtner el id de la ficha 1
         int idficha = obtnerficha1();
         //metodo para sonido(nombre) de las fichas (verfichaPorId)
         String nameficha1 = verfichaPorId(idficha);
@@ -576,7 +567,7 @@ public class BeansTestPreguntaEntren3 {
     }
 
     public String obtnerSonidoficha2() {
-       //método para obtner el id de la ficha 1
+        //método para obtner el id de la ficha 1
         int idficha = obtnerficha2();
         //metodo para sonido(nombre) de las fichas (verfichaPorId)
         String nameficha2 = verfichaPorId(idficha);
@@ -634,18 +625,6 @@ public class BeansTestPreguntaEntren3 {
 
     public String isCorrecto() {
         return correcto;
-    }
-
-    public int getFinalPuntaje() { //obtner el resultado (PUNTAJE) del ENTRENAMIENTO
-        return finalPuntaje;
-    }
-
-    public int getFinalTiempo() { //obtner el resultado (TIEMPO) del ENTRENAMIENTO
-        return finalTiempo;
-    }
-
-    public int getFinalError() { //obtner el resultado (ERROR) del ENTRENAMIENTO
-        return finalError;
     }
 
 }

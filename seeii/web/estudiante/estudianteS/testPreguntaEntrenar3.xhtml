@@ -87,21 +87,11 @@
                             <center>
                                 <p:outputLabel value="puntuación : #{beansTestPreguntaEntren3.resultado1}" style="font-size: 14px; font-weight: bold; color: #fff; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>                               
                                 <p:outputLabel value="incorrectas: #{beansTestPreguntaEntren3.resultado2}" style="font-size: 14px; font-weight: bold; color: #fff; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>
-                                <p:graphicImage value="../../resources/imagen/imgDialog/#{beansTestPreguntaEntren3.isCorrecto()}" width="120" height="100" cache="false" style="object-position: center;"/>
+                                <p:graphicImage value="../../resources/imagen/imgDialog/#{beansTestPreguntaEntren3.isCorrecto()}" width="170" height="150" cache="false" style="object-position: center;"/>
                             </center>
-
-                            <p:outputLabel value="-----------------------------------" style="font-size: 18px; font-weight: bold; color: #000000; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>                               
-                            <p:outputLabel value="DATOS ENTRENAMIENTO" style="font-size: 18px; font-weight: bold; color: #000000; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>                               
-                            <p:outputLabel value="-----------------------------------" style="font-size: 18px; font-weight: bold; color: #000000; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>                               
-
-                            <p:outputLabel value="puntaje : #{beansTestPreguntaEntren3.finalPuntaje}" style="font-size: 18px; font-weight: bold; color: #000000; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>                               
-                            <p:outputLabel value="TIEMPO :#{beansTestPreguntaEntren3.finalTiempo} (segundos)" style="font-size: 18px; font-weight: bold; color: #000000; text-shadow: 0px 0px 1px;  text-align: center;"/>
-                            <p:outputLabel value="Error : #{beansTestPreguntaEntren3.finalError}" style="font-size: 18px; font-weight: bold; color: #000000; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>
-                            <p:outputLabel value="-----------------------------------" style="font-size: 18px; font-weight: bold; color: #000000; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>                               
-
                         </h:panelGrid>
                         <center>
-                            <h:commandButton  value=" FINALIZAR" action="#{beansTestPreguntaEntren3.actualizarPagina()}" styleClass="botonstyle" />
+                            <h:commandButton  value=" VER RESULTADOS" action="#{beansTestPreguntaEntren3.actualizarPagina()}" styleClass="botonstyle" />
                         </center>
                     </p:dialog>
                 </h:form>

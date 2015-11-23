@@ -21,6 +21,7 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.CategoryAxis;
@@ -33,7 +34,7 @@ import org.primefaces.model.chart.LineChartModel;
  */
 @ManagedBean
 @RequestScoped
-public class beansResultado {
+public class BeansVerResultadoEntrenar {
 
     private Session session;
     private Transaction transaction;
@@ -47,7 +48,7 @@ public class beansResultado {
     private String resultado;
     private String imagenResult;
 
-    public beansResultado() {
+    public BeansVerResultadoEntrenar() {
 
     }
 
@@ -57,6 +58,7 @@ public class beansResultado {
         redN.redNeuronal(entrenamiento.getPuntaje(), entrenamiento.getTiempo(), entrenamiento.getError());
         resultado = redN.getResultado();
         imagenResult = redN.getImgResultado();
+
     }
 
     public Entrenamiento obtnerEntrenamiento() {
@@ -85,6 +87,16 @@ public class beansResultado {
             }
         }
         return entrenamiento;
+    }
+
+    public void mostrarMsj() {
+        RequestContext.getCurrentInstance().update("frmResultado:panelResultado");
+        RequestContext.getCurrentInstance().execute("PF('dialogResultado').show()");
+    }
+
+    public String actualizarPagina() {
+//        this.beanSEntrena.finalizar();
+        return "inicioAprendizaje";
     }
 
     //.................setter y getter.....................

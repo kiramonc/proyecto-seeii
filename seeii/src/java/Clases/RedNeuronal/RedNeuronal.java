@@ -62,7 +62,7 @@ public class RedNeuronal {
                 break;
             case "1":
                 resultado = "Disminuir Errores";
-                imgResultado = "pensando.jpg";
+                imgResultado = "Bueno.jpg";
                 System.out.println("Disminuir Errores");
                 break;
             case "2":
@@ -77,17 +77,50 @@ public class RedNeuronal {
                 break;
             case "4":
                 resultado = "Subir Puntaje";
-                imgResultado = "triste.jpg";
+                if (puntaje == 0) {
+                    imgResultado = "mal.jpg";
+                } else {
+                    if (puntaje > 350) {
+                        imgResultado = "pensando.jpg";
+                        if (puntaje >= 700) {
+                            imgResultado = "Bueno.jpg";
+                        }
+                    } else {
+                        imgResultado = "triste.jpg";
+                    }
+                }
                 System.out.println("Subir Puntaje");
                 break;
             case "5":
                 resultado = "Subir Puntaje y disminuir Errores";
-                imgResultado = "triste.jpg";
+                if (puntaje == 0) {
+                    imgResultado = "mal.jpg";
+                } else {
+                    if (puntaje > 350) {
+                       imgResultado = "pensando.jpg";
+                        if (puntaje >= 700) {
+                            imgResultado = "Bueno.jpg";
+                        }
+                    } else {
+                        imgResultado = "triste.jpg";
+                    }
+                }
                 System.out.println("Subir Puntaje y disminuir Errores");
                 break;
             case "6":
                 resultado = "Subir Puntaje y disminuir Tiempo";
-                imgResultado ="triste.jpg";
+                if (puntaje == 0) {
+                    imgResultado = "mal.jpg";
+                } else {
+                    if (puntaje > 350) {
+                        imgResultado = "pensando.jpg";
+                        if (puntaje >= 700) {
+                            imgResultado = "Bueno.jpg";
+                        }
+                    } else {
+                        imgResultado = "triste.jpg";
+                    }
+                }
                 System.out.println("Subir Puntaje y disminuir Tiempo");
                 break;
             case "7":
@@ -105,7 +138,7 @@ public class RedNeuronal {
 
     public String obtnerPuntaje(int punto) {
         int valorPuntos;
-        if (punto >= 850) {
+        if (punto >= 950) {
             valorPuntos = 1;
         } else {
             valorPuntos = 0;
@@ -127,7 +160,7 @@ public class RedNeuronal {
 
     public String obtenerErrores(int errors) {
         int valorError;
-        if (errors > 3) {
+        if (errors > 2) {
             valorError = 0;
         } else {
             valorError = 1;
