@@ -5,9 +5,8 @@
  */
 package Clases.RedBayesiana;
 
-import Pojo.Concepto;
 import Pojo.Estudiante;
-import Pojo.Tema;
+import Pojo.Resultado;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,10 +29,6 @@ import org.openmarkov.core.exception.ProbNodeNotFoundException;
 import org.openmarkov.core.exception.UnexpectedInferenceException;
 import org.openmarkov.core.exception.WriterException;
 import org.openmarkov.core.inference.InferenceAlgorithm;
-import org.openmarkov.core.inference.InferenceOptions;
-import org.openmarkov.core.inference.annotation.InferenceManager;
-import org.openmarkov.core.model.network.EvidenceCase;
-import org.openmarkov.core.model.network.Finding;
 import org.openmarkov.core.model.network.NodeType;
 import org.openmarkov.core.model.network.ProbNet;
 import org.openmarkov.core.model.network.ProbNode;
@@ -559,7 +554,7 @@ public class CrearBayesNetwork1 {
         return null;
     }
     
-    private String refrescarRed(String idSesion, String nombreUnidad, List<Resultado1> resultados) {
+    private String refrescarRed(String idSesion, String nombreUnidad, List<Resultado> resultados) {
         try {
             String file = ruta + "/" + nombreUnidad + idSesion+ ".pgmx";
             File archivoPgmx = new File(file);
@@ -602,7 +597,7 @@ public class CrearBayesNetwork1 {
     }
 
     
-    public HashMap<String, String> inferencia(String idSesion, String nombreUnidad, List<Resultado1> resultados) {
+    public HashMap<String, String> inferencia(String idSesion, String nombreUnidad, List<Resultado> resultados) {
         try {
             // REFRESCAR LA RED!!!
             // UTILIZAR ESTA RED PARA REALIZAR LA INFERENCIA POSTERIOR

@@ -71,7 +71,7 @@
                                 <p:column>
                                     <p:commandButton value="Conceptos" actionListener="#{beanRTema.abrirDialogoVerConceptos(item.idTema)}"/>
                                 </p:column>
-                                
+
                             </p:dataTable>
 
                             <h:panelGrid columns="4">
@@ -81,8 +81,8 @@
                                     <p:commandButton value="Eliminar" title="Eliminar"  onclick="PF('cd').show()" styleClass="botonstyle" icon="ui-icon-trash" disabled="#{beanRUnidadE.deshabilitarBotonCrearTema()}"/>
                                     <p:confirmDialog message="La unidad será eliminada, ¿Desea continuar?" header="Eliminar" severity="alert" widgetVar="cd" styleClass="confirmEliminar">
                                         <center>
-                                        <p:commandButton ajax="false" value="Aceptar" actionListener="#{beanRUnidadE.eliminar()}" oncomplete="PF('cd').hide()"/>
-                                        <p:commandButton value="Cancelar" onclick="PF('cd').hide();" type="button" />
+                                            <p:commandButton ajax="false" value="Aceptar" actionListener="#{beanRUnidadE.eliminar()}" oncomplete="PF('cd').hide()"/>
+                                            <p:commandButton value="Cancelar" onclick="PF('cd').hide();" type="button" />
                                         </center>
                                     </p:confirmDialog>
                                 </h:panelGroup>
@@ -93,9 +93,9 @@
                 </h:panelGrid>
 
 
-                
-                    <p:dialog header="Datos del tema" widgetVar="dialogEditarTema" modal="true">
-                        <h:form id="frmEditarTema" enctype="multipart/form-data">
+
+                <p:dialog header="Datos del tema" widgetVar="dialogEditarTema" modal="true">
+                    <h:form id="frmEditarTema" enctype="multipart/form-data">
                         <h:panelGrid id="panelEditarTema" columns="3">
                             <p:outputLabel value="Nombre: "  for="txtNombreTema"/>
                             <p:inputText id="txtNombreTema" label="Nombre" size="40" value="#{beanRTema.tema.nombre}">
@@ -118,7 +118,7 @@
                             <p:inputText id="txtDominio" label="Dominio:" size="40" value="#{beanRTema.tema.dominio}">
                             </p:inputText>
                             <p:message for="txtDominio"/>
-                            
+
                             <p:outputLabel value="Imagen Tema: " for="uploadImagen"/>
                             <p:fileUpload id="uploadImagen" value="#{beanRTema.imagen}" mode="simple"/>
                             <p:message for="uploadImagen"/>
@@ -133,9 +133,9 @@
                             <p:commandButton ajax="false" value="Eliminar" title="Eliminar" actionListener="#{beanRTema.eliminar()}" onclick="if (!confirm('Desea eliminar el tema'))
                                         return false;" styleClass="botonstyle" icon="ui-icon-trash"/>
                         </center>
-                        </h:form>
-                    </p:dialog>
-                
+                    </h:form>
+                </p:dialog>
+
 
 
                 <h:form id="frmCrearTema" enctype="multipart/form-data">
@@ -163,7 +163,7 @@
                             <p:inputText id="txtDominio" label="Dominio:" size="40" value="#{beanRTema.tema.dominio}">
                             </p:inputText>
                             <p:message for="txtDominio"/>
-                            
+
                             <p:outputLabel value="Imagen Tema: " for="uploadImagen"/>
                             <p:fileUpload id="uploadImagen" value="#{beanRTema.imagen}" mode="simple"/>
                             <p:message for="uploadImagen"/>
@@ -223,10 +223,10 @@
                                 <p:commandButton ajax="false" value="Actualizar" actionListener="#{beanRConcepto.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>
                                 <h:panelGroup>
                                     <p:commandButton ajax="false" value="Eliminar" title="Eliminar" actionListener="#{beanRConcepto.eliminar()}" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}" onclick="if (!confirm('Desea eliminar el concepto'))
-                                        return false;" styleClass="botonstyle" icon="ui-icon-trash"/>
+                                                return false;" styleClass="botonstyle" icon="ui-icon-trash"/>
                                     <p:confirmDialog message="El concepto será eliminado" header="Eliminar" severity="alert" widgetVar="cdc" styleClass="confirmEliminar">
-                                            <p:commandButton ajax="false" value="Aceptar" actionListener="#{beanRConcepto.eliminar()}" oncomplete="PF('cdc').hide()"/>
-                                            <p:commandButton value="Cancelar" onclick="PF('cdc').hide();" type="button" />
+                                        <p:commandButton ajax="false" value="Aceptar" actionListener="#{beanRConcepto.eliminar()}" oncomplete="PF('cdc').hide()"/>
+                                        <p:commandButton value="Cancelar" onclick="PF('cdc').hide();" type="button" />
                                     </p:confirmDialog>
                                 </h:panelGroup>
                                 <p:commandButton ajax="false" icon="ui-icon-circle-arrow-w" value="Limpiar" actionListener="#{beanRConcepto.limpiarFormulario()}" styleClass="botonstyle" disabled="#{beanRConcepto.deshabilitarBotonCrearTema()}"/>

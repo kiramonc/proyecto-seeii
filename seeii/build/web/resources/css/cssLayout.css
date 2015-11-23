@@ -258,3 +258,46 @@
     width: 50%;
     margin-left: 50%;
 }
+
+#panelListaEstResultado{
+    width: 100%
+}
+
+#frmListaEstResultado{
+    width: 40%;
+    float: left;
+    position: absolute;
+}
+
+#frmGraficasPorEstudiante{
+    width: 50%;
+    margin-left: 45%;
+    margin-top: 0%;
+    height: 800px !important;
+    border:2px solid #a8a8a8;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+#graphsTemas{
+    margin-top:2%;
+}
+
+#graphsConceptos{
+    margin-top: 5%;
+}
+
+.iconStadistic{
+    background: url(../iconos/2-3.png) no-repeat !important;
+height:16px;
+width:16px;
+padding-right: 10px;
+}
+
+.iconImport{
+    background: url(../iconos/6-10.png) no-repeat !important;
+    background-color: white;
+height:16px;
+width:16px;
+padding-right: 10px;
+}

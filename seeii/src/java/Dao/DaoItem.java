@@ -23,20 +23,15 @@ public class DaoItem implements Interface.InterfaceItems {
         return true;
     }
     
-//    public boolean registrar(Session session, int pregunta, String nombreItem, byte[] imgItem, int traduccion) throws Exception {
-//        String insert = "insert into Item(pregunta,nombreItem, imgItem, traduccion) values(?,?,?,?)";
-//        Query query = session.createQuery(insert);
-//        query.setInteger(1, pregunta);
-//        query.setString(2, nombreItem);
-//        query.setBinary(3, imgItem);
-//        query.setInteger(4, traduccion);
-//        query.executeUpdate();
-//        
-//        return true;
-//    }
+    public boolean registrarVarios(Session session, List<Item> items) throws Exception {
+        for (Item r : items) {
+            session.save(r);
+            session.flush();
+            session.clear();
+        }
+        return true;
+    }
     
-    
-
     @Override
     public List<Item> verTodo(Session session) throws Exception {
         String hql = "from Item";
@@ -63,13 +58,15 @@ public class DaoItem implements Interface.InterfaceItems {
     }
 
     @Override
-    public Item verPorNombreItem(Session session, String nombreItem) throws Exception {
-        String hql = "from Item where nombreItem=:nombreItem";
+    public Item verPorPREGNombreItem(Session session, String nombreItem, int preguntaItem) throws Exception {
+        String hql = "from Item where nombreItem=:nombreItem and preguntaItem=:preguntaItem";
         Query query = session.createQuery(hql);
         query.setParameter("nombreItem", nombreItem);
+        query.setInteger("preguntaItem", preguntaItem);
         Item item = (Item) query.uniqueResult();
         Hibernate.initialize(item.getPregunta());
 //            Hibernate.initialize(lista.getTest().getTema());
+        
         return item;
     }
 
@@ -96,11 +93,22 @@ public class DaoItem implements Interface.InterfaceItems {
         return true;
     }
     
-//    public void saveImg(Session session, FileInputStream fis, File file) throws Exception{
-//        String hql = "from Item where idItem=:idItem";
-//        Query query = session.createQuery(hql);
-//                    ps.setBinaryStream(1, fis, (int) file.length());
-//
-//    }
-
+    public int verNumItemsPorPregunta(Session session, int pregunta) throws Exception {
+        String hql = "from Item where pregunta=:pregunta";
+        Query query = session.createQuery(hql);
+        query.setInteger("pregunta", pregunta);
+        List<Item> listaItems = (List<Item>) query.list();
+        for (Item lista : listaItems) {
+            Hibernate.initialize(lista.getPregunta());
+//            Hibernate.initialize(lista.getTest().getTema());
+        }
+        int numItems;
+        if(!listaItems.isEmpty()){
+            numItems = listaItems.size();
+        }else{
+            numItems=0;
+        }
+        return numItems;
+    }
+    
 }

@@ -5,16 +5,22 @@
  */
 package BeanRequest;
 
+import Clases.RedBayesiana.CrearBayesDynamic;
+import Dao.DaoConcepto;
 import Dao.DaoItem;
+import Dao.DaoPregConc;
 import Dao.DaoPregunta;
 import HibernateUtil.HibernateUtil;
+import Pojo.Concepto;
 import Pojo.Item;
+import Pojo.PregConc;
 import Pojo.Pregunta;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -66,6 +72,20 @@ public class BeanRItem {
             this.item.setImgItem(nombreImagen);
             this.item.setEstado(true);
             daoItem.registrar(session, item);
+            
+            // Se crea nodo pregunta en Red bayesiana
+            CrearBayesDynamic rbDynamic = new CrearBayesDynamic();
+            DaoPregConc daoPregunta= new DaoPregConc();
+            List<PregConc> lstPregConc=daoPregunta.verPorPregunta(session, this.pregunta.getIdPregunta());
+            List<Concepto> lstConcepto= new ArrayList<>();
+            for (int i = 0; i < lstPregConc.size(); i++) {
+                lstConcepto.add(lstPregConc.get(i).getConcepto());
+            }
+            if(!rbDynamic.existPregunta(lstConcepto.get(0).getTema().getNombre(), this.pregunta.getNombrePreg())){
+                rbDynamic.crearPregunta(lstConcepto.get(0).getTema().getNombre(), this.pregunta, lstConcepto, daoItem.verNumItemsPorPregunta(session, this.pregunta.getIdPregunta()));
+            }else{
+                rbDynamic.editarPregunta(lstConcepto.get(0).getTema().getNombre(), this.pregunta, lstConcepto, daoItem.verNumItemsPorPregunta(session, this.pregunta.getIdPregunta()));
+            }
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
             this.item = new Item();
@@ -207,6 +227,20 @@ public class BeanRItem {
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
             daoItem.eliminar(this.session, this.item);
+            // Se modifica la pregunta
+            CrearBayesDynamic rbDynamic = new CrearBayesDynamic();
+            DaoPregConc daoPregunta= new DaoPregConc();
+            List<PregConc> lstPregConc=daoPregunta.verPorPregunta(session, this.pregunta.getIdPregunta());
+            List<Concepto> lstConcepto= new ArrayList<>();
+            for (int i = 0; i < lstPregConc.size(); i++) {
+                lstConcepto.add(lstPregConc.get(i).getConcepto());
+            }
+            int numItems= daoItem.verNumItemsPorPregunta(session, this.pregunta.getIdPregunta()); 
+            if(numItems==0){
+                rbDynamic.eliminarPregunta(lstConcepto.get(0).getTema().getNombre(), pregunta);
+            }else{
+                rbDynamic.editarPregunta(lstConcepto.get(0).getTema().getNombre(), this.pregunta, lstConcepto,daoItem.verNumItemsPorPregunta(session, this.pregunta.getIdPregunta()));
+            }
             this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Item eliminado correctamente."));
         } catch (Exception ex) {

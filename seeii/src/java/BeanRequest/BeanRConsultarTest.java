@@ -9,7 +9,6 @@ import Dao.DaoTema;
 import HibernateUtil.HibernateUtil;
 import Pojo.Pregunta;
 import Pojo.Tema;
-import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -127,7 +126,7 @@ public class BeanRConsultarTest {
             DaoTema daoTema = new DaoTema();
             this.session = HibernateUtil.getSessionFactory().openSession();
             this.transaction = session.beginTransaction();
-            List<Tema> temas = daoTema.verPorUnidad(session, 1);
+            List<Tema> temas = daoTema.verPorUnidad(session, 2);
             this.listaTemas = temas;
             this.transaction.commit();
             return this.listaTemas;

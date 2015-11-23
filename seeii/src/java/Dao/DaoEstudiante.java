@@ -8,6 +8,7 @@ package Dao;
 
 import Pojo.Estudiante;
 import java.util.List;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -34,7 +35,7 @@ public class DaoEstudiante implements Interface.InterfaceEstudiante{
         Query query=session.createQuery(hql);
         query.setParameter("idEst", idEstud);
         Estudiante estudiante=(Estudiante) query.uniqueResult();
-//        Hibernate.initialize(tema.getUnidadensenianza());
+        Hibernate.initialize(estudiante.getUsuario());
         return estudiante;
     }
 
@@ -60,8 +61,20 @@ public class DaoEstudiante implements Interface.InterfaceEstudiante{
         Query query=session.createQuery(hql);
         query.setParameter("nombreUnidad", nombreUnidad);
         List<Estudiante> listaEst = (List<Estudiante>) query.list();
-//        Hibernate.initialize(tema.getUnidadensenianza());
+        for (int i = 0; i < listaEst.size(); i++) {
+            Hibernate.initialize(listaEst.get(i).getUsuario());
+            Hibernate.initialize(listaEst.get(i).getUnidadensenianza());
+        }
+        
         return listaEst;
+    }
+    
+    public Estudiante verPorUsername(Session session, String username) throws Exception {
+        String hql1 = "select est from Estudiante as est join est.usuario as usuarios where usuarios.username=:username";
+        Query query = session.createQuery(hql1);
+        query.setParameter("username", username);
+        Estudiante estudiante = (Estudiante) query.uniqueResult();
+        return estudiante;
     }
 
 }

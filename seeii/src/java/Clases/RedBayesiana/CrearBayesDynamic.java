@@ -7,6 +7,7 @@ package Clases.RedBayesiana;
 
 import Pojo.Concepto;
 import Pojo.Pregunta;
+import Pojo.Tema;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -295,7 +296,7 @@ public class CrearBayesDynamic {
      * @param preguntaT
      * @param nombreConceptos
      */
-    public void crearPregunta(String nombreTema, Pregunta preguntaT, List<String> nombreConceptos){
+    public void crearPregunta(String nombreTema, Pregunta preguntaT, List<Concepto> nombreConceptos, int numItems){
         int numConceptos = getNumConceptos(nombreTema);
         try {
             String file = ruta + "\\" + nombreTema + ".pgmx";
@@ -321,11 +322,11 @@ public class CrearBayesDynamic {
             listaV.add(pregunta); // Variable Condicionada
             Variable concepto; // Variable Unidad (Hijo)
             for (int i = 0; i < nombreConceptos.size(); i++) {
-                concepto = probNet1.getVariable(nombreConceptos.get(i)); // Variable Unidad (Hijo)
+                concepto = probNet1.getVariable(nombreConceptos.get(i).getNombreConcepto()); // Variable Unidad (Hijo)
                 listaV.add(concepto);
             }
             tablaPPregunta.setVariables(listaV); // Establecer Variables
-            tablaPPregunta.setValues(setValoresCondicionante(listaV, preguntaT.getItems().size(), preguntaT.getDificultad(), preguntaT.getFdescuido(), preguntaT.getIndiceDis(), numConceptos)); // Establecer valores
+            tablaPPregunta.setValues(setValoresCondicionante(listaV, numItems, preguntaT.getDificultad(), preguntaT.getFdescuido(), preguntaT.getIndiceDis(), numConceptos)); // Establecer valores
 
             /**
              * Crear nodos
@@ -395,7 +396,7 @@ public class CrearBayesDynamic {
      * @param preguntaT pregunta que se va a editar
      * @param nombreConceptos Lista de conceptos de la pregunta
      */
-    public void editarPregunta(String nombreTema, Pregunta preguntaT, List<String> nombreConceptos){
+    public void editarPregunta(String nombreTema, Pregunta preguntaT, List<Concepto> nombreConceptos, int numItems){
         int numConceptos = getNumConceptos(nombreTema);
         try {
             String file = ruta + "/" + nombreTema + ".pgmx";
@@ -415,11 +416,11 @@ public class CrearBayesDynamic {
             listaV.add(pregunta); // Variable Condicionada
             Variable concepto; // Variable Unidad (Hijo)
             for (int i = 0; i < nombreConceptos.size(); i++) {
-                concepto = probNet1.getVariable(nombreConceptos.get(i)); // Variable Unidad (Hijo)
+                concepto = probNet1.getVariable(nombreConceptos.get(i).getNombreConcepto()); // Variable Unidad (Hijo)
                 listaV.add(concepto);
             }
             tablaPPregunta.setVariables(listaV); // Establecer Variables
-            tablaPPregunta.setValues(setValoresCondicionante(listaV, preguntaT.getItems().size(), preguntaT.getDificultad(), preguntaT.getFdescuido(), preguntaT.getIndiceDis(), numConceptos)); // Establecer valores
+            tablaPPregunta.setValues(setValoresCondicionante(listaV, numItems, preguntaT.getDificultad(), preguntaT.getFdescuido(), preguntaT.getIndiceDis(), numConceptos)); // Establecer valores
 
             ProbNode nodo = new ProbNode(probNet1, pregunta, NodeType.CHANCE);
             nodo.setPotential(tablaPPregunta);
@@ -443,7 +444,7 @@ public class CrearBayesDynamic {
      * @param conceptoEliminar Concepto que se va a eliminar
      * @param preguntasConcepto Lista de preguntas relacionadas con el concepto
      */
-    public void eliminarConcepto(String nombreTema, Concepto conceptoEliminar, List<Pregunta> preguntasConcepto){
+    public void eliminarConcepto(String nombreTema, Concepto conceptoEliminar, List<Pregunta>preguntasConcepto, HashMap<Integer, Integer> preguntasItems){
         int numConceptos = getNumConceptos(nombreTema);
         try {
             String file = ruta + "/" + nombreTema + ".pgmx";
@@ -453,37 +454,46 @@ public class CrearBayesDynamic {
             ProbNet probNet1 = pgmxReader.loadProbNet(inputStream, nombreTema).getProbNet();
 
             Variable concepto = probNet1.getVariable(conceptoEliminar.getNombreConcepto());
+            System.out.println("OBTIENE LA VARIABLE CONCEPTO CORRECTAMENTE");
             Variable pregunta;
             Pregunta p;
             ProbNode nodo;
             for (int i = 0; i < preguntasConcepto.size(); i++) {
                 p = (Pregunta) preguntasConcepto.get(i);
                 pregunta = probNet1.getVariable(p.getNombrePreg());
+                System.out.println("OBTIENE LA PREGUNTA "+pregunta.getName() + " CORRECTAMENTE");
                 probNet1.removeLink(concepto, pregunta, true); //eliminar el link entre el concepto y el pregunta
+                System.out.println("REMUEVE EL LINK DEL CONCEPTO CON ESA PREGUNTA");
                 /**
                  * Potencial Pregunta
                  */
                 TablePotential tablaPPregunta = pregunta.createDeltaTablePotential(0);
                 tablaPPregunta.setPotentialRole(PotentialRole.CONDITIONAL_PROBABILITY); // Rol
                 List<Variable> variablesPregunta = probNet1.getPotentials(pregunta).get(0).getVariables();
+                System.out.println("OBTIENE LA LISTA DE POTENCIALES PARA ESA PREGUNTA");
                 variablesPregunta.remove(concepto); // eliminamos el concepto de la tabla de potenciales
+                System.out.println("REMUEVE LA VARIABLE CONCEPTO DE LA LISTA DE POTENCIALES");
                 tablaPPregunta.setVariables(variablesPregunta); // Establecer Variables
                 if (variablesPregunta.size() == 1) {
 //                    tablaPPregunta.setValues(setValoresPriori()); // Establecer valores
                     probNet1.removeProbNode(probNet1.getProbNode(pregunta)); // eliminamos el nodo de la pregunta
+                    System.out.println("LA PREGUNTA NO SE RELACIONA CON NADIE MÁS. ELIMINA PREGUNTA");
                 } else {
-                    tablaPPregunta.setValues(setValoresCondicionante(variablesPregunta, p.getItems().size(), p.getDificultad(), p.getFdescuido(), p.getIndiceDis(), numConceptos)); // Establecer valores
+                    tablaPPregunta.setValues(setValoresCondicionante(variablesPregunta, preguntasItems.get(p.getIdPregunta()), p.getDificultad(), p.getFdescuido(), p.getIndiceDis(), numConceptos)); // Establecer valores
+                    System.out.println("LA PREGUNTA TIENE OTROS CONCEPTOS. RECALCULA VALORES");
                     nodo = new ProbNode(probNet1, pregunta, NodeType.CHANCE);
                     nodo.setPotential(tablaPPregunta);
                     probNet1.addProbNode(nodo); // Cambios en el nodo concepto
+                    System.out.println("MODIFICA NODO PREGUNTA");
                 }
 
             }
 
             probNet1.removeProbNode(probNet1.getProbNode(concepto)); // eliminamos el nodo del concepto
-
+            System.out.println("REMUEVE EL NODO CONCEPTO");
             PGMXWriter pgmxWriter = new PGMXWriter();
             pgmxWriter.writeProbNet(file, probNet1);
+            System.out.println("FIN!!");
             inputStream.close();
         } catch (FileNotFoundException | ParserException | ProbNodeNotFoundException | WriterException ex) {
             Logger.getLogger(CrearBayesNetwork1.class.getName()).log(Level.SEVERE, null, ex);
@@ -522,6 +532,10 @@ public class CrearBayesDynamic {
             System.out.println("El fichero no puede ser borrado");
         }
     }
+    
+    public void terminarInferencia(String nombreTema, String idSesion){
+        eliminarTema(nombreTema+idSesion);
+    }
 
     public void editarTema(String nombreTema, String nuevoNombre) {
         File archivoPgmx = new File(ruta + "/" + nombreTema + ".pgmx");
@@ -531,6 +545,23 @@ public class CrearBayesDynamic {
         } else {
             System.out.println("El fichero no puede ser renombrado");
         }
+    }
+    
+    public boolean existPregunta(String nombreTema, String nombrePregunta){
+        InputStream inputStream = null;
+        try {
+            String file = ruta + "/" + nombreTema + ".pgmx";
+            File archivoPgmx = new File(file);
+            inputStream = new FileInputStream(archivoPgmx);
+            PGMXReader pgmxReader = new PGMXReader();
+            ProbNet probNet1 = pgmxReader.loadProbNet(inputStream, nombreTema).getProbNet();
+            if(probNet1.containsVariable(nombrePregunta))
+                return true;
+            return false;
+        } catch (FileNotFoundException | ParserException ex) {
+            Logger.getLogger(CrearBayesDynamic.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } 
     }
 
     private String crearCopia(String nombreTema, String idSesion) {
@@ -675,7 +706,10 @@ public class CrearBayesDynamic {
                 value = posteriorProbabilitiesPotential.values[stateIndex];
 
                 // Agregar el valor calculado para el concepto al HashMap
-                valoresInferencia.put(key, Util.roundedString(value, "0.0001"));
+                if(value>=0.999){ // cuando el valor se aproxima a 1
+                    value=0.999; // valor límite
+                }
+                valoresInferencia.put(key, Util.roundedString(value, "0.000001"));
             } catch (InvalidStateException e) {
                 System.err.println("State \"sí\" not found for variable \"" + variable.getName() + "\".");
                 e.printStackTrace();
@@ -698,7 +732,7 @@ public class CrearBayesDynamic {
         try {
             stateIndex = variable1.getStateIndex(estado);
             value = posteriorProbabilitiesPotential.values[stateIndex];
-            valorPositivo = Util.roundedString(value, "0.0001");
+            valorPositivo = Util.roundedString(value, "0.000001");
         } catch (InvalidStateException e) {
             System.err.println("State \""+estado+ "\" not found for variable \"" + variable1.getName() + "\".");
             e.printStackTrace();
@@ -735,7 +769,7 @@ public class CrearBayesDynamic {
         return null;
     }
 
-    public Pregunta getPreguntaOptima(String nombreTema, String idSesion, Concepto c, List<Pregunta> lstPreguntas) {
+    public Pregunta getPreguntaOptima(String nombreTema, String idSesion, List<Pregunta> lstPreguntas) {
         InputStream inputStream = null;
         try {
             String file = ruta + "/" + nombreTema + idSesion + ".pgmx";
@@ -762,7 +796,6 @@ public class CrearBayesDynamic {
                     pregunta = probNet1.getVariable(lstPreguntas.get(i).getNombrePreg());
                     lstPadres = probNet1.getPotentials(pregunta).get(0).getVariables();
                     lstPadres.remove(0); // eliminamos la variable pregunta para tener solo los padres
-
                     // inferir cadena si o no en padres y obtener el U(P) max de la pregunta
                     double[] valoresInferidos = new double[lstPadres.size()];
                     evidence = new EvidenceCase();
@@ -823,14 +856,12 @@ public class CrearBayesDynamic {
     }
 
     public static void main(String[] args) {
-////        try {
-//        Test test = new Test(1, new Tema());
-//        Concepto conc = new Concepto(1, new Tema(), "Concepto", "traducción", "descripción", true);
-//        Concepto conc2 = new Concepto(2, new Tema(), "Concepto2", "traducción", "descripción", true);
-//        Concepto conc3 = new Concepto(3, new Tema(), "Concepto3", "traducción", "descripción", true);
+//        try {
+        Concepto conc = new Concepto(1, new Tema(), "Concepto", "traducción", true);
+        Concepto conc1 = new Concepto(2, new Tema(), "Concepto1", "traducción", true);
 //        
-//        Pregunta pregunta = new Pregunta(1, test, conc, "Descripcion", 4, true); // Speaking D
-//        Pregunta pregunta2 = new Pregunta(2, test, conc, "Descripcion", 3, true); // Listening M
+        Pregunta pregunta = new Pregunta(1, "Enunciado", 0.02, 0.02, 0.02, "Pregunta", true);
+        Pregunta pregunta1 = new Pregunta(2, "Enunciado", 0.02, 0.02, 0.02, "Pregunta1", true);
 //        Pregunta pregunta3 = new Pregunta(3, test, conc, "Descripcion", 3, true); // Speak M
 //        Pregunta pregunta4 = new Pregunta(4, test, conc, "Descripcion", 2, true); // Listen F
 //        Pregunta pregunta5 = new Pregunta(5, test, conc, "Descripcion", 2, true); // Speak F
@@ -870,11 +901,12 @@ public class CrearBayesDynamic {
 //        pregunta11.setItems(setItem); // Speak F
 //        pregunta12.setItems(setItem); // Listen F
 //
-//        ArrayList<String> lstConceptos = new ArrayList<>(); // List Concepto
-//        lstConceptos.add(conc.getNombreConcepto());
+        ArrayList<Concepto> lstConceptos = new ArrayList<>(); // List Concepto
+        lstConceptos.add(conc);
+        lstConceptos.add(conc1);
 //
-//        ArrayList<String> lstConceptos1 = new ArrayList<>(); // List Concepto 2
-//        lstConceptos1.add(conc2.getNombreConcepto());
+        ArrayList<Concepto> lstConceptos1 = new ArrayList<>(); // List Concepto 2
+        lstConceptos1.add(conc);
 //
 //        ArrayList<String> lstConceptos2 = new ArrayList<>(); // List Concepto 3
 //        lstConceptos2.add(conc3.getNombreConcepto());
@@ -892,19 +924,19 @@ public class CrearBayesDynamic {
 //        lstConceptos5.add(conc3.getNombreConcepto());
 //        lstConceptos5.add(conc2.getNombreConcepto());
 //
-//        CrearBayesDynamic c = new CrearBayesDynamic();
-//        String nombreTema = "TemaPrueba";
+        CrearBayesDynamic c = new CrearBayesDynamic();
+        String nombreTema = "TemaControl";
 //
-//        ArrayList<Pregunta> lstPreguntas = new ArrayList<>(); // preguntas Concepto3
-//        lstPreguntas.add(pregunta);
-//        lstPreguntas.add(pregunta2);
+        ArrayList<Pregunta> lstPreguntas = new ArrayList<>(); // preguntas Concepto3
+        lstPreguntas.add(pregunta);
+        lstPreguntas.add(pregunta1);
 //        lstPreguntas.add(pregunta3);
 //        lstPreguntas.add(pregunta4);
 //        lstPreguntas.add(pregunta5);
 //        lstPreguntas.add(pregunta11);
 //        
-//        ArrayList<Pregunta> lstPreguntas2 = new ArrayList<>(); // preguntas Concepto3
-//        lstPreguntas2.add(pregunta4);
+        ArrayList<Pregunta> lstPreguntas2 = new ArrayList<>(); // preguntas Concepto3
+        lstPreguntas2.add(pregunta1);
 //        lstPreguntas2.add(pregunta5);
 //        lstPreguntas2.add(pregunta6);
 //        lstPreguntas2.add(pregunta7);
@@ -919,20 +951,24 @@ public class CrearBayesDynamic {
 //        lstPreguntas3.add(pregunta11);
 //        lstPreguntas3.add(pregunta12);
 //
-////            c.eliminarConcepto(nombreTema, conc2, lstPreguntas);
-////            c.eliminarPregunta(nombreTema, pregunta7);
+        HashMap<Integer, Integer> items= new HashMap<>();
+        items.put(1, 2);
+        items.put(2, 1);
+        c.eliminarConcepto(nombreTema, conc, lstPreguntas, items);
+//            c.eliminarConcepto(nombreTema, conc2, lstPreguntas);
+//            c.eliminarPregunta(nombreTema, pregunta7);
 //        HashMap<String, String> valoresIniciales = new HashMap<>();
 //        valoresIniciales.put("Concepto", "0.08");
 //        valoresIniciales.put("Concepto2", "0.08");
 //        valoresIniciales.put("Concepto3", "0.08");
 //
-////            c.crearRedTema(nombreTema);
-////            c.crearConcepto(nombreTema, conc.getNombreConcepto());
-////            c.crearConcepto(nombreTema, conc1.getNombreConcepto());
+//            c.crearRedTema(nombreTema);
+//            c.crearConcepto(nombreTema, conc.getNombreConcepto());
+//            c.crearConcepto(nombreTema, conc1.getNombreConcepto());
 ////            c.crearConcepto(nombreTema, conc2.getNombreConcepto());
 ////
-////            c.crearPregunta(nombreTema, pregunta, lstConceptos, 0.001, 2.0); // Speaking Difícil, descuido bajo, id alto
-////            c.crearPregunta(nombreTema, pregunta2, lstConceptos, 0.01, 1.2); // LISTENING INTERMEDIO Descuido medio, iD medio
+//            c.crearPregunta(nombreTema, pregunta, lstConceptos, 2); // Speaking Difícil, descuido bajo, id alto
+//            c.crearPregunta(nombreTema, pregunta1, lstConceptos1, 1); // LISTENING INTERMEDIO Descuido medio, iD medio
 ////            c.crearPregunta(nombreTema, pregunta3, lstConceptos, 0.001, 1.2); // Speaking medio Descuido bajo, id medio
 ////            c.crearPregunta(nombreTema, pregunta4, lstConceptos3, 0.2, 0.2); // Listening FÁCIL Descuido alto, indice de discriminación bajo
 ////            c.crearPregunta(nombreTema, pregunta5, lstConceptos4, 0.001, 0.2);  // Speaking Fácil descuido bajo, id bajo

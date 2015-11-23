@@ -8,6 +8,7 @@ package Dao;
 
 import HibernateUtil.HibernateUtil;
 import Pojo.Concepto;
+import Pojo.Tema;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -78,7 +79,9 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
         Query query=session.createQuery(hql);
         query.setParameter("nombreConcepto", nombreConcepto);
         Concepto concepto=(Concepto) query.uniqueResult();
+        if(concepto!=null){
         Hibernate.initialize(concepto.getTema());
+        }
         return concepto;     
     }
     
@@ -87,6 +90,15 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
         Query query=session.createQuery(hql);
         query.setParameter("nombreConcepto", nombreConcepto);
         query.setInteger("tema", idTema);
+        Concepto concepto=(Concepto) query.uniqueResult();
+        return concepto;     
+    }
+    
+    public Concepto verPorNombreConcepNombreTem(Session session, String nombreConcepto, String nombre) throws Exception {
+        String hql="from Concepto where nombreConcepto=:nombreConcepto and tema.nombre=:nombre";
+        Query query=session.createQuery(hql);
+        query.setParameter("nombreConcepto", nombreConcepto);
+        query.setParameter("nombre", nombre);
         Concepto concepto=(Concepto) query.uniqueResult();
         return concepto;     
     }
@@ -116,4 +128,14 @@ public class DaoConcepto implements Interface.InterfaceConcepto{
         }
         return listaConceptos;
     }
+    
+    public Tema verTemaPorConcepto(Session session, int idConcepto) throws Exception {
+        String hql1 = "select conc.tema from Concepto as conc where conc.idConcepto=:idConcepto";
+        Query query = session.createQuery(hql1);
+        query.setInteger("idConcepto", idConcepto);
+        Tema listaConceptos = (Tema) query.uniqueResult();
+        
+        return listaConceptos;
+    }
+    
 }

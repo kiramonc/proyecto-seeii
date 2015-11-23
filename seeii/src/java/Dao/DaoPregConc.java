@@ -25,6 +25,15 @@ public class DaoPregConc implements Interface.InterfacePregConc {
         return true;
     }
     
+    public boolean registrarVarios(Session session, List<PregConc> resultados) throws Exception {
+        for (PregConc r : resultados) {
+            session.save(r);
+            session.flush();
+            session.clear();
+        }
+        return true;
+    }
+    
         @Override
     public boolean actualizar(Session session, PregConc pregConc) throws Exception {
         session.update(pregConc);

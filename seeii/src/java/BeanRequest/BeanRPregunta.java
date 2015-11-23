@@ -5,26 +5,47 @@
  */
 package BeanRequest;
 
+import Clases.RedBayesiana.CrearBayesDynamic;
+import Clases.RedBayesiana.CrearBayesNetwork1;
 import Dao.DaoConcepto;
+import Dao.DaoItem;
 import Dao.DaoPregConc;
 import Dao.DaoPregunta;
 import Dao.DaoTema;
+import Dao.DaoUnidadE;
 import HibernateUtil.HibernateUtil;
 import Pojo.Concepto;
+import Pojo.Item;
 import Pojo.PregConc;
 import Pojo.Pregunta;
 import Pojo.Tema;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.UploadedFile;
+import org.supercsv.cellprocessor.ParseBool;
+import org.supercsv.cellprocessor.constraint.NotNull;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.io.ICsvMapReader;
+import org.supercsv.prefs.CsvPreference;
 
 /**
  *
@@ -43,8 +64,9 @@ public class BeanRPregunta {
     private String tipoPreg;
     private Concepto concepto;
     private List<Concepto> target = new ArrayList<>();
-
     private DualListModel<Concepto> modelConc = new DualListModel<Concepto>();
+    private UploadedFile csvFile;
+    private String nombreArchivo;
 
     //constructor
     public BeanRPregunta() {
@@ -52,6 +74,11 @@ public class BeanRPregunta {
     }
 
     public void registrar(Tema tema) {
+        List<Concepto> listaC = modelConc.getTarget();
+        if (listaC.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR ACTUALIZAR:", "La pregunta tiene que hacer referencia almenos a un concepto"));
+            return;
+        }
         this.session = null;
         this.transaction = null;
         try {
@@ -62,29 +89,27 @@ public class BeanRPregunta {
             this.pregunta.setNombrePreg("NombrePreg");
             daoPregunta.registrar(this.session, this.pregunta);
             Pregunta preg = daoPregunta.verPorCodigoPregunta(session, daoPregunta.verUltimoRegistro(session));
-            this.transaction.commit();
-            this.session.close();
 
+            //Registrar los conceptos de la pregunta
             DaoPregConc daoPregConc = new DaoPregConc();
-            List<Concepto> listaC = modelConc.getTarget();
+            List<PregConc> lstPregConc = new ArrayList<>();
             PregConc pregConc = new PregConc();
 
             for (int i = 0; i < listaC.size(); i++) {
-                this.session = HibernateUtil.getSessionFactory().openSession();
-                this.transaction = session.beginTransaction();
                 pregConc.setPregunta(preg);
                 pregConc.setConcepto(listaC.get(i));
-                daoPregConc.registrar(session, pregConc);
-                this.transaction.commit();
-                this.session.close();
+                lstPregConc.add(pregConc);
                 pregConc = new PregConc();
             }
-
+            daoPregConc.registrarVarios(session, lstPregConc);
+            this.transaction.commit();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "El registro fue realizado con éxito"));
             this.pregunta = new Pregunta();
         } catch (Exception ex) {
             if (this.transaction != null) {
-                this.transaction.rollback();
+                if (transaction.isInitiator()) {
+                    this.transaction.rollback();
+                }
             }
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR:", "Contacte con el administrador" + ex.getMessage()));
         } finally {
@@ -92,6 +117,116 @@ public class BeanRPregunta {
                 if (this.session.isOpen()) {
                     this.session.close();
                 }
+            }
+        }
+    }
+
+    public void actualizar() {
+        DaoPregConc daoPregConc = new DaoPregConc();
+        DaoConcepto daoConcepto = new DaoConcepto();
+        List<Concepto> listaC = modelConc.getTarget();
+        if (listaC.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR ACTUALIZAR:", "La pregunta tiene que hacer referencia almenos a un concepto"));
+            return;
+        }
+
+        this.session = null;
+        this.transaction = null;
+        try {
+            DaoPregunta daoPregunta = new DaoPregunta();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            daoPregunta.actualizar(this.session, this.pregunta); // Actualizar datos de la pregunta
+            Pregunta preg = daoPregunta.verPorCodigoPregunta(session, this.pregunta.getIdPregunta());
+
+            // Actualizar registros en tabla PregConc
+            List<PregConc> pregConcs = new ArrayList<>();
+            PregConc pregConc = new PregConc();
+            boolean banderaExiste = false; // false= el concepto no existe en la bd
+            boolean banderaMantiene = false; // false= el concepto fue eliminado
+            // Recorro lista conceptos nueva para ver si algún concepto fue agregado
+            for (int i = 0; i < listaC.size(); i++) {
+                for (int j = 0; j < target.size(); j++) {
+                    if (listaC.get(i).getNombreConcepto().equals(target.get(j).getNombreConcepto())) {
+                        banderaExiste = true; // existe el concepto en la bd
+                    }
+                }
+                if (!banderaExiste) { // el concepto i es nuevo
+                    pregConc.setPregunta(preg);
+                    pregConc.setConcepto(daoConcepto.verPorNombreConcepto(session, listaC.get(i).getNombreConcepto()));
+                    pregConcs.add(pregConc);
+                    pregConc = new PregConc();
+                }
+                banderaExiste = false;
+            }
+            if (!pregConcs.isEmpty()) {
+                daoPregConc.registrarVarios(session, pregConcs);
+                this.transaction.commit();
+                this.session.close();
+
+            }
+
+            for (int i = 0; i < target.size(); i++) { // recorro lista de conceptos anterior para ver si un concepto fue eliminiado
+                for (int j = 0; j < listaC.size(); j++) {
+                    if (target.get(i).getNombreConcepto().equals(listaC.get(j).getNombreConcepto())) {
+                        banderaMantiene = true;
+                    }
+                }
+                if (!banderaMantiene) { // el concepto i fue eliminado
+                    this.session = HibernateUtil.getSessionFactory().openSession();
+                    this.transaction = session.beginTransaction();
+                    daoPregConc.eliminar(session, preg, daoConcepto.verPorNombreConcepto(session, target.get(i).getNombreConcepto()));
+                    this.transaction.commit();
+                    this.session.close();
+                }
+                banderaMantiene = false;
+            }
+            // Editar nodo pregunta en la red bayesiana
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            DaoItem daoItem = new DaoItem();
+            CrearBayesDynamic rbDynamic = new CrearBayesDynamic();
+            rbDynamic.editarPregunta(listaC.get(0).getTema().getNombre(), preg, listaC, daoItem.verNumItemsPorPregunta(session, preg.getIdPregunta()));
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
+            this.pregunta = new Pregunta();
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                if (this.transaction.isInitiator()) {
+                    this.transaction.rollback();
+                }
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR ACTUALIZAR:", "Contacte con el administrador" + ex.getMessage()));
+        } finally {
+            if (this.session != null) {
+                if (this.session.isOpen()) {
+                    this.session.close();
+                }
+            }
+        }
+    }
+
+    public void eliminar() {
+        this.session = null;
+        this.transaction = null;
+        try {
+            DaoPregunta daoPregunta = new DaoPregunta();
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            daoPregunta.eliminar(this.session, this.pregunta);
+
+            CrearBayesDynamic rbDynamic = new CrearBayesDynamic();
+            rbDynamic.eliminarPregunta(target.get(0).getTema().getNombre(), pregunta);
+            this.transaction.commit();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Pregunta eliminada correctamente."));
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL ELIMINAR:", "Contacte con el administrador, " + ex));
+        } finally {
+            if (this.session != null) {
+                this.session.close();
             }
         }
     }
@@ -220,106 +355,6 @@ public class BeanRPregunta {
                 this.transaction.rollback();
             }
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR CARGAR PREGUNTA EDITAR:", "Contacte con el administrador" + ex.getMessage()));
-        } finally {
-            if (this.session != null) {
-                this.session.close();
-            }
-        }
-    }
-
-    public void actualizar() {
-        DaoPregConc daoPregConc = new DaoPregConc();
-        DaoConcepto daoConcepto = new DaoConcepto();
-        List<Concepto> listaC = modelConc.getTarget();
-        if (listaC.isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR ACTUALIZAR:", "La pregunta tiene que hacer referencia almenos a un concepto"));
-            return;
-        }
-
-        this.session = null;
-        this.transaction = null;
-        try {
-            DaoPregunta daoPregunta = new DaoPregunta();
-            this.session = HibernateUtil.getSessionFactory().openSession();
-            this.transaction = session.beginTransaction();
-            daoPregunta.actualizar(this.session, this.pregunta); // Actualizar datos de la pregunta
-            Pregunta preg = daoPregunta.verPorCodigoPregunta(session, this.pregunta.getIdPregunta());
-            this.transaction.commit();
-            this.session.close();
-            // Actualizar registros en tabla PregConc
-
-            PregConc pregConc = new PregConc();
-            boolean banderaExiste = false; // false= el concepto no existe en la bd
-            boolean banderaMantiene = false; // false= el concepto fue eliminado
-            // Recorro lista conceptos nueva para ver si algún concepto fue agregado
-            for (int i = 0; i < listaC.size(); i++) {
-                for (int j = 0; j < target.size(); j++) {
-                    if (listaC.get(i).getNombreConcepto().equals(target.get(j).getNombreConcepto())) {
-                        banderaExiste = true; // existe el concepto en la bd
-                    }
-                }
-                if (!banderaExiste) { // el concepto i es nuevo
-                    this.session = HibernateUtil.getSessionFactory().openSession();
-                    this.transaction = session.beginTransaction();
-                    pregConc.setPregunta(preg);
-                    pregConc.setConcepto(daoConcepto.verPorNombreConcepto(session, listaC.get(i).getNombreConcepto()));
-                    daoPregConc.registrar(session, pregConc);
-                    this.transaction.commit();
-                    this.session.close();
-                    pregConc = new PregConc();
-                }
-                banderaExiste = false;
-            }
-
-            for (int i = 0; i < target.size(); i++) { // recorro lista de conceptos anterior para ver si un concepto fue eliminiado
-                for (int j = 0; j < listaC.size(); j++) {
-                    if (target.get(i).getNombreConcepto().equals(listaC.get(j).getNombreConcepto())) {
-                        banderaMantiene = true;
-                    }
-                }
-                if (!banderaMantiene) { // el concepto i fue eliminado
-                    this.session = HibernateUtil.getSessionFactory().openSession();
-                    this.transaction = session.beginTransaction();
-                    daoPregConc.eliminar(session, preg, daoConcepto.verPorNombreConcepto(session, target.get(i).getNombreConcepto()));
-                    this.transaction.commit();
-                    this.session.close();
-                }
-                banderaMantiene = false;
-            }
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Los cambios se realizaron con éxito."));
-            this.pregunta = new Pregunta();
-        } catch (Exception ex) {
-            if (this.transaction != null) {
-                if (this.transaction.isInitiator()) {
-                    this.transaction.rollback();
-                }
-            }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR ACTUALIZAR:", "Contacte con el administrador" + ex.getMessage()));
-        } finally {
-            if (this.session != null) {
-                if (this.session.isOpen()) {
-                    this.session.close();
-                }
-            }
-        }
-    }
-
-    public void eliminar() {
-        this.session = null;
-        this.transaction = null;
-        try {
-            DaoPregunta daoPregunta = new DaoPregunta();
-            this.session = HibernateUtil.getSessionFactory().openSession();
-            this.transaction = session.beginTransaction();
-            daoPregunta.eliminar(this.session, this.pregunta);
-            this.transaction.commit();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Pregunta eliminada correctamente."));
-        } catch (Exception ex) {
-            if (this.transaction != null) {
-                this.transaction.rollback();
-            }
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL ELIMINAR:", "Contacte con el administrador, " + ex));
         } finally {
             if (this.session != null) {
                 this.session.close();
@@ -520,6 +555,218 @@ public class BeanRPregunta {
             this.pregunta.setIndiceDis(2.0);
         }
         this.tipoPreg = tipoPreg;
+    }
+
+    public void importarPreguntas() {
+        ICsvMapReader mapReader = null;
+        this.session = null;
+        this.transaction = null;
+        DaoPregunta daoPregunta = new DaoPregunta();
+        DaoPregConc daoPregConc = new DaoPregConc();
+        DaoConcepto daoConcepto = new DaoConcepto();
+        DaoItem daoItem = new DaoItem();
+        try {
+            actualizarCSV();
+            if (this.nombreArchivo == null) {
+                return;
+            }
+            mapReader = new CsvMapReader(new FileReader(this.nombreArchivo), CsvPreference.STANDARD_PREFERENCE);
+            final String[] header = mapReader.getHeader(true);
+            final CellProcessor[] processors = getProcessors();
+            Map<String, Object> userMap = null;
+            Pregunta t = null;
+            Pregunta pregRegistrada = null;
+            Concepto conceptoCsv = null;
+            List<Concepto> lstConceptos = null;
+            List<Item> lstItems = null;
+            List<PregConc> lstPregConc = null;
+            PregConc relacionConcepto = null;
+            StringTokenizer strToken = null;
+            String nameC = "";
+            String nameI = "";
+            String traduccion = "";
+            String imgI = "";
+            String tema = "";
+            Item item = null;
+            while ((userMap = mapReader.read(header, processors)) != null) {
+                // INSTRUCCIONES CREACIÓN
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                this.transaction = session.beginTransaction();
+                tema = (String) userMap.get("tema");
+                // cOMPROBAR QUE LOS CONCEPTOS EXISTEN en los temas indicados
+                lstConceptos = new ArrayList<>();
+                System.out.println("CONSULTA CONCEPTOS POR TEMAS");
+                strToken = new StringTokenizer((String) userMap.get("conceptos"), "/");
+                while (strToken.hasMoreTokens()) {
+                    nameC = strToken.nextToken();
+                    conceptoCsv = daoConcepto.verPorNombreConcepNombreTem(session, nameC, tema);
+                    if (conceptoCsv == null) {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al importar.", "No existe el concepto para el tema especificado: " + nameC));
+                        return;
+                    } else {
+                        lstConceptos.add(conceptoCsv);
+                    }
+                }
+                System.out.println("CREACIÓN PREGUNTA");
+                t = new Pregunta();
+                t.setNombrePreg("NombrePreg");
+                String tipo = (String) userMap.get("tipo");
+                if (tipo.equalsIgnoreCase("listenF")) {
+                    t.setDificultad(2.0);
+                    t.setFdescuido(0.2);
+                    t.setIndiceDis(0.2);
+                } else if (tipo.equalsIgnoreCase("listenM")) {
+                    t.setDificultad(3.0);
+                    t.setFdescuido(0.01);
+                    t.setIndiceDis(1.2);
+                } else if (tipo.equalsIgnoreCase("speakF")) {
+                    t.setDificultad(2.0);
+                    t.setFdescuido(0.001);
+                    t.setIndiceDis(0.2);
+                } else if (tipo.equalsIgnoreCase("speakM")) {
+                    t.setDificultad(3.0);
+                    t.setFdescuido(0.001);
+                    t.setIndiceDis(1.2);
+                } else if (tipo.equalsIgnoreCase("speakD")) {
+                    t.setDificultad(4.0);
+                    t.setFdescuido(0.001);
+                    t.setIndiceDis(2.0);
+                }
+                t.setEnunciado((String) userMap.get("enunciado"));
+                t.setEstado((boolean) userMap.get("estado"));
+                daoPregunta.registrar(this.session, t);
+                System.out.println("CONSULTA PREGUNTA REGISTRADA");
+                pregRegistrada = daoPregunta.verPorCodigoPregunta(session, daoPregunta.verUltimoRegistro(session));
+
+                // instanciar los conceptos
+                lstPregConc = new ArrayList<>();
+                relacionConcepto = new PregConc();
+                System.out.println("LISTA RELACIONES ENTRE LOS CONCEPTOS");
+                for (int i = 0; i < lstConceptos.size(); i++) {
+                    relacionConcepto.setPregunta(pregRegistrada);
+                    relacionConcepto.setConcepto(lstConceptos.get(i));
+                    lstPregConc.add(relacionConcepto);
+                    relacionConcepto = new PregConc();
+                }
+                System.out.println("GUARDA RELACIONEES ENTRE LOS CONCEPTOS");
+                daoPregConc.registrarVarios(session, lstPregConc);
+                this.transaction.commit();
+                this.session.close();
+
+                // REGISTRAR ITEMS
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                this.transaction = session.beginTransaction();
+                lstItems = new ArrayList<>();
+                System.out.println("LISTA ITEMS");
+                strToken = new StringTokenizer((String) userMap.get("item"), "-/");
+                while (strToken.hasMoreTokens()) {
+                    item = new Item();
+                    item.setPregunta(pregRegistrada);
+                    item.setNombreItem(strToken.nextToken());
+                    item.setTraduccion(strToken.nextToken());
+                    item.setImgItem(strToken.nextToken());
+                    item.setEstado(true);
+                    lstItems.add(item);
+                }
+                System.out.println("REGISTRA ITEMS");
+                daoItem.registrarVarios(session, lstItems);
+
+                // Se crea nodo pregunta en Red bayesiana
+                System.out.println("CAMBIOS EN LA RED BAYESIANA");
+                CrearBayesDynamic rbDynamic = new CrearBayesDynamic();
+                if (!rbDynamic.existPregunta(tema, pregRegistrada.getNombrePreg())) {
+                    rbDynamic.crearPregunta(tema, pregRegistrada, lstConceptos, lstItems.size());
+                } else {
+                    rbDynamic.editarPregunta(tema, pregRegistrada, lstConceptos, lstItems.size());
+                }
+                this.transaction.commit();
+                item = new Item();
+                t = new Pregunta();
+            }
+            mapReader.close();
+            File archivoCsvTemp = new File(this.nombreArchivo);
+            archivoCsvTemp.delete();
+            this.nombreArchivo = null;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Datos importados correctamente."));
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                if (transaction.isInitiator()) {
+                    this.transaction.rollback();
+                }
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "El archivo no corresponde a la plantilla."));
+            System.out.println("ERROR: "+ ex);
+        } finally {
+            if (this.session != null) {
+                if (this.session.isOpen()) {
+                    this.session.close();
+                }
+            }
+        }
+    }
+
+    private static CellProcessor[] getProcessors() {
+        final CellProcessor[] processors = new CellProcessor[]{
+            new NotNull(), // tema
+            new NotNull(new ParseBool()), // estado
+            new NotNull(), // tipo
+            new NotNull(), // enunciado
+            new NotNull(), // conceptos
+            new NotNull(), // items
+        };
+
+        return processors;
+    }
+
+    public UploadedFile getCsvFile() {
+        return csvFile;
+    }
+
+    public void setCsvFile(UploadedFile csvFile) {
+        this.csvFile = csvFile;
+    }
+
+    public void actualizarCSV() throws IOException {
+        InputStream inputS = null;
+        OutputStream outputS = null;
+        try {
+            if (this.csvFile.getSize() <= 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR:", "Debe seleccionar un archivo csv"));
+                return;
+            }
+            inputS = this.csvFile.getInputstream();
+            ServletContext servletContex = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+            String imgTemas = (String) servletContex.getRealPath("/resources") + "/" + this.csvFile.getFileName();
+            String nombre = "";
+            String extension = "";
+            int pos = imgTemas.lastIndexOf(".");
+            if (pos == -1) {
+                nombre = imgTemas;
+            } else {
+                nombre = imgTemas.substring(0, pos);
+                extension = imgTemas.substring(pos);
+            }
+            if (!extension.equals(".csv")) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL CARGAR ARCHIVO:", "La extensión debe ser csv."));
+                return;
+            }
+            outputS = new FileOutputStream(imgTemas);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = inputS.read(bytes)) != -1) {
+                outputS.write(bytes, 0, read);
+            }
+            this.nombreArchivo = imgTemas;
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL CARGAR ARCHIVO:", "Contacte con el administrador, " + ex));
+        } finally {
+            if (inputS != null) {
+                inputS.close();
+            }
+            if (outputS != null) {
+                outputS.close();
+            }
+        }
     }
 
 }

@@ -14,10 +14,12 @@ import Pojo.Tema;
 import Pojo.Unidadensenianza;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -28,6 +30,12 @@ import org.hibernate.Transaction;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
+import org.supercsv.cellprocessor.ParseBool;
+import org.supercsv.cellprocessor.constraint.NotNull;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.io.ICsvMapReader;
+import org.supercsv.prefs.CsvPreference;
 
 /**
  *
@@ -43,11 +51,11 @@ public class BeanRTema {
     private List<Tema> listaTemas;
     private List<Tema> listaTemaFiltrada;
     private String nombreImagen;
-    private byte[] contenidoImg;
     private UploadedFile imagen;
-    //Atributos de sesion y transaccion.
     private Session session;
     private Transaction transaction;
+    private UploadedFile csvFile;
+    private String nombreArchivo;
 
     //constructor
     public BeanRTema() {
@@ -163,9 +171,11 @@ public class BeanRTema {
         this.session = null;
         this.transaction = null;
         try {
-            if(imagen!=null)
-                if(imagen.getSize()>0)
+            if (imagen != null) {
+                if (imagen.getSize() > 0) {
                     actualizarImg();
+                }
+            }
         } catch (IOException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR DE LECTURA ESCRITURA:", "Contacte con el administrador" + ex.getMessage()));
         }
@@ -184,8 +194,9 @@ public class BeanRTema {
             if (!nombre.equals(tema.getNombre())) {
                 this.session = HibernateUtil.getSessionFactory().openSession();
                 this.transaction = session.beginTransaction();
-                if(imagen.getSize()>0)
+                if (imagen.getSize() > 0) {
                     this.tema.setImgTema(nombreImagen);
+                }
                 daoTema.actualizar(this.session, this.tema);
                 CrearBayesNetwork1 redBayesiana = new CrearBayesNetwork1();
                 redBayesiana.editarTema(nombreUnidad, nombre, tema.getNombre());
@@ -195,8 +206,9 @@ public class BeanRTema {
             } else {
                 this.session = HibernateUtil.getSessionFactory().openSession();
                 this.transaction = session.beginTransaction();
-                if(imagen.getSize()>0)
+                if (imagen.getSize() > 0) {
                     this.tema.setImgTema(nombreImagen);
+                }
                 daoTema.actualizar(this.session, this.tema);
                 this.transaction.commit();
 
@@ -371,7 +383,6 @@ public class BeanRTema {
 
     public void handleFileUpload(FileUploadEvent event) {
         UploadedFile file = event.getFile();
-        this.contenidoImg = file.getContents();
         this.nombreImagen = file.getFileName();
     }
 
@@ -403,7 +414,7 @@ public class BeanRTema {
             do {
                 if (f.exists()) {
                     bandera = false;
-                    imgTemas = nombre +"_"+contador+extension;
+                    imgTemas = nombre + "_" + contador + extension;
                     contador++;
                     f = new File(imgTemas);
                 } else {
@@ -434,14 +445,14 @@ public class BeanRTema {
     }
 
     public boolean deshabilitarBotonCrearPregunta() {
-        if (this.tema.getNombre()!=null) {
+        if (this.tema.getNombre() != null) {
             return false;
         }
         return true;
     }
-    
+
     public boolean deshabilitarBotonEliminarTema() {
-        if (this.tema.getNombre()!=null) {
+        if (this.tema.getNombre() != null) {
             return false;
         }
         return true;
@@ -477,6 +488,137 @@ public class BeanRTema {
         } finally {
             if (this.session != null) {
                 this.session.close();
+            }
+        }
+    }
+
+    public void importarTemas() {
+        ICsvMapReader mapReader = null;
+        this.session = null;
+        this.transaction = null;
+        Dao.DaoTema daoTema = new DaoTema();
+        DaoUnidadE daoUnidad = new DaoUnidadE();
+        try {
+            actualizarCSV();
+            if(this.nombreArchivo==null){
+                return;
+            }
+            mapReader = new CsvMapReader(new FileReader(this.nombreArchivo), CsvPreference.STANDARD_PREFERENCE);
+            final String[] header = mapReader.getHeader(true);
+            final CellProcessor[] processors = getProcessors();
+            Map<String, Object> userMap = null;
+            Tema t = null;
+            while ((userMap = mapReader.read(header, processors)) != null) {
+                // INSTRUCCIONES CREACIÓN
+
+                this.session = HibernateUtil.getSessionFactory().openSession();
+                this.transaction = session.beginTransaction();
+                t = daoTema.verPorTemaname(session, (String) userMap.get("nombre"));
+                if (t != null) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al importar.", "Tema duplicado: " + t.getNombre()));
+                    return;
+                } else {
+                    t = new Tema();
+                }
+                t.setNombre((String) userMap.get("nombre"));
+                t.setVocabulario((String) userMap.get("vocabulario"));
+                t.setObjetivo((String) userMap.get("objetivo"));
+                t.setDominio((String) userMap.get("dominio"));
+                t.setImgTema((String) userMap.get("imgTema"));
+                t.setEstado((boolean) userMap.get("estado"));
+                t.setUnidadensenianza(daoUnidad.verPorNombreUnidad(session,(String)userMap.get("unidadensenianza")));
+                daoTema.registrar(this.session, t);
+
+                // Crear nodo Tema en la red bayesiana
+                CrearBayesNetwork1 redBayesiana = new CrearBayesNetwork1();
+                redBayesiana.crearTema(t.getUnidadensenianza().getNombreUnidad(), t.getNombre());
+                CrearBayesDynamic rbDynamic = new CrearBayesDynamic();
+                rbDynamic.crearRedTema(t.getNombre());
+                this.transaction.commit();
+                t = new Tema();
+            }
+            mapReader.close();
+            File archivoCsvTemp = new File(this.nombreArchivo);
+            archivoCsvTemp.delete();
+            this.nombreArchivo = null;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto:", "Datos importados correctamente."));
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                if (transaction.isInitiator()) {
+                    this.transaction.rollback();
+                }
+            }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "El archivo no corresponde a la plantilla."));
+        } finally {
+            if (this.session != null) {
+                if (this.session.isOpen()) {
+                    this.session.close();
+                }
+            }
+        }
+    }
+
+    private static CellProcessor[] getProcessors() {
+        final CellProcessor[] processors = new CellProcessor[]{
+            new NotNull(), // unidadensenianza
+            new NotNull(), // nombre
+            new NotNull(), // vocabulario
+            new NotNull(), // objetivo
+            new NotNull(), // dominio
+            new NotNull(), // imgTema
+            new NotNull(new ParseBool()), // estado
+        };
+
+        return processors;
+    }
+
+    public UploadedFile getCsvFile() {
+        return csvFile;
+    }
+
+    public void setCsvFile(UploadedFile csvFile) {
+        this.csvFile = csvFile;
+    }
+
+    public void actualizarCSV() throws IOException {
+        InputStream inputS = null;
+        OutputStream outputS = null;
+        try {
+            if (this.csvFile.getSize() <= 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR:", "Debe seleccionar un archivo csv"));
+                return;
+            }
+            inputS = this.csvFile.getInputstream();
+            ServletContext servletContex = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+            String imgTemas = (String) servletContex.getRealPath("/resources") + "/" + this.csvFile.getFileName();
+            String nombre="";
+            String extension="";
+            int pos = imgTemas.lastIndexOf(".");
+            if (pos == -1) {
+                nombre = imgTemas;
+            } else {
+                nombre = imgTemas.substring(0, pos);
+                extension = imgTemas.substring(pos);
+            }
+            if(!extension.equals(".csv")){
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL CARGAR ARCHIVO:", "La extensión debe ser csv."));
+                return;
+            }
+            outputS = new FileOutputStream(imgTemas);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = inputS.read(bytes)) != -1) {
+                outputS.write(bytes, 0, read);
+            }
+            this.nombreArchivo = imgTemas;
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR AL CARGAR ARCHIVO:", "Contacte con el administrador, " + ex));
+        } finally {
+            if (inputS != null) {
+                inputS.close();
+            }
+            if (outputS != null) {
+                outputS.close();
             }
         }
     }

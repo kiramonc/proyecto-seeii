@@ -50,10 +50,10 @@ public class DaoPregunta implements Interface.InterfacePregunta {
     }
 
     @Override
-    public List<Pregunta> verPorConcepto(Session session, int concepto) throws Exception {
-        String hql = "from Pregunta where concepto=:concepto";
+    public List<Pregunta> verPorConcepto(Session session, int idConcepto) throws Exception {
+        String hql = "select preg.pregunta from PregConc as preg join preg.concepto as conceptos where conceptos.idConcepto =:idConcepto";
         Query query = session.createQuery(hql);
-        query.setInteger("concepto", concepto);
+        query.setInteger("idConcepto", idConcepto);
         List<Pregunta> listaPreguntas = (List<Pregunta>) query.list();
         
         return listaPreguntas;
@@ -65,18 +65,17 @@ public class DaoPregunta implements Interface.InterfacePregunta {
         Query query = session.createQuery(hql);
         query.setParameter("idPregunta", idPregunta);
         Pregunta pregunta = (Pregunta) query.uniqueResult();
-        
+        Hibernate.initialize(pregunta.getItems());
         return pregunta;
     }
     
     public int verUltimoRegistro(Session session) throws Exception {
-//        String hql = "SELECT pregunta From Pregunta as pregunta LAST_INSERT_ID(idPregunta) from Pregunta order by idPregunta desc";
         String hql = "SELECT max(idPregunta) from Pregunta";
         Query query = session.createQuery(hql);
         int preg= (int) query.uniqueResult();
         return preg;
     }
-
+    
     @Override
     public boolean actualizar(Session session, Pregunta pregunta) throws Exception {
         session.update(pregunta);
