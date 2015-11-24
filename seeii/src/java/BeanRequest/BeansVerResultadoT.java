@@ -54,11 +54,12 @@ public class BeansVerResultadoT {
         ChartSeries temaSeries = new ChartSeries();
         temaSeries.setLabel("Puntajes del Entrenamiento");
         int tamaño = 0;
+        int tamaño1 = 0;
         int anio;
         int mes;
         String fecha;
         int posicion;
-        System.out.println(" el tamano de la lista es_"+listaEntrenamiento.size());
+        System.out.println(" el tamano de la lista es_" + listaEntrenamiento.size());
         if (listaEntrenamiento.isEmpty()) {
             temaSeries.set("Sin Fecha de Entrenamiento", 0);
             modelGraphTemas.addSeries(temaSeries);
@@ -73,12 +74,16 @@ public class BeansVerResultadoT {
                 }
                 modelGraphTemas.addSeries(temaSeries);
             } else {
-                for (int i = 0; i < 7; i++) {
-                    posicion = tamaño - i;
-                    anio = listaEntrenamiento.get(tamaño).getFecha().getYear() + 1900;
-                    mes = listaEntrenamiento.get(tamaño).getFecha().getMonth() + 1;
-                    fecha = "[" + i + "] " + anio + "/" + mes + "/" + listaEntrenamiento.get(tamaño).getFecha().getDate();
-                    temaSeries.set(fecha, listaEntrenamiento.get(tamaño).getPuntaje());
+                tamaño = listaEntrenamiento.size() ;
+                tamaño1 = listaEntrenamiento.size() - 7;
+                int con=0;
+                for (int i = tamaño1; i < tamaño; i++) {
+                    con=con+1;
+                    System.out.println("i:"+i);
+                    anio = listaEntrenamiento.get(i).getFecha().getYear() + 1900;
+                    mes = listaEntrenamiento.get(i).getFecha().getMonth() + 1;
+                    fecha = "[" + con + "] " + anio + "/" + mes + "/" + listaEntrenamiento.get(i).getFecha().getDate();
+                    temaSeries.set(fecha, listaEntrenamiento.get(i).getPuntaje());
                 }
                 modelGraphTemas.addSeries(temaSeries);
             }

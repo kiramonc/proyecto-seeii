@@ -24,23 +24,11 @@
                             <p:outputLabel value="RESULTADO RED NEURONAL:" style="font-size: 18px; font-wbeansTotalResultadoeight: bold; color: #000000; text-shadow: 0px 0px 1px; text-transform: uppercase; text-align: center;"/>                               
                             <p:outputLabel value="#{beansVerResultadoEntrenar.resultado}" style="font-size: 18px; font-wbeansTotalResultadoeight: bold; color: #000000; text-shadow: 0px 0px 1px; text-align: center;"/>                               
                             <center>
-                                <h:commandButton  value="Finalizar" action="#{beansVerResultadoEntrenar.mostrarMsj()}" styleClass="botonstyle" />
+                                <p:commandButton  value="Finalizar" action="#{beansVerResultadoEntrenar.mostrarMsj()}" styleClass="botonstyle" />
                             </center>
                         </h:panelGrid>
                     </h:panelGrid>
 
-                </h:form>
-
-                <!-- FORMULARIO RESULTADO-->
-                <h:form id="frmResultado">
-                    <p:dialog widgetVar="dialogResultado" modal="true" showEffect="fade" hideEffect="explode" closable="false" style="background: thistle;">
-                        <h:panelGrid id="panelResultado" columns="1">
-
-                            <p:graphicImage value="../../resources/imagen/Calificacion/finalizar.jpg" width="170" height="150" cache="false" style="object-position: center;"/>
-                            <h:commandButton  value=" Intentar Nuevamente" action="#{beansVerResultadoEntrenar.actualizarPagina()}" styleClass="botonstyle" />
-
-                        </h:panelGrid>
-                    </p:dialog>
                 </h:form>
 
             </ui:define>

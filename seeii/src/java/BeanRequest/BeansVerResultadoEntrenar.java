@@ -80,15 +80,10 @@ public class BeansVerResultadoEntrenar {
         return entrenamiento;
     }
 
-    public void mostrarMsj() {
-       RequestContext.getCurrentInstance().update("frmResultado:panelResultado");
-        RequestContext.getCurrentInstance().execute("PF('dialogResultado').show()");
-    }
-
-    public String actualizarPagina() {
-//        this.beanSEntrena.finalizar();
-        return "inicioAprendizaje";
-    }
+    public String mostrarMsj() {
+        this.beanSEntrena.finalizar();
+        return "verResultadosT";
+}
 
     //.................setter y getter.....................
     public Entrenamiento getEntrenamiento() {

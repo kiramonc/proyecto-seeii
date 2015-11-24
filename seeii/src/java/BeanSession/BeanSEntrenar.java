@@ -52,9 +52,11 @@ public class BeanSEntrenar implements Serializable {
     public void finalizar() {
         this.idEntrenamiento = -1;
         this.idPrenguntaEnt = -1;
-         this.modelTest = -1;
-        HttpSession httpSession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-        httpSession.invalidate();
+        this.modelTest = -1;
+                this.columna0 = null;
+        this.columna1 = null;
+//        HttpSession httpSession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+//        httpSession.invalidate();
     }
 
     public int getIdEntrenamiento() {
