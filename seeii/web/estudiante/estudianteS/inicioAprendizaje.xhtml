@@ -12,11 +12,11 @@
             <ui:define name="content">
                 <center><h2>LISTA DE TEMAS DISPONIBLES</h2></center><hr/>
                 <h:form id="dockEntrenar">
-                    <p:dataGrid var="menuItem" value="#{beanRTema.getTemasPorUnidad(1)}" columns="5" rows="8"  >
+                    <p:dataGrid var="menuItem" value="#{beansREntrenamiento.temasConFichas(beanSLogin.usernameLogin)}" columns="5" rows="8"  >
                         <p:column style="text-align: center;">
                             <p:panel footer="#{menuItem.nombre}" styleClass="panelStyle" style="font-size: 12px; text-shadow: 0px 0px 1.5px; font-family: cursive,sans-serif; text-transform: uppercase;">
 
-                                <h:commandLink action="#{beansREntrenamiento.iniciarEntrenamiento(beanSLogin.usernameLogin, menuItem.idTema)}">
+                                <h:commandLink id="idtemFicha" action="#{beansREntrenamiento.iniciarEntrenamiento(beanSLogin.usernameLogin, menuItem.idTema)}">
                                     <p:graphicImage styleClass="imgItem" value="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/iconos/SEnseniar.ico" width="80" height="70" cache="false"/>
                                 </h:commandLink>
                             </p:panel>
@@ -38,7 +38,6 @@
                 </h:form>
 
             </ui:define>
-
 
         </ui:composition>
 

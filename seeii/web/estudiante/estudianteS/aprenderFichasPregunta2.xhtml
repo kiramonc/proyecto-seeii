@@ -8,7 +8,7 @@
 
     <body>
 
-        <ui:composition template="./../../templates/templateEstudiante.xhtml">
+        <ui:composition template="./../../templates/templateEntrenarFichas.xhtml">
             <ui:define name="content">
 
                 <h1>PASO 3: Aprendizaje mediante Fichas</h1> 
@@ -18,22 +18,22 @@
                     <p:carousel  id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;" 
                                  effect="easeInStrong"  >  
                         <p:tab title="IMAGEN 1">
-                            <p:graphicImage   id="graficoT"  onclick="hablarF1()"
-                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRFichaPregunta2.idFicha1()}.jpg"/>
+                            <p:graphicImage   id="graficoT"  onclick="hablarF1()" width="590" height="380" cache="false"
+                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansRFichaPregunta2.idFicha1()}.jpg"/>
                         </p:tab>
 
                         <p:tab title="IMAGEN 2">
-                            <p:graphicImage   id="graficoT1" onclick="hablarF2()" 
-                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRFichaPregunta2.idFicha2()}.jpg" />
+                            <p:graphicImage   id="graficoT1" onclick="hablarF2()"  width="590" height="380" cache="false"
+                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansRFichaPregunta2.idFicha2()}.jpg" />
                         </p:tab>
                         <p:tab title="IMAGEN 3">
-                            <p:graphicImage   id="graficoT2" onclick="hablarF3()"
-                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRFichaPregunta2.idFicha3()}.jpg" />
+                            <p:graphicImage   id="graficoT2" onclick="hablarF3()" width="590" height="380" cache="false"
+                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansRFichaPregunta2.idFicha3()}.jpg" />
                         </p:tab>
                         <p:tab title="IMAGEN 4">
 
-                            <p:graphicImage   id="graficoT3" onclick="hablarF4()" 
-                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRFichaPregunta2.idFicha4()}.jpg" />
+                            <p:graphicImage   id="graficoT3" onclick="hablarF4()" width="590" height="380" cache="false"
+                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansRFichaPregunta2.idFicha4()}.jpg" />
                         </p:tab>
 
                     </p:carousel>
@@ -57,29 +57,29 @@
                                      right: 100px;
                                      top: 150px;" /> 
                 </h:form>
-                
+
                 <script src='https://code.responsivevoice.org/responsivevoice.js'></script>
                 <script language="javascript">
-                    function hablarF1() {
-                        var elemento = document.getElementById("sonidoF1");
-                        var frase = elemento.value;
-                        responsiveVoice.speak(frase);
-                    }
-                    function hablarF2() {
-                        var elemento = document.getElementById("sonidoF2");
-                        var frase = elemento.value;
-                        responsiveVoice.speak(frase);
-                    }
-                    function hablarF3() {
-                        var elemento = document.getElementById("sonidoF3");
-                        var frase = elemento.value;
-                        responsiveVoice.speak(frase);
-                    }
-                    function hablarF4() {
-                        var elemento = document.getElementById("sonidoF4");
-                        var frase = elemento.value;
-                        responsiveVoice.speak(frase);
-                    }
+                                function hablarF1() {
+                                    var elemento = document.getElementById("sonidoF1");
+                                    var frase = elemento.value;
+                                    responsiveVoice.speak(frase);
+                                }
+                                function hablarF2() {
+                                    var elemento = document.getElementById("sonidoF2");
+                                    var frase = elemento.value;
+                                    responsiveVoice.speak(frase);
+                                }
+                                function hablarF3() {
+                                    var elemento = document.getElementById("sonidoF3");
+                                    var frase = elemento.value;
+                                    responsiveVoice.speak(frase);
+                                }
+                                function hablarF4() {
+                                    var elemento = document.getElementById("sonidoF4");
+                                    var frase = elemento.value;
+                                    responsiveVoice.speak(frase);
+                                }
                 </script>
             </ui:define>
 

@@ -13,26 +13,116 @@
             <ui:define name="content">
                 <center><h2>ADMINISTRACIÓN DE FICHAS</h2></center><hr/>
 
-                <h:panelGrid id="panelAdministracionFicha" columns="2" cellspacing="25px">
-                    <h:form id="frmListarFicha">
+                <h:panelGrid id="panelAdministracionFicha" columns="2" cellspacing="25px" width="100%">
+                    <h:form id="frmListarTest">
                         <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
 
-                        <h:panelGroup id="listaFicha">
-                            <center><h3>Lista de Temas</h3></center>
-                            <h4>NOTA: Elegir un tema para crear una ficha</h4>                           
-                            <p:dataTable id="tablaListaFicha" var="item" value="#{beanRFicha.getAllTemas}" styleClass="estiloTablaFicha" tableStyleClass="tablaTest">
-                            <!--p:ajax event="rowSelect" update=":frmDatosFicha:panelDatosFicha"/-->
-                            <p:column headerText="TEMA" >
-                                <p:outputLabel value="#{item.nombre}"/>
-                            </p:column>
-                            <p:column headerText="UNIDAD" >
-                                <p:outputLabel value="#{item.unidadensenianza.nombreUnidad}"/>
-                            </p:column>
+                        <h:panelGroup id="listaTest">
+                            <center><h3>Lista de temas y unidades</h3></center>
+                            <p:dataTable id="tablaListaTest" var="item" value="#{beanRTema.allTema}" selection="#{beanRTema.tema}" selectionMode="single" rowKey="#{item.idTema}" paginator="true" rows="10" filteredValue="#{beanRTema.listaTemaFiltrada}" styleClass="estiloTablaUnidad" tableStyleClass="tablaTest">
+                                <p:ajax event="rowSelect" update=":frmDatosTest:panelDatosTest"/>
+                                <p:column headerText="NOMBRE TEMA" filterBy="nombre">
+                                    <p:outputLabel value="#{item.nombre}"/>
+                                </p:column>
+                                <p:column headerText="NOMBRE UNIDAD" filterBy="unidadensenianza.nombreUnidad">
+                                    <p:outputLabel value="#{item.unidadensenianza.nombreUnidad}"/>
+                                </p:column>
                             </p:dataTable>
                         </h:panelGroup>
                     </h:form>
+
+
+                    <h:form id="frmDatosTest">
+                        <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+
+                        <h:panelGrid columns="1" id="panelDatosTest">
+                            <h:panelGrid columns="3">
+                                <p:outputLabel value="Nombre Unidad: " for="txtNombreUnidad"/>
+                                <p:inputText id="txtNombreUnidad" label="Unidad" value="#{beanRTema.tema.unidadensenianza.nombreUnidad}" disabled="true">
+                                    <f:validator validatorId="validatorVacio"/>
+                                </p:inputText>
+                                <p:message for="txtNombreUnidad"/>
+
+                                <p:outputLabel value="Nombre Tema: " for="txtNombreTema"/>
+                                <p:inputText id="txtNombreTema" label="Tema" value="#{beanRTema.tema.nombre}" disabled="true">
+                                    <f:validator validatorId="validatorVacio"/>
+                                </p:inputText>
+                                <p:message for="txtNombreTema"/>
+                            </h:panelGrid>
+
+                            <p:scrollPanel style="width:600px;height:220px;">
+                                <p:commandButton value="Crear ficha" actionListener="#{beanRFicha.abrirDialogoCrearFicha(beanRTema.tema.idTema)}" styleClass="botonCrearNuevo" icon="ui-icon-circle-plus" disabled="#{beanRTema.deshabilitarBotonCrearPregunta()}"/>
+                                <p:dataTable id="tablaPreguntas" var="item" value="#{beanRFicha.getFichasPorTema(beanRTema.tema)}" selection="#{beanRFicha.ficha}" selectionMode="single" rowKey="#{item.idFicha}" paginator="true" rows="10" styleClass="estiloTablaFicha" tableStyleClass="tablaFicha">
+                                    <p:column headerText="NOMBRE" width="50%">
+                                        <p:outputLabel value="#{item.nombreFicha}"/>
+                                    </p:column>
+                                    <p:column headerText="DESCRIPCIÓN" width="30%">
+                                        <p:outputLabel value="#{item.descripcion}"/>
+                                    </p:column>
+                                    <p:column headerText="OPERACIONES" width="20%">
+                                        <p:commandButton value="Ver Detalle" actionListener="#{beanRFicha.abrirDialogoVerFicha(item.idFicha)}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:scrollPanel>
+
+                        </h:panelGrid>
+                    </h:form>
                 </h:panelGrid>
 
+                <p:dialog header="Datos de la Ficha" widgetVar="dialogCrearFicha" modal="true">
+                    <h:form id="frmCrearFicha" enctype="multipart/form-data">
+                        <h:panelGrid id="panelCrearFicha" columns="3">
+                            <p:outputLabel value="Nombre de la Ficha: " for="txtNombreFicha"/>
+                            <p:inputText id="txtNombreFicha" label="Nombre:" size="40" value="#{beanRFicha.ficha.nombreFicha}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtNombreFicha"/>
+
+                            <p:outputLabel value="Descripcion: " for="txtDescripcion"/>
+                            <p:inputText id="txtDescripcion" label="Descripcion:" size="40" value="#{beanRFicha.ficha.descripcion}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtDescripcion"/>
+
+                            <p:outputLabel value="Imagen: " for="uploadImagen"/>
+                            <p:fileUpload id="uploadImagen" value="#{beanRFicha.imagen}" mode="simple" previewWidth="50" update="vistaprevia" />
+                            <p:message for="uploadImagen"/>
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton ajax="false" value="Guardar" actionListener="#{beanRFicha.registrar()}" styleClass="botonstyle" icon="ui-icon-circle-plus"/>
+                        </center>
+                    </h:form>
+                </p:dialog>
+
+                <p:dialog header="Datos de la Ficha" widgetVar="dialogVerFicha" modal="true">
+                    <h:form id="frmVerFicha" enctype="multipart/form-data">
+                        <h:panelGrid id="panelVerFicha" columns="3">
+                            <p:outputLabel value="Nombre de la Ficha: " for="txtNombreFicha"/>
+                            <p:inputText id="txtNombreFicha" label="Nombre:" size="40" value="#{beanRFicha.ficha.nombreFicha}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtNombreFicha"/>
+
+                            <p:outputLabel value="Descripcion: " for="txtDescripcion"/>
+                            <p:inputText id="txtDescripcion" label="Descripcion:" size="40" value="#{beanRFicha.ficha.descripcion}">
+                                <f:validator validatorId="validatorVacio"/>
+                            </p:inputText>
+                            <p:message for="txtDescripcion"/>
+
+                            <p:outputLabel value="Imagen: " for="uploadImagen"/>
+                            <p:fileUpload id="uploadImagen" value="#{beanRFicha.imagen}" mode="simple"/>
+                            <p:message for="uploadImagen"/>
+
+                            <p:graphicImage value="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/imagen/imgFichas/#{beanRFicha.ficha.idFicha}.jpg" width="60" height="60" cache="false"/>
+                            <p:outputLabel value="#{beanRFicha.ficha.nombreFicha}.jpg"/>
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton value="Actualizar" ajax="false" actionListener="#{beanRFicha.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check"/>
+                            <p:commandButton ajax="false" value="Eliminar" title="Eliminar" actionListener="#{beanRFicha.eliminar()}" onclick="if (!confirm('Está seguro si desea eliminar la ficha'))
+                                        return false;" styleClass="botonstyle" icon="ui-icon-trash"/>
+                        </center>
+                    </h:form>
+                </p:dialog>
 
             </ui:define>
         </ui:composition>

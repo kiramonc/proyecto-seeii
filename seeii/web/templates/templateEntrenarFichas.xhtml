@@ -9,26 +9,30 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <h:outputStylesheet name="./css/default.css"/>
         <h:outputStylesheet name="./css/cssLayout.css"/>
+        <h:outputStylesheet name="./css/cssEstudiante.css"/>
+
         <title>(TEST)Sistema Tutor Inteligente de Inglés </title>
+
     </h:head>
 
     <h:body>
 
-        <div id="#leftEntrenar">
-            <ui:insert name="left"></ui:insert>
-            <h:form id="frmMenuPrincipalEstudiante">
-                <div id="sesionUsuarioEst">
+        <div id="top" class="top">
+            <img src="http://localhost:8080/seeii/faces/resources/imagen/logostiiEntrenar.png" alt="STII" width="100%" height="80px"></img>
+            <h:form id="frmMenuPrincipal">
+                <div id="sesionUsuario">
                     <b>Usuario: </b>
                     <p:outputLabel value="#{beanSLogin.usernameLogin==null?'Anónimo':beanSLogin.usernameLogin}"/>
                     <!--enlace con el sesion bean-->
-                    <p:commandLink value="Cerrar Sesión" action="#{beanSLogin.logout()}" update="frmMenuPrincipalEstudiante" />
+
+                    <p:commandLink value="Cerrar Sesión" action="#{beanSLogin.logout()}" update="frmMenuPrincipal" />
                 </div>
             </h:form>
-            <img src="http://localhost:8080/seeii/faces/resources/imagen/logostiiEntrenar1.png" alt="STII" width="20%" height="100%"></img>
+            <ui:insert name="top"></ui:insert>
         </div>
 
-        <div id="contentEntrenar" class="leftEntrenar_content">
-            <ui:insert name="content"></ui:insert>
+        <div id="content" class="center_content">
+            <ui:insert name="content">Content</ui:insert>
         </div>
 
     </h:body>

@@ -36,7 +36,7 @@ public class BeansVerResultadoT {
     private Transaction transaction;
 
     private List<Entrenamiento> listaEntrenamiento;
-    private CartesianChartModel modelGraphTemas;
+    private CartesianChartModel modelGraphFichas;
 
     public BeansVerResultadoT() {
 
@@ -49,7 +49,7 @@ public class BeansVerResultadoT {
 
     private void createLineModels() {
         ObtnerDatosEst();
-        modelGraphTemas = new CartesianChartModel();
+        modelGraphFichas = new CartesianChartModel();
 
         ChartSeries temaSeries = new ChartSeries();
         temaSeries.setLabel("Puntajes del Entrenamiento");
@@ -62,7 +62,7 @@ public class BeansVerResultadoT {
         System.out.println(" el tamano de la lista es_" + listaEntrenamiento.size());
         if (listaEntrenamiento.isEmpty()) {
             temaSeries.set("Sin Fecha de Entrenamiento", 0);
-            modelGraphTemas.addSeries(temaSeries);
+            modelGraphFichas.addSeries(temaSeries);
         } else {
             tamaño = listaEntrenamiento.size();
             if (tamaño <= 7) {
@@ -72,7 +72,7 @@ public class BeansVerResultadoT {
                     fecha = "[" + i + "] " + anio + "/" + mes + "/" + listaEntrenamiento.get(i).getFecha().getDate();
                     temaSeries.set(fecha, listaEntrenamiento.get(i).getPuntaje());
                 }
-                modelGraphTemas.addSeries(temaSeries);
+                modelGraphFichas.addSeries(temaSeries);
             } else {
                 tamaño = listaEntrenamiento.size() ;
                 tamaño1 = listaEntrenamiento.size() - 7;
@@ -85,7 +85,7 @@ public class BeansVerResultadoT {
                     fecha = "[" + con + "] " + anio + "/" + mes + "/" + listaEntrenamiento.get(i).getFecha().getDate();
                     temaSeries.set(fecha, listaEntrenamiento.get(i).getPuntaje());
                 }
-                modelGraphTemas.addSeries(temaSeries);
+                modelGraphFichas.addSeries(temaSeries);
             }
         }
     }
@@ -166,14 +166,15 @@ public class BeansVerResultadoT {
     }
 
     //.................setter y getter.....................
-    public CartesianChartModel getModelGraphTemas() {
-        return modelGraphTemas;
+
+    public CartesianChartModel getModelGraphFichas() {
+        return modelGraphFichas;
     }
 
-    public void setModelGraphTemas(CartesianChartModel modelGraphTemas) {
-        this.modelGraphTemas = modelGraphTemas;
+    public void setModelGraphFichas(CartesianChartModel modelGraphFichas) {
+        this.modelGraphFichas = modelGraphFichas;
     }
-
+   
     public List<Entrenamiento> getListaEntrenamiento() {
         return listaEntrenamiento;
     }

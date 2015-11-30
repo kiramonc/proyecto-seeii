@@ -8,7 +8,7 @@
 
     <body>
 
-        <ui:composition template="./../../templates/templateEstudiante.xhtml">
+        <ui:composition template="./../../templates/templateEntrenarFichas.xhtml">
             <ui:define name="content">
 
                 <h1>PASO 5: Aprendizaje mediante Fichas</h1> 
@@ -18,25 +18,25 @@
                     <p:carousel  id="frmEnsenanzaFicha" numVisible="1" itemStyle="width: 600px; height: 380px;" 
                                  effect="easeInStrong"  >  
                         <p:tab title="IMAGEN 1">
-                            <p:graphicImage   id="graficoT1"  onclick="hablarF1()"
-                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRFichaPregunta3.idFicha1()}.jpg"/>
+                            <p:graphicImage   id="graficoT1"  onclick="hablarF1()" width="590" height="380" cache="false"
+                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansRFichaPregunta3.idFicha1()}.jpg"/>
                         </p:tab>
 
                         <p:tab title="IMAGEN 2">
-                            <p:graphicImage   id="graficoT2" onclick="hablarF2()" 
-                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRFichaPregunta3.idFicha2()}.jpg" />
+                            <p:graphicImage   id="graficoT2" onclick="hablarF2()"  width="590" height="380" cache="false"
+                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansRFichaPregunta3.idFicha2()}.jpg" />
                         </p:tab>
                         <p:tab title="IMAGEN 3">
-                            <p:graphicImage   id="graficoT3" onclick="hablarF3()"
-                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRFichaPregunta3.idFicha3()}.jpg" />
+                            <p:graphicImage   id="graficoT3" onclick="hablarF3()" width="590" height="380" cache="false"
+                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansRFichaPregunta3.idFicha3()}.jpg" />
                         </p:tab>
                         <p:tab title="IMAGEN 4">
-                            <p:graphicImage   id="graficoT4" onclick="hablarF4()" 
-                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRFichaPregunta3.idFicha4()}.jpg" />
+                            <p:graphicImage   id="graficoT4" onclick="hablarF4()"  width="590" height="380" cache="false"
+                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansRFichaPregunta3.idFicha4()}.jpg" />
                         </p:tab>
                         <p:tab title="IMAGEN 5">
-                            <p:graphicImage   id="graficoT5" onclick="hablarF5()" 
-                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansRFichaPregunta3.idFicha5()}.jpg" />
+                            <p:graphicImage   id="graficoT5" onclick="hablarF5()"  width="590" height="380" cache="false"
+                                              value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansRFichaPregunta3.idFicha5()}.jpg" />
                         </p:tab>
 
                     </p:carousel>

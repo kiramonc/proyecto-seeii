@@ -72,11 +72,56 @@ public class BeansREntrenamiento {
         this.entrenar.setFecha(sqlDate);
     }
 
+    //proceso para obtner temas que tengan mayor a 6 fichas
+    public List<Tema> temasConFichas(String username) {
+        List<Tema> listaTemas = getTemasPorUnidad(username);
+        int id;
+        int sizeListFichas;
+        for (int i = 0; i < listaTemas.size(); i++) {
+            id = listaTemas.get(i).getIdTema(); //obtener el id del Tema
+            sizeListFichas = sizeListafichaPorTema(id); //tamaño de lista de fichas segun un tema
+            System.out.println("el id tema " + id + " tiene una lista de fichas con un tamaño " + sizeListFichas);
+            if (sizeListFichas < 6) {
+                listaTemas.remove(i);
+            }
+        }
+        return listaTemas;
+
+    }
+
+    //metodo para obtneter Todos los tema  de una determinada UNIDAD con respecto al idUnidad
+    public List<Tema> getTemasPorUnidad(String Username) {
+        this.session = null;
+        this.transaction = null;
+        try {
+            this.session = HibernateUtil.getSessionFactory().openSession();
+            this.transaction = session.beginTransaction();
+            //obtener un usuario por su username, para obtener un estudiante y fijar en el entrenamiento
+            DaoUsuario daoUsuario = new DaoUsuario();
+            Usuario usuarioEstudiante = daoUsuario.verPorUsername(session, Username); //obtuvimos el usuario segun su username
+            DaoEstudiante daoEstudiante = new DaoEstudiante();
+            Estudiante estudiante = daoEstudiante.verPorCodigoUsuario(session, usuarioEstudiante.getIdUsuario());//obtuvimos el estudiante  segun el id del usuario
+            int unidadEstudiante = estudiante.getUnidadensenianza().getId();
+
+            DaoTema daoTema = new DaoTema();
+            List<Tema> listaTemas = daoTema.verPorUnidad(session, unidadEstudiante);
+
+            transaction.commit();
+            return listaTemas;
+
+        } catch (Exception ex) {
+            if (this.transaction != null) {
+                this.transaction.rollback();
+            }
+            return null;
+        }
+    }
+
     public String iniciarEntrenamiento(String usernameLogin, int idtema) {
         String direcionar = "inicioAprendizaje";
         boolean estado = false;
         int idEntrena = 0;
-        int tamñoListficha = SizeListafichaPorTema(idtema);
+        int tamñoListficha = sizeListafichaPorTema(idtema);
 
         //si existe lista de fichas mayor a 5 entonces crea el entrenamiento y las preguntas
         if (tamñoListficha >= 6) {
@@ -88,18 +133,18 @@ public class BeansREntrenamiento {
             //si tiene un idEntrena diferente a 0 entonces crea una pregunta
             if (idEntrena != 0) {
                 crearPreguntaEntrenaTEST1(idEntrena);
-                 return direcionar = "aprenderFichasPregunta1";
+                return direcionar = "aprenderFichasPregunta1";
             }
         } else {
             //mostrar mensaje para indicar que no existe fichas, para el entrenamiento
             RequestContext.getCurrentInstance().update("frmPresentarMensaje:panelPresentarMensaje");
             RequestContext.getCurrentInstance().execute("PF('dialogPresentarMensaje').show()");
         }
-//se debe mostraraun mensaje diciendo que no hay suficientes fichas del tema para realizar el entrenamiento.
+        //se debe mostraraun mensaje diciendo que no hay suficientes fichas del tema para realizar el entrenamiento.
         return direcionar;
     }
 
-    public int SizeListafichaPorTema(int idtema) {
+    public int sizeListafichaPorTema(int idtema) {
         List<Ficha> listFichas;
         int sizeListaFichaPregunta = 0;
         this.session = null;

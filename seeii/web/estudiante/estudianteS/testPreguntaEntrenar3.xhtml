@@ -6,8 +6,8 @@
       xmlns:p="http://primefaces.org/ui">
 
     <body>
-
-        <ui:composition template="./../../templates/templateEstudiante.xhtml">
+        
+        <ui:composition template="./../../templates/templateEntrenarFichas.xhtml">
             <ui:define name="content">
                 <h1>PASO 6: Prueba de la asociación de las fichas con sonidos</h1> 
                 <!--inicializamos el metodo inicializarListaFichaPrengunta-->
@@ -18,46 +18,53 @@
                         <h:form>
                             <p:growl id="msgs" showDetail="true" />
 
-                            <p:dashboard id="board" model="#{beansTestPreguntaEntren3.model}">
+                            <p:dashboard id="board" model="#{beansTestPreguntaEntren3.model}"
+                                         style=" border: 3px #036fab solid;
+                                         background-color: #d4e4ef;
+                                         padding: 15px; margin: 10px 35px 0px 10px; float: left;
+                                         position: absolute;
+                                         left:  20%;
+                                         right: 35%;
+                                         top: 20px;">
                                 <p:ajax event="reorder" listener="#{beansTestPreguntaEntren3.handleReorder}"/>
 
                                 <p:panel id="imagen1" header="IMAGEN" >
-                                    <p:graphicImage  id="im1" value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren3.obtnerficha1()}.jpg" 
+                                    <p:graphicImage  id="im1" value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansTestPreguntaEntren3.obtnerficha1()}.jpg" 
                                                      width="100px" height="70px" />
                                 </p:panel>
 
                                 <p:panel id="imagen2" header="IMAGEN" >
-                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren3.obtnerficha2()}.jpg" 
+                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansTestPreguntaEntren3.obtnerficha2()}.jpg" 
                                                      width="100px" height="70px" />
                                 </p:panel>
 
                                 <p:panel id="imagen3" header="IMAGEN">
-                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren3.obtnerficha3()}.jpg" 
+                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansTestPreguntaEntren3.obtnerficha3()}.jpg" 
                                                      width="100px" height="70px" />
                                 </p:panel>
 
                                 <p:panel id="imagen4" header="IMAGEN">
-                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/#{beansTestPreguntaEntren3.obtnerficha4()}.jpg" 
+                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansTestPreguntaEntren3.obtnerficha4()}.jpg" 
                                                      width="100px" height="70px" />
                                 </p:panel>
 
                                 <p:panel id="sonido1" header="SONIDO">
-                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
+                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/sonido.jpg" 
                                                      width="100px" height="70px" onclick="hablarF1()"/>
                                 </p:panel>
 
                                 <p:panel id="sonido2" header="SONIDO">
-                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
+                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/sonido.jpg" 
                                                      width="100px" height="70px"  onclick="hablarF2()"/>
                                 </p:panel>
 
                                 <p:panel id="sonido3" header="SONIDO">
-                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
+                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/sonido.jpg" 
                                                      width="100px" height="70px" onclick="hablarF3()"/>
                                 </p:panel>
 
                                 <p:panel id="sonido4" header="SONIDO">
-                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/school/sonido.jpg" 
+                                    <p:graphicImage  value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/sonido.jpg" 
                                                      width="100px" height="70px" onclick="hablarF4()"/>
                                 </p:panel>
                             </p:dashboard>

@@ -69,6 +69,19 @@ public class DaoEstudiante implements Interface.InterfaceEstudiante{
         return listaEst;
     }
     
+    public List<Estudiante> verEstudiantePorIdUnidad(Session session, int idUnidad) throws Exception {
+        String hql=" from Estudiante where estUnidEnsen=:estUnidEnsen";
+        Query query=session.createQuery(hql);
+        query.setParameter("estUnidEnsen", idUnidad);
+        List<Estudiante> listaEst = (List<Estudiante>) query.list();
+        for (int i = 0; i < listaEst.size(); i++) {
+            Hibernate.initialize(listaEst.get(i).getUsuario());
+            Hibernate.initialize(listaEst.get(i).getUnidadensenianza());
+        }
+        
+        return listaEst;
+    }
+    
     public Estudiante verPorUsername(Session session, String username) throws Exception {
         String hql1 = "select est from Estudiante as est join est.usuario as usuarios where usuarios.username=:username";
         Query query = session.createQuery(hql1);

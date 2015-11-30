@@ -251,6 +251,6 @@ h1 {
 }
 
 .ui-dashboard-column {
-    width:220px;
-    line-stacking: exclude-ruby;
+    width:230px;
+    line-stacking: exclude-ruby;  
 }
