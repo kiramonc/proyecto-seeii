@@ -40,12 +40,12 @@ public class DaoTema implements InterfaceTema {
         }
         return listaTemas;
     }
-    
+
     public List<Tema> verTodo() {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
-        Criteria criteria=session.createCriteria(Tema.class);
-        List<Tema> listaTemas=(List<Tema>) criteria.list();
+        Criteria criteria = session.createCriteria(Tema.class);
+        List<Tema> listaTemas = (List<Tema>) criteria.list();
         session.close();
         return listaTemas;
     }
@@ -56,19 +56,18 @@ public class DaoTema implements InterfaceTema {
 //        Hibernate.initialize(tema.getUnidadensenianza());
         return true;
     }
-    
-    public boolean eliminar(Session session, Tema tema) throws Exception{
+
+    public boolean eliminar(Session session, Tema tema) throws Exception {
         session.delete(tema);
         return true;
     }
 
-
     @Override
     public Tema verPorCodigoTema(Session session, int idTema) throws Exception {
-        String hql="from Tema where idTema=:idTema";
-        Query query=session.createQuery(hql);
+        String hql = "from Tema where idTema=:idTema";
+        Query query = session.createQuery(hql);
         query.setParameter("idTema", idTema);
-        Tema tema=(Tema) query.uniqueResult();
+        Tema tema = (Tema) query.uniqueResult();
 //        Hibernate.initialize(tema.getUnidadensenianza());
         return tema;
     }
@@ -81,12 +80,13 @@ public class DaoTema implements InterfaceTema {
         Tema tema = (Tema) query.uniqueResult();
         return tema;
     }
-    
+
     public List<Tema> verPorUnidad(Session session, int idUnidad) throws Exception {
-        String hql = "from Tema where unidadensenianza=:unidadensenianza";
+        String hql = "from Tema where temUnidEnsen=:temUnidEnsen and estado=:estado ";
         Query query = session.createQuery(hql);
-        query.setInteger("unidadensenianza", idUnidad);
-//        query.setParameter("unidadensenianza", idUnidad);
+        query.setParameter("estado", true);
+        query.setInteger("temUnidEnsen", idUnidad);
+        //        query.setParameter("unidadensenianza", idUnidad);
         List<Tema> tema = (List<Tema>) query.list();
         if(tema.isEmpty())
             System.out.println("La lista está vacía");
@@ -95,11 +95,8 @@ public class DaoTema implements InterfaceTema {
                 System.out.println("Tema: "+lista.getNombre());
             }
         }
-//        for(Tema lista: tema){
-//            Hibernate.initialize(lista.getUnidadensenianza());
-//        }
 
         return tema;
     }
-
+    
 }

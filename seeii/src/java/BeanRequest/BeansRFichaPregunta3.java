@@ -44,7 +44,6 @@ public class BeansRFichaPregunta3 {
     private List<Fichaspregunta> listFichasPregunta;
     private List<Ficha> listFichas;
 
-
     public BeansRFichaPregunta3() {
         fichaPregunta = new Fichaspregunta();
     }
@@ -65,11 +64,17 @@ public class BeansRFichaPregunta3 {
         //si sizeListaFicha(tamaño de la lista de fichas) es diferente de cero(exista fichas)
         System.out.println("tamaño de la lista de fichas ..." + sizeListaFicha + "...............");
         if (sizeListaFicha >= 5) {
+            int numAle;
+            int numFich;
             //obtiene n(num) numeros aleatorios
-            listaAleatorio = generarAleatoreo(1, sizeListaFicha, 5);
+              int num=sizeListaFicha-1;
+            listaAleatorio = generarAleatoreo(0, num, 5);
             for (int i = 0; i < 5; i++) {
+                numAle = (int) listaAleatorio.get(i);
+                numFich = listFichas.get(numAle).getIdFicha();
+                System.out.println(i + "creacion de la ficha en la posicion:[" + numAle + "] con el id: " + numFich);
                 //aqui  registrar(FichaPregunta) la fija con (idFicha, idPreguntaEntrenar)
-                registrarFichaPregunta((int) listaAleatorio.get(i), idPrenguntaEnt);
+                registrarFichaPregunta(numFich, idPrenguntaEnt);
             }
 
             //metodo para obtnere la lista de fichasPregunta Creadas anteriormente
@@ -204,7 +209,6 @@ public class BeansRFichaPregunta3 {
     }
 
     //OBtner los id de las fichas..........
-
     public int idFicha1() {
         return listFichasPregunta.get(0).getFicha().getIdFicha();
     }
@@ -252,7 +256,6 @@ public class BeansRFichaPregunta3 {
     }
 
     //metodo para obtner NOMBRE de la ficha por su id
-
     public String obtnerNameficha(int idFich) {
         String nombreFicha = "empty";
         this.session = null;

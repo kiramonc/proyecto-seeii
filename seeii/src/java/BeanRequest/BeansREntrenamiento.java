@@ -334,4 +334,4 @@ public class BeansREntrenamiento {
         this.preguntaEnt = preguntaEnt;
     }
 
-}
+    }
