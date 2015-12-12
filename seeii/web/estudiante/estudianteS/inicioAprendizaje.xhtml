@@ -12,16 +12,28 @@
             <ui:define name="content">
                 <center><h2>LISTA DE TEMAS DISPONIBLES</h2></center><hr/>
                 <h:form id="dockEntrenar">
-                    <p:dataGrid var="menuItem" value="#{beansREntrenamiento.temasConFichas(beanSLogin.usernameLogin)}" columns="5" rows="8"  >
-                        <p:column style="text-align: center;">
-                            <p:panel footer="#{menuItem.nombre}" styleClass="panelStyle" style="font-size: 12px; text-shadow: 0px 0px 1.5px; font-family: cursive,sans-serif; text-transform: uppercase;">
+                    <p:dataGrid var="menuItem" value="#{beansREntrenamiento.temasConFichas(beanSLogin.usernameLogin)}" columns="3" rows="8"  >
+                        <p:column style="text-align: justify;">
+                            <p:panel footer="#{menuItem.nombre}" styleClass="panelStyle" style="font-size: 14px; text-shadow: 0px 0px 1.5px; font-family: cursive,sans-serif;">
 
                                 <h:commandLink id="idtemFicha" action="#{beansREntrenamiento.iniciarEntrenamiento(beanSLogin.usernameLogin, menuItem.idTema)}">
-                                     
-                                    <p:graphicImage styleClass="imgItem" value="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/imagen/imgFichas/#{menuItem.imgTema}" width="80" height="70" cache="false"/>
+
+                                    <p:graphicImage styleClass="imgItem" value="#{FacesContext.getCurrentInstance().getExternalContext()}/resources/imagen/imgFichas/#{menuItem.imgTema}" width="100" height="90" cache="false"/>
                                 </h:commandLink>
                             </p:panel>
                         </p:column>
+                       
+                         <h:panelGrid>
+                        </h:panelGrid>
+                         <h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid>
+                        </h:panelGrid>
+                         <h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid>
+                        </h:panelGrid>
+
                     </p:dataGrid>
                 </h:form>
 

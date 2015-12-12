@@ -21,13 +21,13 @@
 
                             <p:dashboard id="board" model="#{beansTestPreguntaEntren1.model}" 
                                          style=" border: 3px #036fab solid;
-                                         background-color: #d4e4ef;
+                                         background-image: url('http://localhost:8080/seeii/faces/resources/imagen/school/fondoTest1.png');
                                          padding: 15px; margin: 10px 35px 0px 10px; float: left;
                                          position: absolute;
                                          left:  20%;
                                          right: 35%;
                                          top: 20px;">
-                                <p:ajax event="reorder" listener="#{beansTestPreguntaEntren1.handleReorder}"/>
+                                         <p:ajax event="reorder" listener="#{beansTestPreguntaEntren1.handleReorder}"/>
 
                                 <p:panel id="imagen1" header="IMAGEN" >
                                     <p:graphicImage  id="im1" value="#{FacesContext.getCurrentInstance()}/resources/imagen/imgFichas/#{beansTestPreguntaEntren1.obtnerficha1()}.jpg" 
@@ -93,21 +93,21 @@
 
                 <script src='https://code.responsivevoice.org/responsivevoice.js'></script>
                 <script language="javascript">
-                    function hablarF1() {
-                        var elemento = document.getElementById("sonidoF1");
-                        var frase = elemento.value;
-                        responsiveVoice.speak(frase, "US English Female");
-                    }
-                    function hablarF2() {
-                        var elemento = document.getElementById("sonidoF2");
-                        var frase = elemento.value;
-                        responsiveVoice.speak(frase, "US English Female");
-                    }
-                    function hablarF3() {
-                        var elemento = document.getElementById("sonidoF3");
-                        var frase = elemento.value;
-                        responsiveVoice.speak(frase, "US English Female");
-                    }
+                                                         function hablarF1() {
+                                                             var elemento = document.getElementById("sonidoF1");
+                                                             var frase = elemento.value;
+                                                             responsiveVoice.speak(frase, "US English Female");
+                                                         }
+                                                         function hablarF2() {
+                                                             var elemento = document.getElementById("sonidoF2");
+                                                             var frase = elemento.value;
+                                                             responsiveVoice.speak(frase, "US English Female");
+                                                         }
+                                                         function hablarF3() {
+                                                             var elemento = document.getElementById("sonidoF3");
+                                                             var frase = elemento.value;
+                                                             responsiveVoice.speak(frase, "US English Female");
+                                                         }
                 </script>
 
             </ui:define>

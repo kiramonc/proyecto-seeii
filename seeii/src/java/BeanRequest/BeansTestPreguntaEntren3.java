@@ -297,6 +297,7 @@ public class BeansTestPreguntaEntren3 {
         //1. cambia letras("sonido1" ó "imagen1",etc)a numero (1 ,2, 3), En Método (cambiarValor)
         ArrayList columna0 = this.beanSEntrena.getColumna0();
         ArrayList columna1 = this.beanSEntrena.getColumna1();
+        //REVISION
         ArrayList columnaN0 = cambiarValor(columna0);
         ArrayList columnaN1 = cambiarValor(columna1);
         System.out.println("el valor de los resultado de columna 0" + columnaN0);
@@ -366,6 +367,7 @@ public class BeansTestPreguntaEntren3 {
         System.out.println("la columna es " + columna);
         int num = 0;
         String valor = "";
+        ///revision 
         for (int i = 0; i < columna.size(); i++) {
             valor = (String) columna.get(i);
             if ((valor.equals("sonido1")) || (valor.equals("imagen1"))) {

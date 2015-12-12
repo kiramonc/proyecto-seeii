@@ -43,6 +43,7 @@ public class BeanRFicha {
     private String nombreImagen;
     private UploadedFile imagen;
 
+    List<Ficha> listafiltrada;
     public BeanRFicha() {
     }
 
@@ -336,4 +337,13 @@ public class BeanRFicha {
     public void setImagen(UploadedFile imagen) {
         this.imagen = imagen;
     }
+
+    public List<Ficha> getListafiltrada() {
+        return listafiltrada;
+    }
+
+    public void setListafiltrada(List<Ficha> listafiltrada) {
+        this.listafiltrada = listafiltrada;
+    }
+    
 }

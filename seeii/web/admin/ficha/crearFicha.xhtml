@@ -13,7 +13,7 @@
             <ui:define name="content">
                 <center><h2>ADMINISTRACIÓN DE FICHAS</h2></center><hr/>
 
-                <h:panelGrid id="panelAdministracionFicha" columns="2" cellspacing="25px" width="100%">
+                <h:panelGrid id="panelAdministracionFicha" columns="2" cellspacing="15px" width="100%"  >
                     <h:form id="frmListarTest">
                         <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
 
@@ -31,39 +31,25 @@
                         </h:panelGroup>
                     </h:form>
 
-
-                    <h:form id="frmDatosTest">
+                    <h:form id="frmDatosTest" style="border: 2px cadetblue solid; top: 30px">
                         <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
 
                         <h:panelGrid columns="1" id="panelDatosTest">
-                            <h:panelGrid columns="3">
-                                <p:outputLabel value="Nombre Unidad: " for="txtNombreUnidad"/>
-                                <p:inputText id="txtNombreUnidad" label="Unidad" value="#{beanRTema.tema.unidadensenianza.nombreUnidad}" disabled="true">
-                                    <f:validator validatorId="validatorVacio"/>
-                                </p:inputText>
-                                <p:message for="txtNombreUnidad"/>
-
-                                <p:outputLabel value="Nombre Tema: " for="txtNombreTema"/>
-                                <p:inputText id="txtNombreTema" label="Tema" value="#{beanRTema.tema.nombre}" disabled="true">
-                                    <f:validator validatorId="validatorVacio"/>
-                                </p:inputText>
-                                <p:message for="txtNombreTema"/>
-                            </h:panelGrid>
-
-                            <p:scrollPanel style="width:600px;height:220px;">
-                                <p:commandButton value="Crear ficha" actionListener="#{beanRFicha.abrirDialogoCrearFicha(beanRTema.tema.idTema)}" styleClass="botonCrearNuevo" icon="ui-icon-circle-plus" disabled="#{beanRTema.deshabilitarBotonCrearPregunta()}"/>
-                                <p:dataTable id="tablaPreguntas" var="item" value="#{beanRFicha.getFichasPorTema(beanRTema.tema)}" selection="#{beanRFicha.ficha}" selectionMode="single" rowKey="#{item.idFicha}" paginator="true" rows="10" styleClass="estiloTablaFicha" tableStyleClass="tablaFicha">
-                                    <p:column headerText="NOMBRE" width="50%">
-                                        <p:outputLabel value="#{item.nombreFicha}"/>
-                                    </p:column>
+                            <p:commandButton value="Crear ficha" actionListener="#{beanRFicha.abrirDialogoCrearFicha(beanRTema.tema.idTema)}" styleClass="botonCrearNuevo" icon="ui-icon-circle-plus" disabled="#{beanRTema.deshabilitarBotonCrearPregunta()}"/>
+                            <p:dataTable id="tablaPreguntas" var="item" value="#{beanRFicha.getFichasPorTema(beanRTema.tema)}" selection="#{beanRFicha.ficha}" selectionMode="single" rowKey="#{item.idFicha}" paginator="true" rows="10" styleClass="estiloTablaFicha" tableStyleClass="tablaFicha">
+                                 <f:facet name="header">
+                                    Lista de Fichas del tema: #{beanRTema.tema.nombre}
+                                </f:facet>
+                                <p:column headerText="NOMBRE" width="50%">
+                                    <p:outputLabel value="#{item.nombreFicha}"/>
+                                </p:column>
                                     <p:column headerText="DESCRIPCIÓN" width="30%">
-                                        <p:outputLabel value="#{item.descripcion}"/>
-                                    </p:column>
-                                    <p:column headerText="OPERACIONES" width="20%">
-                                        <p:commandButton value="Ver Detalle" actionListener="#{beanRFicha.abrirDialogoVerFicha(item.idFicha)}"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </p:scrollPanel>
+                                    <p:outputLabel value="#{item.descripcion}"/>
+                                </p:column>
+                                <p:column headerText="OPERACIONES" width="20%">
+                                    <p:commandButton value="Ver Detalle" actionListener="#{beanRFicha.abrirDialogoVerFicha(item.idFicha)}"/>
+                                </p:column>
+                            </p:dataTable>
 
                         </h:panelGrid>
                     </h:form>

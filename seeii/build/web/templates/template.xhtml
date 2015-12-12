@@ -27,7 +27,14 @@
                     <p:commandLink value="Cerrar Sesión" action="#{beanSLogin.logout()}" update="frmMenuPrincipal" />
                 </div>
                 <p:megaMenu>
-                    <p:menuitem value="Usuario" outcome="/admin/buscar" icon="ui-icon-person"/>
+                    <p:submenu label="Administrar">
+                        <p:column>
+                            <p:submenu label="Ver">
+                                <p:menuitem value="Usuario" outcome="/admin/buscar" icon="ui-icon-person"/>
+                                <p:menuitem value="Estudiante" outcome="/admin/estudiante/crearEstudiante" icon="iconStadistic"/>  
+                            </p:submenu>
+                        </p:column>
+                    </p:submenu>
                     <p:menuitem value="Unidad" outcome="/admin/unidad/buscar_unidad" icon="ui-icon-bookmark"/>
                     <p:menuitem value="Test" outcome="/admin/test/crearTest" icon="ui-icon-clipboard"/>
                     <p:menuitem value="Ficha" outcome="/admin/ficha/crearFicha" icon="ui-icon-contact"/>

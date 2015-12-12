@@ -52,11 +52,11 @@ public class DaoFicha implements InterfaceFicha {
         return ficha;
     }
 
-     @Override
+    @Override
     public List<Ficha> verListfichasActivasPorTema(Session session, int idTema) throws Exception {
-        String hql = "from Ficha where temaFicha=:temaFicha and estado=:estado";
+        String hql = "from Ficha where temaFicha=:temaFicha and estado=:estado order by nombreFicha asc";
         Query query = session.createQuery(hql);
-           query.setParameter("estado", true);
+        query.setParameter("estado", true);
         query.setInteger("temaFicha", idTema);
         List<Ficha> listaFichasPreguntas = (List<Ficha>) query.list();
         for (Ficha lista : listaFichasPreguntas) {
@@ -64,13 +64,13 @@ public class DaoFicha implements InterfaceFicha {
         }
         return listaFichasPreguntas;
     }
-    
+
     @Override
     public boolean actualizar(Session session, Ficha ficha) throws Exception {
         session.update(ficha);
         return true;
     }
-    
+
     @Override
     public List<Ficha> verTodo(Session session) throws Exception {
         String hql = "from Ficha";
@@ -103,5 +103,5 @@ public class DaoFicha implements InterfaceFicha {
         }
         return listaFichasPreguntas;
     }
-   
+
 }
