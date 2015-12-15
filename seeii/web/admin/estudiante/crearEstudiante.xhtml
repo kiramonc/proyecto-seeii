@@ -12,13 +12,13 @@
 
             <ui:define name="content">
                 <center><h2>ADMINISTRACIÓN DE ESTUDIANTES</h2></center><hr/>
-                <h:panelGrid id="panelAdministracionUsuario" columns="2" cellspacing="25px">
+                <h:panelGrid id="panelAdministracionEstudiante" columns="2" cellspacing="25px">
                     <h:form id="frmListarUsuarios">
                         <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
                         <h:panelGroup>
                             <center><h3>Lista de Estudiantes </h3></center>
                             <p:dataTable id="tablaListaUsuarios" var="item" value="#{beanRUsuario.allUsuario}" selection="#{beanRUsuario.usuario}" selectionMode="single" rowKey="#{item.idUsuario}" paginator="true" rows="10" filteredValue="#{beanRUsuario.listaUsuarioFiltrado}" styleClass="estiloTabla">
-                                <!--p:ajax event="rowSelect" update=":frmDatosUsuario:panelDatosUsuario"/-->
+                                <p:ajax event="rowSelect" update=":frmDatosEstudiante:panelDatosEstudiante"/>
                                 <p:column headerText="NOMBRE" filterBy="username">
                                     <p:outputLabel value="#{item.username}"/>
                                 </p:column>
@@ -35,10 +35,19 @@
                         </h:panelGroup>
                     </h:form>
 
-                    <h:form id="frmDatosUsuario">
-                        <!--p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
-                        <h:panelGrid columns="1" id="panelDatosUsuario">
+                    <h:form id="frmDatosEstudiante">
+                        <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                        <h:panelGrid columns="1" id="panelDatosEstudiante">
                             <h:panelGrid columns="3">
+
+                                <p:outputLabel for="menuUnidad" value="ESTUDIANTE: " />
+                                <p:selectOneMenu converter="estudianteConverter" id="menuEstudiante" value="#{beansVResultadoEstudiante.unidadE}"  >
+                                    <f:selectItems id="itemsUnidad" value="#{beansVResultadoEstudiante.obtnerListaUnidades()}" var="r" itemLabel="#{r.nombreUnidad}"/>
+                                    <p:ajax update="tablaEstudianteResultado"/>
+                                    <f:converter converterId="unidadEConverter"/>
+                                </p:selectOneMenu>
+                                 <p:message for="txtNombre"/>
+
                                 <p:outputLabel value="Nombre: " for="txtNombre"/>
                                 <p:inputText id="txtNombre" label="Nombre" value="#{beanRUsuario.usuario.nombre}">
                                     <f:validator validatorId="validatorVacio"/>
@@ -103,10 +112,10 @@
                                 <p:commandButton ajax="false" value="Actualizar Datos" actionListener="#{beanRUsuario.actualizar()}" styleClass="botonstyle" icon="ui-icon-circle-check" disabled="#{!beanRUsuario.deshabilitarBotonCrear()}"/>
                                 <p:commandButton ajax="false" value="#{beanRUsuario.usuario.estado? 'Desactivar usuario':'Activar usuario'}" actionListener="#{beanRUsuario.cargarUsuarioDesactivar(beanRUsuario.usuario.idUsuario)}" styleClass="botonstyle" icon="ui-icon-trash" disabled="#{beanRUsuario.deshabilitarBotonEstado()}"/>
                                 <p:commandButton ajax="false" icon="ui-icon-circle-arrow-w" value="Limpiar" actionListener="#{beanRUsuario.limpiarFormulario()}" styleClass="botonstyle" disabled="#{!beanRUsuario.deshabilitarBotonCrear()}">
-                                 
+
                                 </p:commandButton>
                             </h:panelGrid>
-                        </h:panelGrid-->
+                        </h:panelGrid>
                     </h:form>
                 </h:panelGrid>
             </ui:define>

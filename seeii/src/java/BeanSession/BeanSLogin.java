@@ -55,7 +55,8 @@ public class BeanSLogin {
                     HttpSession httpSession=(HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
                     httpSession.setAttribute("usernameLogin", this.usernameLogin);
                     if(usuarioLogeado.getRol().getTipo().equals("Estudiante")){
-                        return "/estudiante/inicioEstudiante";
+//                        return "/estudiante/inicioEstudiante";//                       
+                        return "/estudiante/estudianteS/inicioAprendizaje";
                     }
                     return "/admin/buscar";
                 }

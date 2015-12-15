@@ -1,5 +1,5 @@
 package Pojo;
-// Generated 19/11/2015 09:00:12 PM by Hibernate Tools 3.6.0
+// Generated 12/12/2015 02:01:14 PM by Hibernate Tools 4.3.1
 
 
 import java.util.Date;
@@ -18,6 +18,7 @@ public class Entrenamiento  implements java.io.Serializable {
      private int error;
      private int tiempo;
      private int puntaje;
+     private String resultadoredn;
      private Date fecha;
      private Set preguntaentrenars = new HashSet(0);
 
@@ -25,22 +26,24 @@ public class Entrenamiento  implements java.io.Serializable {
     }
 
 	
-    public Entrenamiento(int idEntrena, Estudiante estudiante, Tema tema, int error, int tiempo, int puntaje, Date fecha) {
+    public Entrenamiento(int idEntrena, Estudiante estudiante, Tema tema, int error, int tiempo, int puntaje, String resultadoredn, Date fecha) {
         this.idEntrena = idEntrena;
         this.estudiante = estudiante;
         this.tema = tema;
         this.error = error;
         this.tiempo = tiempo;
         this.puntaje = puntaje;
+        this.resultadoredn = resultadoredn;
         this.fecha = fecha;
     }
-    public Entrenamiento(int idEntrena, Estudiante estudiante, Tema tema, int error, int tiempo, int puntaje, Date fecha, Set preguntaentrenars) {
+    public Entrenamiento(int idEntrena, Estudiante estudiante, Tema tema, int error, int tiempo, int puntaje, String resultadoredn, Date fecha, Set preguntaentrenars) {
        this.idEntrena = idEntrena;
        this.estudiante = estudiante;
        this.tema = tema;
        this.error = error;
        this.tiempo = tiempo;
        this.puntaje = puntaje;
+       this.resultadoredn = resultadoredn;
        this.fecha = fecha;
        this.preguntaentrenars = preguntaentrenars;
     }
@@ -86,6 +89,13 @@ public class Entrenamiento  implements java.io.Serializable {
     
     public void setPuntaje(int puntaje) {
         this.puntaje = puntaje;
+    }
+    public String getResultadoredn() {
+        return this.resultadoredn;
+    }
+    
+    public void setResultadoredn(String resultadoredn) {
+        this.resultadoredn = resultadoredn;
     }
     public Date getFecha() {
         return this.fecha;

@@ -18,6 +18,7 @@ public class RedNeuronal {
 
     private String resultado;
     private String imgResultado;
+    private String imgREDneuronal;
 
     public void redNeuronal(int puntaje, int tiempo, int error) throws Exception {
         //si puntaje >= 200 entonces aprendido
@@ -58,41 +59,49 @@ public class RedNeuronal {
             case "0":
                 resultado = "Excelente ha aprendido";
                 imgResultado = "Excelente.jpg";
+                imgREDneuronal="0.png";
                 System.out.println("Excelente ha aprendido");
                 break;
             case "1":
                 resultado = "Disminuir Errores";
                 imgResultado = "Bueno.jpg";
+                imgREDneuronal="1.png";
                 System.out.println("Disminuir Errores");
                 break;
             case "2":
                 resultado = "Disminuir Tiempo";
                 imgResultado = "Bueno.jpg";
+                imgREDneuronal="2.png";
                 System.out.println("Disminuir Tiempo");
                 break;
             case "3":
                 resultado = "Disminuir Errores y tiempo";
                 imgResultado = "Bueno.jpg";
+                imgREDneuronal="3.png";
                 System.out.println("Disminuir Errores y tiempo");
                 break;
             case "4":
                 resultado = "Subir Puntaje";
                 imgResultado = "pensando.jpg";
+                imgREDneuronal="4.png";
                 System.out.println("Subir Puntaje");
                 break;
             case "5":
                 resultado = "Subir Puntaje y disminuir Errores";
                 imgResultado = "pensando.jpg";
+                imgREDneuronal="5.png";
                 System.out.println("Subir Puntaje y disminuir Errores");
                 break;
             case "6":
                 resultado = "Subir Puntaje y disminuir Tiempo";
                 imgResultado = "pensando.jpg";
+                imgREDneuronal="6.png";
                 System.out.println("Subir Puntaje y disminuir Tiempo");
                 break;
             case "7":
                 resultado = "Ponle mas Empeño";
                 imgResultado = "pensando.jpg";
+                imgREDneuronal="7.png";
                 System.out.println("Ponle mas Empeño");
                 break;
             default:
@@ -152,4 +161,12 @@ public class RedNeuronal {
         this.imgResultado = imgResultado;
     }
 
+    public String getImgREDneuronal() {
+        return imgREDneuronal;
+    }
+
+    public void setImgREDneuronal(String ImgREDneuronal) {
+        this.imgREDneuronal = ImgREDneuronal;
+    }
+    
 }

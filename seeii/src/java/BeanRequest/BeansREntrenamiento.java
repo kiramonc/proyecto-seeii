@@ -70,6 +70,7 @@ public class BeansREntrenamiento {
         this.entrenar.setTiempo(tiempo);
         this.entrenar.setPuntaje(0);
         this.entrenar.setFecha(sqlDate);
+        this.entrenar.setResultadoredn("sin resultado");
     }
 
     //proceso para obtner temas que tengan mayor a 6 fichas

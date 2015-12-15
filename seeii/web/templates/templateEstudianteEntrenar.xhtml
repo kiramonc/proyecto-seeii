@@ -17,7 +17,7 @@
 
         <div id="top">
             <ui:insert name="top">
-                <img src="http://localhost:8080/seeii/faces/resources/imagen/logostiiEst.png" alt="STII" width="100%" height="100%"></img>
+                <p:graphicImage   alt="STII" width="100%" height="100%" value="#{FacesContext.getCurrentInstance()}/resources/imagen/logostiiEst.png"/>
                 <h:form id="frmMenuPrincipalEstudiante">
                     <div id="sesionUsuarioEst">
                         <b>Usuario: </b>
@@ -27,7 +27,7 @@
                         <p:commandLink value="Cerrar Sesión" action="#{beanSLogin.logout()}" update="frmMenuPrincipalEstudiante" />
                     </div>
                     <p:megaMenu style="background: #ddd;">
-                        <p:menuitem value="Test" outcome="/estudiante/estudianteK/listaTest" icon="ui-icon-home"/>
+                        <p:menuitem value="Inicio" outcome="/estudiante/estudianteS/inicioAprendizaje" icon="ui-icon-home"/>
                         <p:menuitem value="Entrenar" outcome="/estudiante/estudianteS/inicioAprendizaje" icon="ui-icon-circle-check"/>
                     </p:megaMenu>
                 </h:form>

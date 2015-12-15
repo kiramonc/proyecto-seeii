@@ -119,6 +119,16 @@ panelAdministracionFicha
     border: 2px cadetblue solid;
     position: inherit;
 }
+#frmDatosEstudiante{
+    border: 2px cadetblue solid;
+    background: #eee;
+    padding-bottom: 30px;
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border: 2px cadetblue solid;
+    position: inherit;
+}
 #frmDatosUsuario{
     border: 2px cadetblue solid;
     background: #eee;
